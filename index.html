@@ -1,0 +1,86 @@
+// 1. 데이터 스키마에 lastHungerUpdateTime 추가
+let tamaState = JSON.parse(localStorage.getItem(TAMA_KEY)) || {
+  hunger: 100,
+  xp: 0,
+  level: 1,
+  isDead: false,
+  missedDaysFilled: 0,
+  lastRecordTime: Date.now(),
+  lastHungerUpdateTime: Date.now(), // [Fix] 배고픔 계산 전용 타이머 추가
+  lastRecordDate: getTodayDateStr(),
+  streak: 0
+};
+
+// 2. 눈덩이 버그를 막은 안전한 배고픔 계산 로직
+function calculateHunger() {
+  if (tamaState.isDead) return 0;
+  
+  const now = Date.now();
+  const hoursPassed = (now - tamaState.lastHungerUpdateTime) / (1000 * 60 * 60);
+  
+  if (hoursPassed > 0) {
+    tamaState.hunger -= (hoursPassed * 2);
+    tamaState.lastHungerUpdateTime = now; // [Fix] 계산 후 기준 시간 즉시 갱신
+  }
+  
+  if (tamaState.hunger <= 0) {
+    tamaState.hunger = 0;
+    tamaState.isDead = true;
+  }
+  return tamaState.hunger;
+}
+
+// 3. 순서가 교정된 저장 로직 (Streak 꼼수 방어)
+function saveRecord() {
+  const date = document.getElementById('recordDate').value;
+  const amount = parseInt(document.getElementById('recordAmount').value);
+  const note = document.getElementById('recordNote').value;
+
+  if (!date || isNaN(amount) || amount <= 0) {
+    alert("0원 초과의 올바른 금액과 날짜를 입력해주세요.");
+    return;
+  }
+
+  const previousRecordsOnDate = ledger.filter(r => r.date === date).length;
+  ledger.push({ id: Date.now(), date, amount, note });
+
+  const todayStr = getTodayDateStr();
+  
+  // [Fix] 기록을 갱신하기 전에, 끊긴 연속 기록이 있는지 먼저 검증
+  validateStreak(); 
+
+  if (tamaState.isDead) {
+    if (date < todayStr && previousRecordsOnDate === 0) {
+      tamaState.missedDaysFilled += 1;
+      if (tamaState.missedDaysFilled >= 2) {
+        tamaState.isDead = false;
+        tamaState.level = 1;
+        tamaState.xp = 0;
+        tamaState.hunger = 100;
+        tamaState.missedDaysFilled = 0;
+        tamaState.lastRecordTime = Date.now();
+        tamaState.lastHungerUpdateTime = Date.now();
+        alert("✨ 팡파르! 밀린 가계부를 작성하여 다마고치가 부활했습니다! 🥚");
+      }
+    }
+  } else {
+    tamaState.hunger = Math.min(100, tamaState.hunger + 15);
+    tamaState.lastRecordTime = Date.now();
+    tamaState.lastHungerUpdateTime = Date.now(); // [Fix] 회복 시점부터 배고픔 다시 계산
+    
+    // [Fix] Streak 검증이 끝난 후 안전하게 날짜 갱신 및 보상 지급
+    if (date === todayStr && tamaState.lastRecordDate !== todayStr) {
+       tamaState.streak += 1;
+       tamaState.lastRecordDate = todayStr;
+    }
+
+    let gainedXP = 10;
+    if (tamaState.streak >= 3) gainedXP = 15;
+    tamaState.xp += gainedXP;
+  }
+
+  saveState();
+  renderLedger();
+  renderTama();
+  closeModal();
+}
