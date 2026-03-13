@@ -5,91 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Budget App v1.1 with Tamagotchi</title>
   <style>
-    /* =========================================
-       v1.0 Base & Reset Styles
-       ========================================= */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
     body { background-color: #121212; color: #ffffff; padding-bottom: 80px; }
     
     .screen-main { padding: 20px; max-width: 480px; margin: 0 auto; position: relative; }
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 20px; font-weight: bold; }
     
-    /* v1.0 UI Elements */
     .compact-summary { background: #1e1e1e; padding: 16px; border-radius: 16px; margin-bottom: 20px; }
     .ledger-list { display: flex; flex-direction: column; gap: 10px; }
     .ledger-item { background: #2a2a2a; padding: 12px 16px; border-radius: 12px; display: flex; justify-content: space-between; }
     
-    .fab { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; background: #007aff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(0,122,255,0.4); z-index: 100; cursor: pointer; color: white; border: none; }
+    /* FAB Button */
+    .fab { position: fixed; bottom: 30px; right: 30px; width: 56px; height: 56px; background: #007aff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(0,122,255,0.4); z-index: 100; cursor: pointer; color: white; border: none; outline: none; }
     
-    /* =========================================
-       v1.1 Tamagotchi Zone Styles (Glassmorphism)
-       ========================================= */
-    .tama-zone {
-      position: relative;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 10;
-      overflow: hidden;
-    }
-
-    .tama-header {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      z-index: 12;
-    }
-
-    .tama-character {
-      font-size: 72px;
-      margin: 10px 0;
-      z-index: 12;
-      transition: transform 0.2s ease;
-    }
-
-    .tama-hunger-bar {
-      width: 100%;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 10px;
-      z-index: 12;
-    }
+    /* Tamagotchi Zone */
+    .tama-zone { position: relative; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; z-index: 10; overflow: hidden; }
+    .tama-header { width: 100%; display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 10px; z-index: 12; }
+    .tama-character { font-size: 72px; margin: 10px 0; z-index: 12; transition: transform 0.2s ease; }
     
-    .tama-hunger-fill {
-      height: 100%;
-      width: 100%;
-      background: #34c759;
-      transition: width 0.5s ease, background-color 0.5s ease;
-    }
+    .tama-hunger-bar { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 4px; overflow: hidden; margin-top: 10px; z-index: 12; }
+    .tama-hunger-fill { height: 100%; width: 100%; background: #34c759; transition: width 0.5s ease, background-color 0.5s ease; }
+    
+    .tama-receipts { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11; }
+    .receipt-icon { position: absolute; font-size: 20px; opacity: 0.7; }
 
-    .tama-receipts {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 11;
-    }
-    .receipt-icon {
-      position: absolute;
-      font-size: 20px;
-      opacity: 0.7;
-    }
-
+    /* Modal */
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
     .modal-content { background: #1e1e1e; padding: 24px; border-radius: 16px; width: 90%; max-width: 400px; }
-    .modal input { width: 100%; padding: 12px; margin: 8px 0 16px; border-radius: 8px; border: none; background: #2a2a2a; color: white; }
-    .modal button { width: 100%; padding: 14px; background: #007aff; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; }
+    .modal input { width: 100%; padding: 12px; margin: 8px 0 16px; border-radius: 8px; border: none; background: #2a2a2a; color: white; font-size: 16px; }
+    .modal button { width: 100%; padding: 14px; background: #007aff; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -135,24 +79,209 @@
     const LEDGER_KEY = 'ledger_v1.0';
     const TAMA_KEY = 'tama_status_v1_1';
 
-    let ledger = JSON.parse(localStorage.getItem(LEDGER_KEY)) || [];
-    
-    // [Fix 적용됨] lastHungerUpdateTime이 포함된 상태 객체
-    let tamaState = JSON.parse(localStorage.getItem(TAMA_KEY)) || {
-      hunger: 100,
-      xp: 0,
-      level: 1,
-      isDead: false,
-      missedDaysFilled: 0,
-      lastRecordTime: Date.now(),
-      lastHungerUpdateTime: Date.now(),
-      lastRecordDate: getTodayDateStr(),
-      streak: 0
-    };
-
     function getTodayDateStr() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
+    // 🚨 [핵심 Fix] 찌꺼기 데이터로 인한 크래시 방지용 방탄 초기화 
+    const defaultTamaState = {
+      hunger: 100, xp: 0, level: 1, isDead: false, missedDaysFilled: 0,
+      lastRecordTime: Date.now(), lastHungerUpdateTime: Date.now(),
+      lastRecordDate: getTodayDateStr(), streak: 0
+    };
+
+    let ledger = [];
+    try {
+      const savedLedger = localStorage.getItem(LEDGER_KEY);
+      if (savedLedger && savedLedger !== "undefined") ledger = JSON.parse(savedLedger);
+    } catch(e) { console.warn("Ledger load error resolved."); }
+    if (!Array.isArray(ledger)) ledger = [];
+
+    let tamaState = { ...defaultTamaState };
+    try {
+      const savedTama = localStorage.getItem(TAMA_KEY);
+      if (savedTama && savedTama !== "undefined") {
+        const parsedTama = JSON.parse(savedTama);
+        // 저장된 데이터가 있어도, 새 버전에 추가된 키가 없다면 default 값으로 안전하게 채움
+        tamaState = { ...defaultTamaState, ...parsedTama };
+      }
+    } catch(e) { console.warn("Tama load error resolved."); }
+
+    // --- 이하 로직 동일 ---
+
     function saveState() {
+      localStorage.setItem(LEDGER_KEY, JSON.stringify(ledger));
+      localStorage.setItem(TAMA_KEY, JSON.stringify(tamaState));
+    }
+
+    function calculateHunger() {
+      if (tamaState.isDead) return 0;
+      
+      const now = Date.now();
+      const hoursPassed = (now - tamaState.lastHungerUpdateTime) / (1000 * 60 * 60);
+      
+      if (hoursPassed > 0) {
+        tamaState.hunger -= (hoursPassed * 2);
+        tamaState.lastHungerUpdateTime = now; 
+      }
+      
+      if (tamaState.hunger <= 0) {
+        tamaState.hunger = 0;
+        tamaState.isDead = true;
+      }
+      return tamaState.hunger;
+    }
+
+    function updateEvolution() {
+      if (tamaState.xp >= 300) tamaState.level = 3;
+      else if (tamaState.xp >= 100) tamaState.level = 2;
+      else tamaState.level = 1;
+    }
+
+    function getCharacterEmoji() {
+      if (tamaState.isDead) return '👻';
+      if (tamaState.level === 3) return '🐥';
+      if (tamaState.level === 2) return '🐣';
+      return '🥚';
+    }
+
+    function calculateMissedDays() {
+      let missedCount = 0;
+      const today = new Date(getTodayDateStr());
+      
+      for (let i = 0; i < 7; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - i);
+        const dateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+        
+        const hasRecord = ledger.some(r => r.date === dateStr);
+        if (!hasRecord) missedCount++;
+      }
+      return missedCount;
+    }
+
+    function validateStreak() {
+      const todayStr = getTodayDateStr();
+      const today = new Date(todayStr);
+      const lastDate = new Date(tamaState.lastRecordDate);
+      
+      const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+      if (diffDays > 1) {
+        tamaState.streak = 0; 
+      }
+    }
+
+    function renderTama() {
+      tamaState.hunger = calculateHunger();
+      updateEvolution();
+      validateStreak();
+      
+      document.getElementById('tamaInfo').innerText = `Lv.${tamaState.level} (${tamaState.xp} XP)`;
+      document.getElementById('tamaStreak').innerText = tamaState.streak > 0 ? `🔥 ${tamaState.streak}일째!` : '🌱 기록 시작';
+      document.getElementById('tamaChar').innerText = getCharacterEmoji();
+      
+      const fillBar = document.getElementById('tamaHungerFill');
+      fillBar.style.width = `${tamaState.hunger}%`;
+      if (tamaState.hunger >= 50) fillBar.style.background = '#34c759'; 
+      else if (tamaState.hunger >= 20) fillBar.style.background = '#ff9f0a'; 
+      else fillBar.style.background = '#ff453a'; 
+
+      const missedDays = calculateMissedDays();
+      const receiptsContainer = document.getElementById('tamaReceipts');
+      receiptsContainer.innerHTML = '';
+      for (let i = 0; i < missedDays; i++) {
+        const span = document.createElement('span');
+        span.className = 'receipt-icon';
+        span.innerText = '📄';
+        span.style.left = `${Math.random() * 80 + 5}%`;
+        span.style.top = `${Math.random() * 70 + 10}%`;
+        span.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
+        receiptsContainer.appendChild(span);
+      }
+      saveState();
+    }
+
+    function renderLedger() {
+      const list = document.getElementById('ledgerList');
+      list.innerHTML = '';
+      let total = 0;
+      const sortedLedger = [...ledger].sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      sortedLedger.forEach(item => {
+        total += item.amount;
+        list.innerHTML += `
+          <div class="ledger-item">
+            <div>
+              <div style="font-size: 12px; color: #888;">${item.date}</div>
+              <div>${item.note || '내용 없음'}</div>
+            </div>
+            <div style="font-weight: bold;">${item.amount.toLocaleString()}원</div>
+          </div>
+        `;
+      });
+      document.getElementById('totalSpent').innerText = total.toLocaleString();
+    }
+
+    function saveRecord() {
+      const date = document.getElementById('recordDate').value;
+      const amount = parseInt(document.getElementById('recordAmount').value);
+      const note = document.getElementById('recordNote').value;
+
+      if (!date || isNaN(amount) || amount <= 0) {
+        alert("0원 초과의 올바른 금액과 날짜를 입력해주세요.");
+        return;
+      }
+
+      const previousRecordsOnDate = ledger.filter(r => r.date === date).length;
+      ledger.push({ id: Date.now(), date, amount, note });
+
+      const todayStr = getTodayDateStr();
+      validateStreak(); 
+
+      if (tamaState.isDead) {
+        if (date < todayStr && previousRecordsOnDate === 0) {
+          tamaState.missedDaysFilled += 1;
+          if (tamaState.missedDaysFilled >= 2) {
+            Object.assign(tamaState, { isDead: false, level: 1, xp: 0, hunger: 100, missedDaysFilled: 0, lastRecordTime: Date.now(), lastHungerUpdateTime: Date.now() });
+            alert("✨ 팡파르! 밀린 가계부를 작성하여 다마고치가 부활했습니다! 🥚");
+          }
+        }
+      } else {
+        tamaState.hunger = Math.min(100, tamaState.hunger + 15);
+        tamaState.lastRecordTime = Date.now();
+        tamaState.lastHungerUpdateTime = Date.now(); 
+        
+        if (date === todayStr && tamaState.lastRecordDate !== todayStr) {
+           tamaState.streak += 1;
+           tamaState.lastRecordDate = todayStr;
+        }
+
+        let gainedXP = 10;
+        if (tamaState.streak >= 3) gainedXP = 15;
+        tamaState.xp += gainedXP;
+      }
+
+      saveState();
+      renderLedger();
+      renderTama();
+      closeModal();
+    }
+
+    function openModal() {
+      document.getElementById('recordDate').value = getTodayDateStr();
+      document.getElementById('recordAmount').value = '';
+      document.getElementById('recordNote').value = '';
+      document.getElementById('inputModal').style.display = 'flex';
+    }
+    
+    function closeModal() { document.getElementById('inputModal').style.display = 'none'; }
+
+    window.onload = () => {
+      renderLedger();
+      renderTama();
+      setInterval(renderTama, 60000);
+    };
+  </script>
+</body>
+</html>
