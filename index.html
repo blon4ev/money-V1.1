@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v43 (True Native Fullscreen)</title>
+    <title>Budget Split Ledger v43 (Custom Numpad & Name Lock)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -26,7 +26,6 @@
         ::-webkit-scrollbar-thumb { background-color: transparent; border-radius: 4px; transition: background-color 1s ease; }
         .is-scrolling::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.25); transition: background-color 0s; }
 
-        /* 🌟 [FIX] 100dvh 적용으로 사파리 주소창 오르락내리락 대응 */
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; justify-content: center; align-items: flex-start; height: 100dvh; margin: 0; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         
         .liquid-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: var(--bg-main); pointer-events: none; }
@@ -35,17 +34,14 @@
         .orb-2 { width: 300px; height: 300px; background: #FF2D55; bottom: -5%; right: -5%; }
         @keyframes float { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(15px, -20px); } }
 
-        /* 🌟 [FIX] 가짜 폰 테두리 및 반경(Radius) 완전 제거, 폭 100% 채움 */
         .iphone-frame { width: 100%; max-width: 480px; height: 100dvh; background: var(--bg-main); position: relative; z-index: 10; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
         
-        /* 🌟 [FIX] 노치(Top)와 홈바(Bottom) Safe Area 패딩 적용 */
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding: 24px; box-sizing: border-box; padding-top: calc(20px + env(safe-area-inset-top)); padding-bottom: calc(85px + env(safe-area-inset-bottom)); z-index: 5; }
         .screen.active { display: flex; }
         
-        #screen-input { z-index: 300; background: var(--bg-main); padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
-        #screen-detail { z-index: 300; background: var(--bg-main); padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+        /* 🌟 [FIX] 새롭게 추가된 예산 넘패드 모달 스타일 지정 */
+        #screen-input, #screen-budget-input, #screen-detail { z-index: 300; background: var(--bg-main); padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 
-        /* 🌟 [FIX] 하단 탭바 Safe Area 영역 확보 */
         .tab-bar { position: absolute; bottom: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.95); border-top: 0.5px solid var(--glass-border); display: flex; justify-content: space-around; padding-top: 10px; padding-bottom: env(safe-area-inset-bottom); box-sizing: border-box; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.02); }
         .tab-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; background: none; border: none; width: 33.3%; transition: color 0.2s; }
         .tab-item.active { color: var(--accent-blue); }
@@ -102,7 +98,6 @@
         .item-card { display: flex; align-items: center; background: var(--bg-card); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; border: 1px solid var(--glass-border); box-shadow: var(--shadow-subtle); }
         .cat-badge { display: inline-flex; align-items: center; height: 22px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0; border: 1px solid transparent; }
 
-        /* 🌟 [FIX] FAB 위치도 Safe Area 감안하여 플로팅 */
         .fab { position: absolute; bottom: calc(95px + env(safe-area-inset-bottom)); right: 16px; width: 62px; height: 62px; border-radius: 50%; background: var(--accent-blue); border: none; color: white; font-size: 34px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);}
 
         .filter-bar { display: none; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; padding-bottom: 8px; margin-left: -24px; margin-right: -24px; padding-left: 24px; padding-right: 24px; align-items: center; }
@@ -114,12 +109,10 @@
         .filter-chip { height: 30px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-right: 8px; cursor: pointer; transition: opacity 0.2s, transform 0.1s; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .filter-chip:active { transform: scale(0.95); }
 
-        /* 🌟 [FIX] 모달 패딩에 Safe Area 보정 추가 */
         .stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(242, 242, 247, 0.95); z-index: 500; display: none; flex-direction: column; padding: calc(50px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom)); box-sizing: border-box; overflow-y: auto; backdrop-filter: blur(20px); }
         .stats-modal.active { display: flex; }
         .modal-close-btn { align-self: flex-end; background: var(--bg-card); border: 1px solid var(--glass-border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; margin-bottom: 20px; box-shadow: var(--shadow-subtle); }
         .stats-card { background: var(--bg-card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-subtle); }
-        
         .stats-legend-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
         .stats-legend-row:last-child { border-bottom: none; }
 
@@ -128,16 +121,18 @@
         .budget-title { font-size: 15px; font-weight: 600; color: var(--text-dim); }
         .budget-remain { font-size: 24px; font-weight: 700; color: var(--text-main); }
         .budget-pct { font-size: 13px; color: var(--text-dim); text-align: right; margin-top: 5px; font-weight: 500; }
-        .total-budget-input { background: none; border: none; border-bottom: 2px solid var(--accent-blue); color: var(--text-main); font-size: 32px; font-weight: 700; text-align: center; width: 80%; outline: none; padding-bottom: 5px; }
+        
+        /* 🌟 [FIX] 예산 입력을 Input에서 커스텀 Div(버튼) 형식으로 수정 */
+        .total-budget-input { background: none; border: none; border-bottom: 2px solid var(--accent-blue); color: var(--text-main); font-size: 32px; font-weight: 700; text-align: center; width: 80%; outline: none; padding-bottom: 5px; cursor: pointer; margin: 0 auto; }
         .cat-budget-list { flex: 1; overflow-y: auto; }
         .cat-budget-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--glass-border); }
-        .cat-budget-input { background: var(--bg-main); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-main); padding: 8px; width: 100px; text-align: right; font-size: 14px; outline: none; font-weight: 500;}
+        .cat-budget-input { background: var(--bg-main); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-main); padding: 8px 12px; min-width: 80px; text-align: right; font-size: 14px; outline: none; font-weight: 500; cursor: pointer; display: inline-block; }
+        
         .budget-bar-mini { height: 6px; background: rgba(0,0,0,0.05); border-radius: 3px; margin-top: 8px; width: 100%; overflow: hidden;}
         .budget-fill-mini { height: 100%; background: var(--accent-green); }
 
         .amt-display { text-align: right; padding: 10px 0; font-size: 52px; font-weight: 300; color: var(--text-main); cursor: pointer; margin-bottom: 20px; }
         .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; }
-        /* 🌟 [FIX] 키패드 레이어 Safe Area 대응 */
         .keypad-layer { position: absolute; width: 100%; bottom: 0; z-index: 50; background: var(--bg-main); padding-bottom: env(safe-area-inset-bottom); }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .key { background: var(--bg-card); border: 1px solid var(--glass-border); color: var(--text-main); height: 60px; border-radius: 16px; font-size: 24px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
@@ -151,7 +146,6 @@
         .option-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 4px; border-top: 1px solid var(--glass-border); color: var(--text-main); font-weight: 600; }
         .save-btn-large { width: 100%; height: 60px; border-radius: 18px; border: none; background: var(--text-main); color: white; font-size: 18px; font-weight: 700; margin-top: 15px; cursor: pointer; flex-shrink: 0;}
 
-        /* 🌟 [FIX] 카테고리 추가 시트 Safe Area 대응 */
         .add-cat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; flex-direction: column; justify-content: flex-end; }
         .add-cat-sheet { background: var(--bg-main); border-radius: 24px 24px 0 0; padding: 30px 24px calc(30px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
         .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 20px 0; max-height: 200px; overflow-y: auto; }
@@ -171,8 +165,9 @@
             <div class="center-stage">
                 <div class="receipt-zone" id="tamaReceipts"></div>
                 <div class="tama-character" id="tamaChar">🥚</div>
+                
                 <div class="tama-name-badge" onclick="changeName()">
-                    <span id="tamaName">다마고치</span> <span style="font-size:14px; color:var(--text-dim);">✏️</span>
+                    <span id="tamaName">다마고치</span> <span id="tamaNameEditIcon" style="font-size:14px; color:var(--text-dim);">✏️</span>
                 </div>
                 
                 <div class="status-container">
@@ -218,9 +213,14 @@
         <div id="screen-goal" class="screen">
             <div class="header-nav" style="justify-content:center;"><h1 class="month-label">예산 및 목표</h1></div>
             <div class="budget-status-card"><div class="budget-header"><span class="budget-title">이달의 남은 예산</span><span class="budget-remain" id="budget-remain-amt-goal">0원</span></div><div class="progress-track" style="margin-bottom:0; height:12px;"><div class="exp-fill" id="budget-progress-goal"></div></div><div class="budget-pct" id="budget-percent-goal">0% 사용</div></div>
-            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:30px; margin-top:20px;"><div style="color:var(--text-dim); font-size:13px; font-weight:500; margin-bottom:10px;">총 예산 수정하기 (원)</div><input type="number" id="total-budget-input" class="total-budget-input" value="0" onchange="saveBudget()"></div>
+            
+            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:30px; margin-top:20px;">
+                <div style="color:var(--text-dim); font-size:13px; font-weight:500; margin-bottom:10px;">총 예산 수정하기</div>
+                <div id="total-budget-input" class="total-budget-input" onclick="openBudgetNumpad('total')">0원</div>
+            </div>
             <div class="cat-budget-list" id="cat-budget-list"></div>
-            <div style="padding:20px 0; text-align:center;"><button class="save-btn-large" onclick="validateAndSaveBudget()">설정 저장</button></div>
+            
+            <div style="padding:20px 0; text-align:center;"><button class="save-btn-large" onclick="validateAndSaveBudget()">설정 완료</button></div>
         </div>
 
         <div class="stats-modal scroll-container" id="stats-modal">
@@ -231,6 +231,26 @@
                 <div style="font-weight:600; margin-bottom:15px;">카테고리별 지출 비율</div>
                 <div style="height:200px; margin-bottom:20px;"><canvas id="pieChart"></canvas></div>
                 <div id="pie-legend" style="display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+        </div>
+
+        <div id="screen-budget-input" class="screen">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <button style="background:none; border:none; color:var(--text-main); font-size:17px; font-weight:500;" onclick="closeBudgetNumpad()">취소</button>
+                <div style="font-size:16px; font-weight:700; color:var(--text-main);" id="budget-numpad-title">예산 입력</div>
+                <div style="width:40px;"></div>
+            </div>
+            <div class="amt-display" id="budget-amt-display" style="margin-top:20px;">0원</div>
+            <div class="input-content-wrapper">
+                <div class="keypad-layer" style="display:block;">
+                    <div class="keypad-grid">
+                        <button class="key" onclick="pressBudgetNum(1)">1</button><button class="key" onclick="pressBudgetNum(2)">2</button><button class="key" onclick="pressBudgetNum(3)">3</button>
+                        <button class="key" onclick="pressBudgetNum(4)">4</button><button class="key" onclick="pressBudgetNum(5)">5</button><button class="key" onclick="pressBudgetNum(6)">6</button>
+                        <button class="key" onclick="pressBudgetNum(7)">7</button><button class="key" onclick="pressBudgetNum(8)">8</button><button class="key" onclick="pressBudgetNum(9)">9</button>
+                        <button class="key" style="background:rgba(0,0,0,0.05);" onclick="pressBudgetNum('C')">C</button><button class="key" onclick="pressBudgetNum(0)">0</button>
+                        <button class="key key-done" onclick="confirmBudget()">확인</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -316,22 +336,19 @@
         function getTodayDateStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
         function formatDateWithDay(dateStr) { const date = new Date(dateStr); const days = ['일', '월', '화', '수', '목', '금', '토']; return `${days[date.getDay()]}요일 · ${date.getMonth() + 1}월 ${date.getDate()}일`; }
 
-        // 🌟 [NEW] 절대로 색상이 겹치지 않는 Golden Angle(137.5도) 캐싱 로직
         const catColorCache = {};
         function initCatColors() {
-            // 수입, 지출의 모든 카테고리 이름을 중복 없이 하나로 합침
             const allCats = [...new Set([...cats.ex.map(c=>c.n), ...cats.in.map(c=>c.n)])];
             allCats.forEach((name, i) => {
-                const h = (i * 137.5) % 360; // 137.5도씩 회전하여 색상 배치
+                const h = (i * 137.5) % 360; 
                 catColorCache[name] = { bg: `hsl(${h}, 75%, 90%)`, text: `hsl(${h}, 85%, 35%)`, border: `hsl(${h}, 70%, 80%)` };
             });
         }
-        initCatColors(); // 앱 로드 시 한 번 초기화하여 고정 색상 맵 생성
+        initCatColors();
 
         function getCatColor(name) {
             if(!name) return { bg: '#F2F2F7', text: '#8E8E93', border: 'transparent' };
             if(!catColorCache[name]) {
-                // 새로 추가된 카테고리도 기존 개수에서 이어서 각도를 분할함
                 const count = Object.keys(catColorCache).length;
                 const h = (count * 137.5) % 360;
                 catColorCache[name] = { bg: `hsl(${h}, 75%, 90%)`, text: `hsl(${h}, 85%, 35%)`, border: `hsl(${h}, 70%, 80%)` };
@@ -345,7 +362,7 @@
         function saveTamaState() { localStorage.setItem(TAMA_KEY, JSON.stringify(tamaState)); }
 
         function changeName() {
-            if (tamaState.nameChanged) return alert("이름은 태어날 때 한 번만 지어줄 수 있어요!");
+            if (tamaState.nameChanged) return; // 🌟 연필이 사라지면 클릭해도 무시됨
             const newName = prompt("다마고치에게 예쁜 이름을 지어주세요 (최대 6자)", tamaState.name);
             if (newName && newName.trim().length > 0) { tamaState.name = newName.trim().substring(0, 6); tamaState.nameChanged = true; saveTamaState(); renderTama(); }
         }
@@ -403,6 +420,10 @@
 
         function renderTama() {
             tamaState.hunger = calculateHunger(); updateEvolution(); document.getElementById('tamaName').innerText = tamaState.name;
+            
+            // 🌟 [FIX] 이름이 변경되었다면 연필 이모지 숨김 처리
+            document.getElementById('tamaNameEditIcon').style.display = tamaState.nameChanged ? 'none' : 'inline';
+            
             let requiredXP; let baseXP = 0;
             if (tamaState.level === 0) { requiredXP = 30; baseXP = 0; } else if (tamaState.level === 1) { requiredXP = 100; baseXP = 30; } else if (tamaState.level === 2) { requiredXP = 300; baseXP = 100; } else { requiredXP = 'MAX'; baseXP = 300; }
             let pct = requiredXP === 'MAX' ? 100 : ((tamaState.xp - baseXP) / (requiredXP - baseXP)) * 100; pct = Math.max(0, Math.min(100, pct)); 
@@ -542,8 +563,11 @@
             }
         }
 
+        // 🌟 [FIX] 예산 탭 렌더링 시 Div 이벤트 바인딩 적용
         function renderGoalScreen() {
-            updateBudgetLogic(); document.getElementById('total-budget-input').value = budget.total;
+            updateBudgetLogic(); 
+            document.getElementById('total-budget-input').innerText = (budget.total || 0).toLocaleString() + '원';
+            
             const list = document.getElementById('cat-budget-list'); list.innerHTML = '';
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), prefix=`${y}-${String(m+1).padStart(2,'0')}`;
             const monthExData = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex');
@@ -555,9 +579,47 @@
                             <span style="font-size:24px;">${c.i}</span>
                             <div><div style="font-size:15px; font-weight:600; color:var(--text-main);">${c.n}</div><div style="font-size:11px; color:var(--text-dim); margin-top:4px; font-weight:500;">사용: ${spent.toLocaleString()}원</div></div>
                         </div>
-                        <div style="text-align:right;"><input type="number" class="cat-budget-input" value="${bAmt}" onchange="updateCatBudget('${c.n}', this.value)"><div class="budget-bar-mini"><div class="budget-fill-mini" style="width:${pct}%; background:${pct>90?'var(--accent-red)':'var(--accent-green)'}"></div></div></div>
+                        <div style="text-align:right;">
+                            <div class="cat-budget-input" onclick="openBudgetNumpad('${c.n}', ${bAmt})">${bAmt.toLocaleString()}원</div>
+                            <div class="budget-bar-mini"><div class="budget-fill-mini" style="width:${pct}%; background:${pct>90?'var(--accent-red)':'var(--accent-green)'}"></div></div>
+                        </div>
                     </div>`;
             });
+        }
+
+        // 🌟 [NEW] 예산 전용 커스텀 넘패드 로직
+        let budgetTarget = null;
+        let budgetInputAmt = '0';
+
+        function openBudgetNumpad(target, currentAmt = 0) {
+            budgetTarget = target;
+            budgetInputAmt = String(target === 'total' ? budget.total || 0 : currentAmt);
+            document.getElementById('budget-numpad-title').innerText = target === 'total' ? '총 예산 설정' : `${target} 예산 설정`;
+            document.getElementById('budget-amt-display').innerText = Number(budgetInputAmt).toLocaleString() + '원';
+            showScreen('screen-budget-input');
+        }
+
+        function closeBudgetNumpad() { showScreen('screen-goal'); }
+
+        function pressBudgetNum(n) {
+            if(n === 'C') budgetInputAmt = '0';
+            else budgetInputAmt = budgetInputAmt === '0' ? String(n) : (budgetInputAmt.length < 10 ? budgetInputAmt + String(n) : budgetInputAmt);
+            document.getElementById('budget-amt-display').innerText = Number(budgetInputAmt).toLocaleString() + '원';
+        }
+
+        function confirmBudget() {
+            const val = Number(budgetInputAmt);
+            if (budgetTarget === 'total') budget.total = val;
+            else { if(!budget.cats) budget.cats = {}; budget.cats[budgetTarget] = val; }
+            localStorage.setItem('budget_v31', JSON.stringify(budget));
+            renderGoalScreen();
+            closeBudgetNumpad();
+        }
+
+        function validateAndSaveBudget() {
+            let catSum = 0; for(let k in budget.cats) catSum += budget.cats[k]; 
+            if (catSum > (budget.total || 0)) { alert(`설정된 카테고리 합계가 총 예산보다 ${(catSum - budget.total).toLocaleString()}원 초과되었습니다.`); } 
+            else { alert('예산 설정이 안전하게 저장되었습니다.'); switchTab('tama'); } 
         }
 
         function executeSave() {
@@ -645,14 +707,8 @@
             if(confirm("정말 이 내역을 삭제하시겠습니까?")) { 
                 db = db.filter(x => x.id !== editingId); 
                 localStorage.setItem('ledger_v31', JSON.stringify(db)); 
-                
-                // 삭제 후 이전 화면으로 복귀
-                if(document.getElementById('tab-ledger').classList.contains('active')) {
-                    showScreen('screen-ledger'); 
-                    renderLedger(); 
-                } else {
-                    showScreen('screen-tama'); 
-                }
+                if(document.getElementById('tab-ledger').classList.contains('active')) { showScreen('screen-ledger'); renderLedger(); } 
+                else { showScreen('screen-tama'); }
                 renderTama(); 
             } 
         }
