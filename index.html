@@ -3,1043 +3,657 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Budget Split Ledger v1.1 (Tamagotchi)</title>
+    <title>Budget Split Ledger v42 (No Dancing, Unique Colors)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --accent-blue: #0A84FF;
-            --accent-green: #32D74B;
-            --accent-red: #FF453A;
-            --accent-orange: #FF9F0A;
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --text-dim: rgba(255, 255, 255, 0.5);
-            --bg-card: rgba(255, 255, 255, 0.08);
-            --bg-main: #000;
+            --accent-blue: #007AFF;
+            --accent-green: #34C759;
+            --accent-red: #FF3B30;
+            --accent-orange: #FF9500;
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-main: #1C1C1E;
+            --text-dim: #8E8E93;
+            --bg-card: #FFFFFF;
+            --bg-main: #F2F2F7;
+            --shadow-subtle: 0 4px 14px rgba(0, 0, 0, 0.04);
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-main);
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; margin: 0; overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: transparent; border-radius: 4px; transition: background-color 1s ease; }
+        .is-scrolling::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.25); transition: background-color 0s; }
 
-        .liquid-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: #000; pointer-events: none; }
-        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; animation: float 15s infinite ease-in-out; }
-        .orb-1 { width: 350px; height: 350px; background: #4facfe; top: -10%; left: -10%; }
-        .orb-2 { width: 300px; height: 300px; background: #f093fb; bottom: -5%; right: -5%; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+        
+        .liquid-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: var(--bg-main); pointer-events: none; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15; animation: float 15s infinite ease-in-out; }
+        .orb-1 { width: 350px; height: 350px; background: #007AFF; top: -10%; left: -10%; }
+        .orb-2 { width: 300px; height: 300px; background: #FF2D55; bottom: -5%; right: -5%; }
         @keyframes float { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(15px, -20px); } }
 
-        .iphone-frame {
-            width: 390px; height: 844px;
-            background: rgba(25, 25, 35, 0.85);
-            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            border-radius: 54px; border: 1px solid var(--glass-border);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            overflow: hidden; position: relative; z-index: 10;
-        }
+        .iphone-frame { width: 390px; height: 844px; background: rgba(242, 242, 247, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-radius: 54px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.15); overflow: hidden; position: relative; z-index: 10; }
         
-        .screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; flex-direction: column; padding: 24px; box-sizing: border-box;
-            padding-top: 60px; padding-bottom: 100px; z-index: 5;
-        }
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding: 24px; box-sizing: border-box; padding-top: 60px; padding-bottom: 100px; z-index: 5; }
         .screen.active { display: flex; }
-        #screen-input, #screen-detail { z-index: 300; background: #121217; }
+        
+        #screen-input { z-index: 300; background: var(--bg-main); padding-bottom: 20px; }
+        #screen-detail { z-index: 300; background: var(--bg-main); }
 
-        .tab-bar {
-            position: absolute; bottom: 0; width: 100%; height: 85px;
-            background: rgba(20, 20, 20, 0.95); border-top: 0.5px solid var(--glass-border);
-            display: flex; justify-content: space-around; padding-top: 10px; z-index: 100;
-        }
-        .tab-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; background: none; border: none; width: 33%; }
+        .tab-bar { position: absolute; bottom: 0; width: 100%; height: 85px; background: rgba(255, 255, 255, 0.95); border-top: 0.5px solid var(--glass-border); display: flex; justify-content: space-around; padding-top: 10px; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.02); }
+        .tab-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; background: none; border: none; width: 33.3%; transition: color 0.2s; }
         .tab-item.active { color: var(--accent-blue); }
         .tab-icon { font-size: 22px; margin-bottom: 4px; }
         .tab-label { font-size: 10px; font-weight: 600; }
 
-        /* Header */
-        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%; }
-        .nav-btn-circle { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-        .month-label { font-size: 20px; font-weight: 800; color: white; margin: 0; }
-        .filter-toggle-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px;}
-        .filter-toggle-btn.active { background: var(--accent-blue); }
+        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%; }
+        .month-label { font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0; }
+        .header-actions { display: flex; gap: 8px; }
+        .action-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--glass-border); color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; box-shadow: var(--shadow-subtle); }
+        .action-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
 
-        .filter-bar { display: none; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; padding-bottom: 5px; -ms-overflow-style: none; scrollbar-width: none; }
-        .filter-bar.visible { display: block; }
-        .filter-chip { display: inline-block; padding: 6px 14px; border-radius: 16px; background: rgba(255,255,255,0.1); color: white; font-size: 12px; font-weight: 600; margin-right: 8px; cursor: pointer; }
-        .filter-chip.active { background: var(--accent-blue); }
+        .center-stage { position: relative; flex: none; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--bg-card); border-radius: 24px; padding: 30px 20px 20px 20px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-subtle); margin-bottom: 15px; }
+        .tama-character { font-size: 120px; margin-bottom: 15px; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.1)); transition: transform 0.3s ease; z-index: 2; }
+        .tama-name-badge { background: var(--bg-main); padding: 8px 20px; border-radius: 20px; font-size: 18px; font-weight: 800; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 25px; border: 1px solid var(--glass-border); z-index: 2; box-shadow: var(--shadow-subtle); }
+        .tama-name-badge:active { transform: scale(0.95); }
 
-        /* NEW: Tamagotchi Zone */
-        .tama-zone {
-            background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 20px;
-            padding: 20px; margin-bottom: 15px; position: relative; z-index: 15;
-            display: flex; flex-direction: column; align-items: center; pointer-events: none;
-        }
-        .tama-header {
-            width: 100%; display: flex; justify-content: space-between; align-items: flex-start;
-            margin-bottom: 10px; pointer-events: none;
-        }
-        .tama-level { font-size: 11px; font-weight: 700; color: var(--accent-blue); }
-        .tama-streak { font-size: 11px; font-weight: 700; color: var(--accent-orange); }
-        .tama-character {
-            font-size: 64px; margin: 10px 0; pointer-events: none;
-            animation: bounce 2s infinite ease-in-out;
-        }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        .tama-receipts {
-            display: flex; gap: 4px; margin: 10px 0; flex-wrap: wrap; justify-content: center;
-            pointer-events: none;
-        }
-        .receipt-item { font-size: 18px; opacity: 0.6; }
-        .tama-hunger-bar {
-            width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;
-            overflow: hidden; margin-top: 8px; pointer-events: none;
-        }
-        .tama-hunger-fill {
-            height: 100%; background: var(--accent-green); transition: width 0.5s ease, background 0.3s ease;
-        }
-        .tama-hunger-fill.warning { background: var(--accent-orange); }
-        .tama-hunger-fill.danger { background: var(--accent-red); }
-
-        /* Compact Summary (Main Screen) */
-        .compact-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: var(--bg-card); border-radius: 14px; padding: 12px; margin-bottom: 20px; border: 1px solid var(--glass-border); }
-        .sum-item { display: flex; flex-direction: column; align-items: center; }
-        .sum-label { font-size: 9px; color: var(--text-dim); margin-bottom: 4px; }
-        .sum-val { font-size: 13px; font-weight: 700; color: white; }
-        .sum-sub { font-size: 9px; color: var(--accent-blue); margin-top: 2px; font-weight: 500; opacity: 0.8; }
-
-        /* Budget Card (Moved to Goal Screen) */
-        .budget-status-card {
-            background: var(--bg-card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--glass-border);
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .budget-header { display: flex; justify-content: space-between; align-items: baseline; }
-        .budget-title { font-size: 14px; font-weight: 600; color: var(--text-dim); }
-        .budget-remain { font-size: 20px; font-weight: 700; color: white; }
+        .status-container { width: 100%; background: var(--bg-main); border-radius: 16px; padding: 16px; box-sizing: border-box; z-index: 2; border: 1px solid var(--glass-border); }
+        .exp-header { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 10px; font-weight: 700; }
+        .level-badge { background: var(--accent-blue); padding: 4px 10px; border-radius: 12px; color: white; }
+        .exp-text { color: var(--text-dim); }
+        .exp-value { color: var(--text-main); margin-left: auto; font-family: monospace; font-size: 14px; }
+        .progress-track { width: 100%; height: 10px; background: rgba(0,0,0,0.06); border-radius: 5px; overflow: hidden; margin-bottom: 18px; }
+        .exp-fill { height: 100%; background: var(--accent-blue); border-radius: 5px; transition: width 0.5s ease; width: 0%; }
         
-        .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--accent-blue); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
-        .progress-fill.warning { background: var(--accent-orange); }
-        .progress-fill.danger { background: var(--accent-red); }
-        .budget-pct { font-size: 12px; color: white; text-align: right; margin-top: 5px; }
+        .heart-row { display: flex; justify-content: space-between; align-items: center; }
+        .heart-label { font-size: 13px; color: var(--text-dim); font-weight: 700; }
+        .heart-container { position: relative; display: inline-block; font-size: 20px; color: rgba(0,0,0,0.1); letter-spacing: 2px; }
+        .heart-fill { position: absolute; top: 0; left: 0; overflow: hidden; white-space: nowrap; width: 100%; transition: width 0.5s ease; letter-spacing: 2px; }
 
-        /* Calendar & List */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 15px; }
+        .receipt-zone { position: absolute; top: 0; left: 0; width: 100%; height: 55%; pointer-events: none; z-index: 1; overflow: hidden; border-radius: 24px 24px 0 0; opacity: 0.5; }
+        .receipt-icon { position: absolute; font-size: 26px; }
+
+        .weekly-list-area { flex: 1; overflow-y: auto; margin: 0 -24px; padding: 0 24px 20px 24px; position: relative; }
+        .weekly-sticky-header { position: sticky; top: 0; background: rgba(242, 242, 247, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 10; margin: 0 -24px; padding: 0 24px 10px 24px; }
+        .weekly-header-title { font-size: 14px; font-weight: 700; color: var(--text-dim); margin-bottom: 12px; padding-left: 4px; padding-top: 4px; }
+        .add-today-card { background: var(--accent-blue); color: white; border-radius: 16px; padding: 16px; text-align: center; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; margin-bottom: 10px; }
+        .add-today-card:active { transform: scale(0.97); }
+
+        .compact-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-subtle); }
+        .sum-item { display: flex; flex-direction: column; align-items: center; }
+        .sum-label { font-size: 10px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
+        .sum-val { font-size: 15px; font-weight: 800; color: var(--text-main); }
+        .sum-sub { font-size: 10px; color: var(--accent-blue); margin-top: 4px; font-weight: 600; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 20px; }
         .weekday { text-align: center; color: var(--text-dim); font-size: 11px; font-weight: 700; padding-bottom: 8px; }
-        .day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 12px; font-size: 14px; color: white; cursor: pointer; position: relative; padding-top: 5px; pointer-events: auto; }
-        .day.selected { background: rgba(10, 132, 255, 0.25); border: 1px solid var(--accent-blue); }
-        .day.today { color: var(--accent-blue); font-weight: 800; }
+        .day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; border-radius: 12px; font-size: 14px; color: var(--text-main); cursor: pointer; position: relative; padding-top: 5px; font-weight: 500; }
+        .day.selected { background: rgba(0, 122, 255, 0.1); border: 1px solid var(--accent-blue); color: var(--accent-blue); font-weight: 700; }
+        .day.today { color: var(--accent-blue); font-weight: 800; border: 1px dashed var(--accent-blue); }
         .day-amount { font-size: 8px; font-weight: 700; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; white-space: nowrap; pointer-events: none;}
 
-        .list-area { flex: 1; overflow-y: auto; }
-        .item-card { display: flex; align-items: center; background: var(--bg-card); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; }
-        .cat-badge { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.12); font-size: 11px; font-weight: 800; color: white; white-space: nowrap; flex-shrink: 0; }
-        .item-memo { font-size: 14px; color: white; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .list-area { flex: 1; overflow-y: auto; padding-bottom: 20px; margin: 0 -24px; padding: 0 24px 20px 24px; overflow-x: hidden; }
+        .item-card { display: flex; align-items: center; background: var(--bg-card); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; border: 1px solid var(--glass-border); box-shadow: var(--shadow-subtle); }
+        .cat-badge { display: inline-flex; align-items: center; height: 22px; padding: 0 10px; box-sizing: border-box; border-radius: 8px; font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0; border: 1px solid transparent; }
 
-        /* Goal Screen */
-        .total-budget-input { background: none; border: none; border-bottom: 2px solid var(--accent-blue); color: white; font-size: 32px; font-weight: 700; text-align: center; width: 80%; outline: none; padding-bottom: 5px; }
+        .fab { position: absolute; bottom: 110px; right: 16px; width: 62px; height: 62px; border-radius: 50%; background: var(--accent-blue); border: none; color: white; font-size: 34px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0, 122, 255, 0.4);}
+
+        /* 🌟 [FIX] 필터 바 UI 강제 고정 (춤 방지) */
+        .filter-bar { display: none; overflow-x: auto; white-space: nowrap; margin-bottom: 15px; padding-bottom: 8px; margin-left: -24px; margin-right: -24px; padding-left: 24px; padding-right: 24px; align-items: center; }
+        .filter-bar.visible { display: flex; } 
+        
+        .filter-segment-container { display: flex; background: rgba(0,0,0,0.05); padding: 3px; border-radius: 10px; gap: 2px; flex-shrink: 0; height: 32px; box-sizing: border-box; align-items: center; }
+        .filter-segment-btn { height: 100%; display: flex; align-items: center; justify-content: center; border: none; padding: 0 14px; margin: 0; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; background: transparent; color: var(--text-dim); box-sizing: border-box; transition: 0.1s; }
+        .filter-segment-btn.active { background: var(--bg-card); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        .filter-divider { width: 1px; height: 18px; background: rgba(0,0,0,0.15); margin: 0 10px; flex-shrink: 0; border-radius: 1px; }
+
+        .filter-chip { height: 30px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-right: 8px; cursor: pointer; transition: opacity 0.2s, transform 0.1s; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .filter-chip:active { transform: scale(0.95); }
+
+        .stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(242, 242, 247, 0.95); z-index: 500; display: none; flex-direction: column; padding: 50px 24px 24px; box-sizing: border-box; overflow-y: auto; backdrop-filter: blur(20px); }
+        .stats-modal.active { display: flex; }
+        .modal-close-btn { align-self: flex-end; background: var(--bg-card); border: 1px solid var(--glass-border); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; margin-bottom: 20px; box-shadow: var(--shadow-subtle); }
+        .stats-card { background: var(--bg-card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-subtle); }
+        
+        .stats-legend-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
+        .stats-legend-row:last-child { border-bottom: none; }
+
+        .budget-status-card { background: var(--bg-card); border-radius: 20px; padding: 24px; margin-bottom: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-subtle); }
+        .budget-header { display: flex; justify-content: space-between; align-items: baseline; }
+        .budget-title { font-size: 15px; font-weight: 600; color: var(--text-dim); }
+        .budget-remain { font-size: 24px; font-weight: 700; color: var(--text-main); }
+        .budget-pct { font-size: 13px; color: var(--text-dim); text-align: right; margin-top: 5px; font-weight: 500; }
+        .total-budget-input { background: none; border: none; border-bottom: 2px solid var(--accent-blue); color: var(--text-main); font-size: 32px; font-weight: 700; text-align: center; width: 80%; outline: none; padding-bottom: 5px; }
         .cat-budget-list { flex: 1; overflow-y: auto; }
-        .cat-budget-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .cat-budget-input { background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: white; padding: 8px; width: 100px; text-align: right; font-size: 14px; outline: none; }
-        .budget-bar-mini { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 5px; width: 100%; overflow: hidden;}
+        .cat-budget-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--glass-border); }
+        .cat-budget-input { background: var(--bg-main); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-main); padding: 8px; width: 100px; text-align: right; font-size: 14px; outline: none; font-weight: 500;}
+        .budget-bar-mini { height: 6px; background: rgba(0,0,0,0.05); border-radius: 3px; margin-top: 8px; width: 100%; overflow: hidden;}
         .budget-fill-mini { height: 100%; background: var(--accent-green); }
 
-        /* Unified Input Page */
-        .amt-display { text-align: right; padding: 10px 0; font-size: 52px; font-weight: 200; color: white; cursor: pointer; margin-bottom: 20px; }
+        .amt-display { text-align: right; padding: 10px 0; font-size: 52px; font-weight: 300; color: var(--text-main); cursor: pointer; margin-bottom: 20px; }
         .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; }
-        .keypad-layer { position: absolute; width: 100%; bottom: 0; z-index: 50; background: #121217; padding-top: 10px; }
+        .keypad-layer { position: absolute; width: 100%; bottom: 0; z-index: 50; background: var(--bg-main); }
         .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .key { background: rgba(255,255,255,0.1); border: none; color: white; height: 60px; border-radius: 50%; font-size: 24px; cursor: pointer; }
-        .key-done { background: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-size: 26px;}
+        .key { background: var(--bg-card); border: 1px solid var(--glass-border); color: var(--text-main); height: 60px; border-radius: 16px; font-size: 24px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .key-done { background: var(--accent-blue); color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; border: none; }
         .details-layer { display: none; flex-direction: column; flex: 1; overflow-y: auto; padding-bottom: 20px; }
         .details-layer.visible { display: flex; }
-        .memo-input { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; color: white; font-size: 15px; margin-bottom: 12px; outline: none; resize: none; font-family: inherit; box-sizing: border-box;}
+        .memo-input { width: 100%; background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 12px; padding: 14px; color: var(--text-main); font-size: 15px; margin-bottom: 12px; outline: none; resize: none; font-family: inherit; box-sizing: border-box; }
         .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-        .cat-box { display: flex; flex-direction: column; align-items: center; padding: 10px 0; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1.5px solid transparent; opacity: 0.5; cursor: pointer;}
-        .cat-box.selected { opacity: 1; background: rgba(255,255,255,0.15); border-color: var(--accent-blue); }
-        .cat-box.add-btn { border: 1px dashed rgba(255,255,255,0.3); opacity: 0.8; }
-        .option-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); color: white; }
-        .save-btn-large { width: 100%; height: 60px; border-radius: 18px; border: none; background: var(--accent-blue); color: white; font-size: 18px; font-weight: 700; margin-top: 15px; cursor: pointer; flex-shrink: 0;}
-        .switch { width: 50px; height: 30px; background: rgba(255,255,255,0.2); border-radius: 15px; position: relative; cursor: pointer; transition: 0.3s; }
-        .switch::after { content: ''; position: absolute; width: 26px; height: 26px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
-        .switch.on { background: var(--accent-green); }
-        .switch.on::after { left: 22px; }
+        .cat-box { display: flex; flex-direction: column; align-items: center; padding: 12px 0; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--glass-border); opacity: 0.6; cursor: pointer; box-shadow: var(--shadow-subtle);}
+        .cat-box.selected { opacity: 1; border: 2px solid var(--accent-blue); background: rgba(0,122,255,0.05); }
+        .option-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 4px; border-top: 1px solid var(--glass-border); color: var(--text-main); font-weight: 600; }
+        .save-btn-large { width: 100%; height: 60px; border-radius: 18px; border: none; background: var(--text-main); color: white; font-size: 18px; font-weight: 700; margin-top: 15px; cursor: pointer; flex-shrink: 0;}
 
-        /* Modals & Overlays */
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: flex-end; justify-content: center; pointer-events: auto; }
-        .action-sheet { width: 100%; max-width: 370px; margin-bottom: 30px; background: #1c1c1e; border-radius: 14px; overflow: hidden; z-index: 1001; display:flex; flex-direction:column; }
-        .sheet-btn { width: 100%; padding: 18px; background: none; border: none; color: var(--accent-blue); font-size: 17px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
-        .sheet-btn.danger { color: var(--accent-red); }
-        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; display: none; flex-direction: column; padding: 50px 24px; box-sizing: border-box; }
-        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 20px; }
-        .day-pick { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-size: 14px;}
-        .day-pick.picked { background: var(--accent-blue); font-weight: 800; border-color: var(--accent-blue); }
-        .add-cat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2500; display: none; flex-direction: column; justify-content: flex-end; }
-        .add-cat-sheet { background: #1c1c1e; border-radius: 24px 24px 0 0; padding: 30px 24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); }
+        .add-cat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; flex-direction: column; justify-content: flex-end; }
+        .add-cat-sheet { background: var(--bg-main); border-radius: 24px 24px 0 0; padding: 30px 24px; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
         .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 20px 0; max-height: 200px; overflow-y: auto; }
-        .emoji-item { font-size: 28px; text-align: center; padding: 10px; border-radius: 12px; cursor: pointer; background: rgba(255,255,255,0.05); }
-        .emoji-item.selected { background: var(--accent-blue); }
-
-        .fab { position: absolute; bottom: 100px; right: 25px; width: 62px; height: 62px; border-radius: 50%; background: var(--accent-blue); border: none; color: white; font-size: 34px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.3);}
-        
-        /* Stats */
-        .stats-container { flex: 1; overflow-y: auto; padding-bottom: 20px; }
-        .stats-card { background: var(--bg-card); border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--glass-border); }
-        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .chart-filter { display: flex; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 2px; }
-        .chart-btn { background: none; border: none; color: var(--text-dim); font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
-        .chart-btn.active { background: var(--accent-blue); color: white; font-weight: 600; }
+        .emoji-item { font-size: 28px; text-align: center; padding: 10px; border-radius: 12px; cursor: pointer; background: var(--bg-card); border: 1px solid var(--glass-border); }
+        .emoji-item.selected { background: rgba(0,122,255,0.1); border-color: var(--accent-blue); }
     </style>
 </head>
 <body>
     <div class="liquid-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     <div class="iphone-frame">
         
-        <div id="screen-main" class="screen active">
-            <div class="header-nav">
-                <button class="nav-btn-circle" onclick="moveMonth(-1)">&#10094;</button>
-                <div style="display:flex; align-items:center;">
-                    <h1 class="month-label" id="month-name">2026년 3월</h1>
-                    <button class="filter-toggle-btn" id="filter-btn" onclick="toggleFilterBar()">⌥</button>
-                </div>
-                <button class="nav-btn-circle" onclick="moveMonth(1)">&#10095;</button>
+        <div id="screen-tama" class="screen active">
+            <div class="header-nav" style="justify-content:center;">
+                <h1 class="month-label">내 다마고치</h1>
             </div>
-
-            <!-- NEW: Tamagotchi Zone -->
-            <div class="tama-zone" id="tama-zone">
-                <div class="tama-header">
-                    <div class="tama-level" id="tama-level">Lv.1 (0 XP)</div>
-                    <div class="tama-streak" id="tama-streak">🔥 0일째</div>
+            
+            <div class="center-stage">
+                <div class="receipt-zone" id="tamaReceipts"></div>
+                <div class="tama-character" id="tamaChar">🥚</div>
+                <div class="tama-name-badge" onclick="changeName()">
+                    <span id="tamaName">다마고치</span> <span style="font-size:14px; color:var(--text-dim);">✏️</span>
                 </div>
-                <div class="tama-character" id="tama-char">🥚</div>
-                <div class="tama-receipts" id="tama-receipts"></div>
-                <div class="tama-hunger-bar">
-                    <div class="tama-hunger-fill" id="tama-hunger-fill" style="width: 100%;"></div>
+                
+                <div class="status-container">
+                    <div class="exp-header"><span class="level-badge" id="tamaLevel">Lv. 0</span><span class="exp-text">경험치</span><span class="exp-value" id="tamaExpText">0 / 30 XP</span></div>
+                    <div class="progress-track"><div class="exp-fill" id="tamaExpFill"></div></div>
+                    <div class="heart-row"><span class="heart-label" id="tamaStreak">🔥 0일 연속 기록</span><div class="heart-container">🤍🤍🤍🤍🤍<div class="heart-fill" id="tamaHeartFill">❤️❤️❤️❤️❤️</div></div></div>
                 </div>
             </div>
             
-            <div id="filter-bar" class="filter-bar">
-                <div class="filter-chip active" id="f-all" onclick="setFilterType('all')">전체</div>
-                <div class="filter-chip" id="f-ex" onclick="setFilterType('ex')">지출만</div>
-                <div class="filter-chip" id="f-in" onclick="setFilterType('in')">수입만</div>
-                <div id="filter-cat-chips" style="display:inline-block;"></div>
+            <div class="weekly-list-area scroll-container">
+                <div class="weekly-sticky-header">
+                    <div class="weekly-header-title">이번 주 내역</div>
+                </div>
+                <div id="tama-weekly-list"></div>
+            </div>
+        </div>
+
+        <div id="screen-ledger" class="screen">
+            <div class="header-nav">
+                <button class="action-btn" onclick="moveMonth(-1)" style="border:none; background:none; box-shadow:none;">&#10094;</button>
+                <h1 class="month-label" id="month-name">2026년 3월</h1>
+                <div class="header-actions">
+                    <button class="action-btn" id="filter-btn" onclick="toggleFilterBar()">⌥</button>
+                    <button class="action-btn" onclick="openStatsModal()">📊</button>
+                </div>
             </div>
 
+            <div id="filter-bar" class="filter-bar scroll-container"></div>
+
             <div class="compact-summary">
-                <div class="sum-item"><div class="sum-label">IN</div><div class="sum-val" id="sum-in" style="color:var(--accent-green);">+0</div></div>
-                <div class="sum-item">
-                    <div class="sum-label">OUT</div>
-                    <div class="sum-val" id="sum-ex" style="color:var(--accent-red);">-0</div>
-                    <div class="sum-sub" id="main-budget-remain">(남은 예산: ₩0)</div>
-                </div>
-                <div class="sum-item"><div class="sum-label">NET</div><div class="sum-val" id="sum-net" style="color:white;">0</div></div>
+                <div class="sum-item"><div class="sum-label">수입</div><div class="sum-val" id="sum-in" style="color:var(--accent-green);">0원</div></div>
+                <div class="sum-item"><div class="sum-label">지출</div><div class="sum-val" id="sum-ex" style="color:var(--accent-red);">0원</div><div class="sum-sub" id="main-budget-remain">남은 예산: 0원</div></div>
+                <div class="sum-item"><div class="sum-label">합계</div><div class="sum-val" id="sum-net">0원</div></div>
             </div>
 
             <div class="calendar-grid" id="cal-grid"></div>
-            <div id="selected-date-text" style="color:var(--text-dim); font-size:12px; margin-bottom:10px;"></div>
-            <div class="list-area" id="list-area"></div>
-            <button class="fab" id="main-fab" onclick="openInputScreen()">+</button>
-        </div>
-
-        <div id="screen-stats" class="screen">
-            <div class="header-nav" style="justify-content:center;"><h1 class="month-label">소비 분석</h1></div>
-            <div class="stats-container">
-                <div class="stats-card">
-                    <div class="stats-title" style="margin-bottom:15px; color:white; font-weight:700;">카테고리별 지출</div>
-                    <div style="height:180px;"><canvas id="pieChart"></canvas></div>
-                </div>
-                <div class="stats-card">
-                    <div class="chart-header">
-                        <div class="stats-title" style="color:white; font-weight:700;">지출 추이</div>
-                        <div class="chart-filter">
-                            <button class="chart-btn active" id="mode-daily" onclick="setChartMode('daily')">일</button>
-                            <button class="chart-btn" id="mode-weekly" onclick="setChartMode('weekly')">주</button>
-                            <button class="chart-btn" id="mode-monthly" onclick="setChartMode('monthly')">월</button>
-                        </div>
-                    </div>
-                    <div style="height:150px;"><canvas id="barChart"></canvas></div>
-                </div>
-            </div>
+            <div id="selected-date-text" style="color:var(--text-dim); font-size:13px; font-weight:600; margin-bottom:12px;"></div>
+            <div class="list-area scroll-container" id="list-area"></div>
+            
+            <button class="fab" onclick="openInputScreen()">+</button>
         </div>
 
         <div id="screen-goal" class="screen">
-            <div class="header-nav" style="justify-content:center;"><h1 class="month-label">목표 설정</h1></div>
-            
-            <div class="budget-status-card">
-                <div class="budget-header">
-                    <span class="budget-title">남은 예산</span>
-                    <span class="budget-remain" id="budget-remain-amt-goal">₩0</span>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" id="budget-progress-goal"></div>
-                </div>
-                <div class="budget-pct" id="budget-percent-goal">0% 사용</div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:20px;">
-                <div style="color:var(--text-dim); font-size:12px; margin-bottom:5px;">이번 달 총 예산 수정</div>
-                <input type="number" id="total-budget-input" class="total-budget-input" value="0" onchange="saveBudget()">
-            </div>
-            <div style="padding:0 10px; margin-bottom:10px; font-size:12px; color:var(--accent-blue); display:flex; justify-content:space-between;">
-                <span>카테고리별 예산</span>
-                <span id="cat-sum-display">합계: 0</span>
-            </div>
+            <div class="header-nav" style="justify-content:center;"><h1 class="month-label">예산 및 목표</h1></div>
+            <div class="budget-status-card"><div class="budget-header"><span class="budget-title">이달의 남은 예산</span><span class="budget-remain" id="budget-remain-amt-goal">0원</span></div><div class="progress-track" style="margin-bottom:0; height:12px;"><div class="exp-fill" id="budget-progress-goal"></div></div><div class="budget-pct" id="budget-percent-goal">0% 사용</div></div>
+            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:30px; margin-top:20px;"><div style="color:var(--text-dim); font-size:13px; font-weight:500; margin-bottom:10px;">총 예산 수정하기 (원)</div><input type="number" id="total-budget-input" class="total-budget-input" value="0" onchange="saveBudget()"></div>
             <div class="cat-budget-list" id="cat-budget-list"></div>
-            <div style="padding:20px 0; text-align:center;">
-                <button class="save-btn-large" onclick="validateAndSaveBudget()">설정 저장</button>
+            <div style="padding:20px 0; text-align:center;"><button class="save-btn-large" onclick="validateAndSaveBudget()">설정 저장</button></div>
+        </div>
+
+        <div class="stats-modal scroll-container" id="stats-modal">
+            <button class="modal-close-btn" onclick="closeStatsModal()">✕</button>
+            <h2 style="color:var(--text-main); margin:0 0 20px 0; font-weight:800;" id="stats-month-name">2026년 3월 통계</h2>
+            
+            <div class="stats-card">
+                <div style="font-weight:600; margin-bottom:15px;">카테고리별 지출 비율</div>
+                <div style="height:200px; margin-bottom:20px;"><canvas id="pieChart"></canvas></div>
+                <div id="pie-legend" style="display:flex; flex-direction:column; gap:6px;"></div>
             </div>
         </div>
 
         <div id="screen-input" class="screen">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <button style="background:none; border:none; color:var(--accent-blue); font-size:17px;" onclick="closeInputScreen()">Cancel</button>
-                <div style="background:rgba(255,255,255,0.1); border-radius:10px; display:flex; padding:2px; width:120px;">
-                    <button id="seg-ex" style="flex:1; border:none; background:white; color:black; padding:6px; border-radius:8px; font-size:11px;" onclick="setInputMode('ex')">지출</button>
-                    <button id="seg-in" style="flex:1; border:none; background:none; color:white; padding:6px; border-radius:8px; font-size:11px;" onclick="setInputMode('in')">수입</button>
+                <button style="background:none; border:none; color:var(--text-main); font-size:17px; font-weight:500;" onclick="closeInputScreen()">취소</button>
+                <div style="background:rgba(0,0,0,0.05); border-radius:12px; display:flex; padding:4px; width:130px;">
+                    <button id="seg-ex" style="flex:1; border:none; background:var(--bg-card); color:var(--text-main); padding:6px; border-radius:8px; font-size:12px; font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,0.1);" onclick="setInputMode('ex')">지출</button>
+                    <button id="seg-in" style="flex:1; border:none; background:none; color:var(--text-dim); padding:6px; border-radius:8px; font-size:12px; font-weight:600;" onclick="setInputMode('in')">수입</button>
                 </div>
-                <div style="width:50px;"></div>
+                <div style="width:40px;"></div>
             </div>
-            <div class="amt-display" id="amt-display" onclick="focusAmount()">0</div>
+            <div class="amt-display" id="amt-display" onclick="focusAmount()">0원</div>
             <div class="input-content-wrapper">
                 <div class="keypad-layer" id="keypad-layer">
                     <div class="keypad-grid">
                         <button class="key" onclick="pressNum(1)">1</button><button class="key" onclick="pressNum(2)">2</button><button class="key" onclick="pressNum(3)">3</button>
                         <button class="key" onclick="pressNum(4)">4</button><button class="key" onclick="pressNum(5)">5</button><button class="key" onclick="pressNum(6)">6</button>
                         <button class="key" onclick="pressNum(7)">7</button><button class="key" onclick="pressNum(8)">8</button><button class="key" onclick="pressNum(9)">9</button>
-                        <button class="key" onclick="pressNum('C')">C</button><button class="key" onclick="pressNum(0)">0</button>
-                        <button class="key key-done" onclick="blurAmount()">↓</button>
+                        <button class="key" style="background:rgba(0,0,0,0.05);" onclick="pressNum('C')">C</button><button class="key" onclick="pressNum(0)">0</button>
+                        <button class="key key-done" onclick="blurAmount()">확인</button>
                     </div>
                 </div>
                 <div class="details-layer" id="details-layer">
-                    <textarea class="memo-input" id="memo-input" placeholder="메모를 입력하세요..."></textarea>
+                    <textarea class="memo-input" id="memo-input" placeholder="어디에 쓰셨나요?"></textarea>
                     <div class="cat-grid" id="cat-grid"></div>
-                    <div class="option-row">
-                        <span>Date</span>
-                        <input type="date" id="date-input" style="background:none; border:none; color:var(--accent-blue); font-size:15px; color-scheme:dark;">
-                    </div>
-                    <button style="background:none; color:var(--accent-blue); border:none; font-size:12px; font-weight:700; align-self:flex-end;" onclick="openMultiPicker()">+ 날짜 추가</button>
-                    <div id="multi-date-count" style="font-size:10px; color:var(--accent-blue); text-align:right; margin-bottom:5px;"></div>
-                    <div class="option-row" style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
-                        <span>Repeat Monthly</span>
-                        <div class="switch" id="repeat-toggle" onclick="this.classList.toggle('on')"></div>
-                    </div>
-                    <button class="save-btn-large" onclick="executeSave()">Save Transaction</button>
+                    <div class="option-row"><span>날짜</span><input type="date" id="date-input" style="background:none; border:none; color:var(--accent-blue); font-size:16px; font-weight:600; outline:none;"></div>
+                    <button class="save-btn-large" onclick="executeSave()">저장 & 먹이주기</button>
                 </div>
             </div>
         </div>
 
         <div id="screen-detail" class="screen">
-            <button style="background:none; border:none; color:var(--accent-blue); font-size:17px; align-self:flex-start;" onclick="showScreen('screen-main')">Back</button>
-            <div style="background:var(--bg-card); border-radius:24px; padding:30px 20px; border:1px solid var(--glass-border); text-align:center; margin:20px 0;">
-                <div id="det-icon" style="font-size:40px;">💸</div>
-                <div id="det-amt" style="font-size:32px; font-weight:800; color:white; margin:10px 0;">₩0</div>
-                <div id="det-cat" class="cat-badge">Category</div>
-                <div id="det-date" style="color:var(--text-dim); font-size:13px; margin:10px 0;">2026-03-13</div>
-                <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; text-align:left; color:white; font-size:14px;" id="det-memo"></div>
+            <button style="background:none; border:none; color:var(--text-main); font-size:17px; font-weight:500; align-self:flex-start;" onclick="showScreen('screen-ledger')">뒤로</button>
+            <div style="background:var(--bg-card); border-radius:24px; padding:40px 20px; text-align:center; margin:20px 0; border:1px solid var(--glass-border); box-shadow:var(--shadow-subtle);">
+                <div id="det-icon" style="font-size:48px; margin-bottom:15px;">💸</div>
+                <div id="det-amt" style="font-size:36px; font-weight:700; color:var(--text-main); margin:10px 0;">0원</div>
+                <div id="det-cat" class="cat-badge" style="margin-top:10px;">Category</div>
+                <div id="det-date" style="color:var(--text-dim); font-size:14px; margin-top:20px; font-weight:500;"></div>
+                <div id="det-memo" style="margin-top:15px; color:var(--text-main); font-size:16px;"></div>
             </div>
             <div style="display:flex; gap:10px; margin-top:auto;">
-                <button style="flex:1; height:56px; border-radius:14px; background:rgba(255,255,255,0.1); color:white; border:none; font-weight:700;" onclick="initiateEdit()">Edit</button>
-                <button style="flex:1; height:56px; border-radius:14px; background:rgba(255,69,58,0.2); color:var(--accent-red); border:none; font-weight:700;" onclick="handleDeleteRequest()">Delete</button>
+                <button style="flex:1; height:56px; border-radius:16px; background:var(--text-main); color:white; border:none; font-weight:600; font-size:16px;" onclick="initiateEdit()">수정</button>
+                <button style="flex:1; height:56px; border-radius:16px; background:rgba(255,59,48,0.1); color:var(--accent-red); border:none; font-weight:600; font-size:16px;" onclick="handleDeleteRequest()">삭제</button>
             </div>
         </div>
 
-        <div class="tab-bar">
-            <div class="tab-item active" id="tab-main" onclick="switchTab('main')"><div class="tab-icon">🗓️</div><div class="tab-label">가계부</div></div>
-            <div class="tab-item" id="tab-stats" onclick="switchTab('stats')"><div class="tab-icon">📊</div><div class="tab-label">통계</div></div>
-            <div class="tab-item" id="tab-goal" onclick="switchTab('goal')"><div class="tab-icon">🎯</div><div class="tab-label">목표</div></div>
-        </div>
-
-        <div class="multi-picker-overlay" id="multi-picker">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><h2 style="color:white; margin:0;">날짜 추가 선택</h2><button style="background:var(--accent-blue); border:none; color:white; padding:8px 16px; border-radius:10px; font-weight:600;" onclick="closeMultiPicker()">완료</button></div>
-            <div class="multi-calendar-grid" id="multi-cal-grid" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px; margin-top:20px;"></div>
-        </div>
-        
         <div class="add-cat-overlay" id="add-cat-overlay">
             <div class="add-cat-sheet">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h3 style="color:white; margin:0;">새 카테고리</h3>
-                    <button style="background:none; border:none; color:var(--accent-red); font-size:15px;" onclick="closeAddCat()">취소</button>
+                    <h3 style="color:var(--text-main); margin:0;">새 카테고리 추가</h3>
+                    <button style="background:none; border:none; color:var(--text-dim); font-size:15px; font-weight:600; cursor:pointer;" onclick="closeAddCat()">취소</button>
                 </div>
-                <input type="text" id="new-cat-name" placeholder="카테고리 이름" class="memo-input" style="margin-bottom:10px;">
-                <div style="color:var(--text-dim); font-size:12px; margin-bottom:10px;">아이콘 선택</div>
+                <input type="text" id="new-cat-name" placeholder="카테고리 이름 입력" class="memo-input" style="margin-bottom:10px;">
+                <div style="color:var(--text-dim); font-size:13px; font-weight:600; margin-bottom:10px;">아이콘 선택</div>
                 <div class="emoji-grid" id="emoji-grid"></div>
                 <button class="save-btn-large" onclick="saveNewCategory()">추가하기</button>
             </div>
         </div>
 
-        <div class="modal-overlay" id="modal-overlay">
-            <div class="action-sheet" id="action-sheet">
-                <div id="modal-title" style="padding:15px; text-align:center; color:var(--text-dim); font-size:13px; border-bottom:1px solid rgba(255,255,255,0.1);">알림</div>
-                <button class="sheet-btn" id="btn-only-one">옵션 1</button>
-                <button class="sheet-btn danger" id="btn-all-future">옵션 2</button>
-                <button class="sheet-btn" style="color:white; font-weight:700; border-top: 5px solid rgba(0,0,0,0.2);" onclick="hideModal()">취소</button>
-            </div>
+        <div class="tab-bar">
+            <div class="tab-item active" id="tab-tama" onclick="switchTab('tama')"><div class="tab-icon">🐾</div><div class="tab-label">다마고치</div></div>
+            <div class="tab-item" id="tab-ledger" onclick="switchTab('ledger')"><div class="tab-icon">🗓️</div><div class="tab-label">가계부</div></div>
+            <div class="tab-item" id="tab-goal" onclick="switchTab('goal')"><div class="tab-icon">🎯</div><div class="tab-label">목표</div></div>
         </div>
     </div>
-
-    <script>
-        // v1.0 Core Data
+<script>
         let db = JSON.parse(localStorage.getItem('ledger_v31')) || [];
         let budget = JSON.parse(localStorage.getItem('budget_v31')) || { total: 0, cats: {} };
-        let storedCats = JSON.parse(localStorage.getItem('ledger_cats_v28'));
-        let defaultCats = { ex: [{n:'식비',i:'🍔'},{n:'카페',i:'☕'},{n:'교통',i:'🚌'},{n:'쇼핑',i:'🛍️'},{n:'주거',i:'🏠'},{n:'기타',i:'🎸'}], in: [{n:'월급',i:'💰'},{n:'보너스',i:'🎉'},{n:'용돈',i:'💵'},{n:'기타',i:'🏦'}] };
-        let cats = storedCats || defaultCats;
+        let cats = JSON.parse(localStorage.getItem('ledger_cats_v39')) || { 
+            ex: [{n:'식비',i:'🍔'},{n:'카페',i:'☕'},{n:'교통',i:'🚌'},{n:'쇼핑',i:'🛍️'},{n:'주거',i:'🏠'},{n:'기타',i:'🎸'}], 
+            in: [{n:'월급',i:'💰'},{n:'용돈',i:'💵'},{n:'보너스',i:'🎉'}] 
+        };
 
         let viewDate = new Date();
-        let selectedDateStr = new Date().toISOString().split('T')[0];
-        let inputMode = 'ex', inputAmt = '0', selectedCat = null, editingId = null, multiSelectedDates = [];
-        let filterType = 'all', filterCategory = 'all', chartMode = 'daily';
-        let pieChart, barChart;
+        let selectedDateStr = getTodayDateStr();
+        let inputMode = 'ex', inputAmt = '0', selectedCat = null, editingId = null;
+        let filterType = 'all', filterCategories = []; 
+        let pieChart, scrollTimeout;
         let newCatEmoji = '✨';
         const emojiList = ['✨','🍔','☕','🍺','💊','📚','🎮','✈️','🎁','🐶','👶','💻','👗','👠','🏋️','🎬','🚗','📱','🥖','🥩','🍭','🎫','💸','🏦','🎉'];
 
-        // NEW: v1.1 Tamagotchi Data
-        let tamaState = JSON.parse(localStorage.getItem('tama_status_v1_1')) || {
-            hunger: 100,
-            xp: 0,
-            level: 1,
-            isDead: false,
-            missedDaysFilled: 0,
-            lastRecordTime: Date.now(),
-            lastRecordDate: new Date().toISOString().split('T')[0],
-            streak: 0
-        };
+        function getTodayDateStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+        function formatDateWithDay(dateStr) { const date = new Date(dateStr); const days = ['일', '월', '화', '수', '목', '금', '토']; return `${days[date.getDay()]}요일 · ${date.getMonth() + 1}월 ${date.getDate()}일`; }
 
-        // --- v1.0 Core Functions (Preserved 100%) ---
-        function render() {
-            const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
-            document.getElementById('month-name').innerText = `${y}년 ${m+1}월`;
-            document.getElementById('selected-date-text').innerText = selectedDateStr;
+        // 🌟 [NEW] 절대로 색상이 겹치지 않는 Golden Angle(137.5도) 캐싱 로직
+        const catColorCache = {};
+        function initCatColors() {
+            // 수입, 지출의 모든 카테고리 이름을 중복 없이 하나로 합침
+            const allCats = [...new Set([...cats.ex.map(c=>c.n), ...cats.in.map(c=>c.n)])];
+            allCats.forEach((name, i) => {
+                const h = (i * 137.5) % 360; // 137.5도씩 회전하여 색상 배치
+                catColorCache[name] = { bg: `hsl(${h}, 75%, 90%)`, text: `hsl(${h}, 85%, 35%)`, border: `hsl(${h}, 70%, 80%)` };
+            });
+        }
+        initCatColors(); // 앱 로드 시 한 번 초기화하여 고정 색상 맵 생성
 
-            const first = new Date(y, m, 1).getDay(), last = new Date(y, m + 1, 0).getDate();
-            const grid = document.getElementById('cal-grid');
-            grid.innerHTML = '<div class="weekday">S</div><div class="weekday">M</div><div class="weekday">T</div><div class="weekday">W</div><div class="weekday">T</div><div class="weekday">F</div><div class="weekday">S</div>';
-            for(let i=0; i<first; i++) grid.innerHTML += '<div></div>';
-            for(let d=1; d<=last; d++) {
-                const dStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                let dItems = db.filter(x => x.date === dStr);
-                if(filterType!=='all') dItems=dItems.filter(x=>x.type===filterType);
-                if(filterCategory!=='all') dItems=dItems.filter(x=>x.cat===filterCategory);
-                const dNet = dItems.reduce((s, x) => s + (x.type === 'in' ? x.amt : -x.amt), 0);
-                let amtH = dNet !== 0 ? `<div class="day-amount" style="color:${dNet>0?'var(--accent-green)':'rgba(255,255,255,0.7)'}">${dNet>0?'+':''}${Math.abs(dNet)>=10000?(dNet/10000).toFixed(0)+'만':dNet.toLocaleString()}</div>` : '';
-                grid.innerHTML += `<div class="day ${dStr===selectedDateStr?'selected':''} ${dStr===new Date().toISOString().split('T')[0]?'today':''}" onclick="selectDay('${dStr}')"><span class="day-num">${d}</span>${amtH}</div>`;
+        function getCatColor(name) {
+            if(!name) return { bg: '#F2F2F7', text: '#8E8E93', border: 'transparent' };
+            if(!catColorCache[name]) {
+                // 새로 추가된 카테고리도 기존 개수에서 이어서 각도를 분할함
+                const count = Object.keys(catColorCache).length;
+                const h = (count * 137.5) % 360;
+                catColorCache[name] = { bg: `hsl(${h}, 75%, 90%)`, text: `hsl(${h}, 85%, 35%)`, border: `hsl(${h}, 70%, 80%)` };
             }
+            return catColorCache[name];
+        }
 
-            let mItems = db.filter(x => x.date.startsWith(prefix));
-            if(filterType!=='all') mItems=mItems.filter(x=>x.type===filterType);
-            if(filterCategory!=='all') mItems=mItems.filter(x=>x.cat===filterCategory);
-            const inS = mItems.filter(x => x.type === 'in').reduce((s, x) => s + x.amt, 0);
-            const exS = mItems.filter(x => x.type === 'ex').reduce((s, x) => s + x.amt, 0);
-            document.getElementById('sum-in').innerText = `+${(inS/10000).toFixed(1)}만`;
-            document.getElementById('sum-ex').innerText = `-${(exS/10000).toFixed(1)}만`;
+        const TAMA_KEY = 'tama_status_v35';
+        let tamaState = { name: '다마고치', nameChanged: false, hunger: 100, xp: 0, level: 0, isDead: false, missedDaysFilled: 0, lastRecordTime: Date.now(), lastHungerUpdateTime: Date.now(), lastRecordDate: getTodayDateStr(), streak: 0 };
+        try { const savedTama = localStorage.getItem(TAMA_KEY); if (savedTama && savedTama !== "undefined") tamaState = { ...tamaState, ...JSON.parse(savedTama) }; } catch(e) {}
+        function saveTamaState() { localStorage.setItem(TAMA_KEY, JSON.stringify(tamaState)); }
+
+        function changeName() {
+            if (tamaState.nameChanged) return alert("이름은 태어날 때 한 번만 지어줄 수 있어요!");
+            const newName = prompt("다마고치에게 예쁜 이름을 지어주세요 (최대 6자)", tamaState.name);
+            if (newName && newName.trim().length > 0) { tamaState.name = newName.trim().substring(0, 6); tamaState.nameChanged = true; saveTamaState(); renderTama(); }
+        }
+
+        function calculateHunger() {
+            if (tamaState.isDead) return 0;
+            const now = Date.now(); const hoursPassed = (now - tamaState.lastHungerUpdateTime) / (1000 * 60 * 60);
+            if (hoursPassed > 0) { tamaState.hunger -= (hoursPassed * 2.5); tamaState.lastHungerUpdateTime = now; }
+            if (tamaState.hunger <= 0) { tamaState.hunger = 0; tamaState.isDead = true; }
+            return Math.max(0, Math.min(100, tamaState.hunger));
+        }
+
+        function updateEvolution() {
+            if (tamaState.xp >= 300) tamaState.level = 3; else if (tamaState.xp >= 100) tamaState.level = 2; else if (tamaState.xp >= 30) tamaState.level = 1; else tamaState.level = 0;
+        }
+
+        function getCharacterEmoji() {
+            if (tamaState.isDead) return '👻'; if (tamaState.level === 3) return '🐦‍🔥'; if (tamaState.level === 2) return '🐥'; if (tamaState.level === 1) return '🐣'; return '🥚';
+        }
+
+        function renderWeeklyList() {
+            const listContainer = document.getElementById('tama-weekly-list');
+            const today = new Date(); const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay(); 
+            const startOfWeek = new Date(today); startOfWeek.setDate(today.getDate() - dayOfWeek + 1);
+            const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6);
+            const startStr = `${startOfWeek.getFullYear()}-${String(startOfWeek.getMonth()+1).padStart(2,'0')}-${String(startOfWeek.getDate()).padStart(2,'0')}`;
+            const endStr = `${endOfWeek.getFullYear()}-${String(endOfWeek.getMonth()+1).padStart(2,'0')}-${String(endOfWeek.getDate()).padStart(2,'0')}`;
+            
+            const weeklyItems = db.filter(x => x.date >= startStr && x.date <= endStr).sort((a,b) => { if (a.date !== b.date) return new Date(b.date) - new Date(a.date); return b.id - a.id; });
+            const hasTodayRecord = db.some(x => x.date === getTodayDateStr());
+            
+            let html = '';
+            if (!hasTodayRecord) html += `<div class="add-today-card" onclick="openInputScreen()"><span style="font-size:20px; font-weight:400;">+</span> 오늘 지출 등록하기</div>`;
+            
+            if(weeklyItems.length === 0) html += '<div style="text-align:center; color:var(--text-dim); margin-top:30px; font-size:13px; font-weight:500;">이번 주 내역이 없습니다.</div>';
+            else {
+                weeklyItems.forEach(x => {
+                    const c = getCatColor(x.cat);
+                    html += `
+                        <div class="item-card" onclick="showItemDetail(${x.id})">
+                            <div style="font-size:24px; margin-right:12px;">${x.icon}</div>
+                            <div style="flex:1; overflow:hidden;">
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <div class="cat-badge" style="background:${c.bg}; color:${c.text}; border:1px solid ${c.border}">${x.cat}</div>
+                                    <div style="font-size:14px; color:var(--text-main); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.memo || ''}</div>
+                                </div>
+                                <div style="font-size:12px; color:var(--text-dim); font-weight:400; margin-top:6px;">${formatDateWithDay(x.date)}</div>
+                            </div>
+                            <div style="font-size:15px; font-weight:600; color:${x.type==='in'?'var(--accent-green)':'var(--text-main)'}; white-space:nowrap;">${x.type==='in'?'+':'-'} ${x.amt.toLocaleString()}원</div>
+                        </div>`;
+                });
+            }
+            listContainer.innerHTML = html;
+        }
+
+        function renderTama() {
+            tamaState.hunger = calculateHunger(); updateEvolution(); document.getElementById('tamaName').innerText = tamaState.name;
+            let requiredXP; let baseXP = 0;
+            if (tamaState.level === 0) { requiredXP = 30; baseXP = 0; } else if (tamaState.level === 1) { requiredXP = 100; baseXP = 30; } else if (tamaState.level === 2) { requiredXP = 300; baseXP = 100; } else { requiredXP = 'MAX'; baseXP = 300; }
+            let pct = requiredXP === 'MAX' ? 100 : ((tamaState.xp - baseXP) / (requiredXP - baseXP)) * 100; pct = Math.max(0, Math.min(100, pct)); 
+            document.getElementById('tamaLevel').innerText = `Lv. ${tamaState.level}`;
+            document.getElementById('tamaExpText').innerText = requiredXP === 'MAX' ? `${tamaState.xp} XP (MAX)` : `${tamaState.xp} / ${requiredXP} XP`;
+            document.getElementById('tamaExpFill').style.width = `${pct}%`;
+            document.getElementById('tamaStreak').innerText = tamaState.streak > 0 ? `🔥 ${tamaState.streak}일 연속 기록` : '🌱 기록 시작!';
+            document.getElementById('tamaChar').innerText = getCharacterEmoji();
+            document.getElementById('tamaHeartFill').style.width = `${tamaState.hunger}%`;
+            
+            let missedCount = 0; const today = new Date(getTodayDateStr());
+            for (let i = 0; i < 7; i++) { const checkDate = new Date(today); checkDate.setDate(today.getDate() - i); const dateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`; if (!db.some(r => r.date === dateStr)) missedCount++; }
+            const rc = document.getElementById('tamaReceipts'); rc.innerHTML = '';
+            for (let i = 0; i < missedCount; i++) { const span = document.createElement('span'); span.className = 'receipt-icon'; span.innerText = '📄'; span.style.left = `${Math.random() * 80 + 5}%`; span.style.top = `${Math.random() * 70 + 10}%`; span.style.transform = `rotate(${Math.random() * 60 - 30}deg)`; rc.appendChild(span); }
+            renderWeeklyList(); saveTamaState();
+        }
+
+        function renderLedger() {
+            const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
+            document.getElementById('month-name').innerText = `${y}년 ${m+1}월`; document.getElementById('selected-date-text').innerText = `${selectedDateStr} 내역`;
+            
+            let baseItems = db.filter(x => x.date.startsWith(prefix));
+            if(filterType !== 'all') baseItems = baseItems.filter(x => x.type === filterType);
+            
+            const fCat = document.getElementById('filter-bar');
+            let fHtml = `
+                <div class="filter-segment-container">
+                    <button class="filter-segment-btn ${filterType==='all'?'active':''}" onclick="setFilterType('all')">전체</button>
+                    <button class="filter-segment-btn ${filterType==='ex'?'active':''}" onclick="setFilterType('ex')">지출</button>
+                    <button class="filter-segment-btn ${filterType==='in'?'active':''}" onclick="setFilterType('in')">수입</button>
+                </div>
+                <div class="filter-divider"></div>
+            `;
+            const avCats = [...new Set(baseItems.map(x=>x.cat))]; 
+            avCats.forEach(c => { 
+                const color = getCatColor(c); 
+                const isActive = filterCategories.includes(c);
+                const opacity = isActive ? '1' : '0.4';
+                fHtml += `<div class="filter-chip" style="background:${color.bg}; color:${color.text}; border:1px solid ${color.border}; opacity:${opacity};" onclick="toggleFilterCat('${c}')">${c}</div>`; 
+            });
+            fCat.innerHTML = fHtml;
+
+            let filteredItems = baseItems;
+            if(filterCategories.length > 0) filteredItems = baseItems.filter(x => filterCategories.includes(x.cat));
+
+            const inS = filteredItems.filter(x => x.type === 'in').reduce((s, x) => s + x.amt, 0); 
+            const exS = filteredItems.filter(x => x.type === 'ex').reduce((s, x) => s + x.amt, 0);
+            document.getElementById('sum-in').innerText = `+${(inS/10000).toFixed(1)}만`; 
+            document.getElementById('sum-ex').innerText = `-${(exS/10000).toFixed(1)}만`; 
             document.getElementById('sum-net').innerText = (inS-exS>=0?'+':'')+`${((inS-exS)/10000).toFixed(1)}만`;
 
-            const fCat = document.getElementById('filter-cat-chips');
-            const avCats = [...new Set(db.filter(x=>x.date.startsWith(prefix)).map(x=>x.cat))];
-            fCat.innerHTML = '';
-            avCats.forEach(c => { fCat.innerHTML += `<div class="filter-chip ${filterCategory===c?'active':''}" onclick="setFilterCat('${c}')">${c}</div>`; });
+            const first = new Date(y, m, 1).getDay(), last = new Date(y, m + 1, 0).getDate(); 
+            const grid = document.getElementById('cal-grid');
+            grid.innerHTML = '<div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>';
+            for(let i=0; i<first; i++) grid.innerHTML += '<div></div>';
+            for(let d=1; d<=last; d++) {
+                const dStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; 
+                const dItems = filteredItems.filter(x => x.date === dStr);
+                const dNet = dItems.reduce((s, x) => s + (x.type === 'in' ? x.amt : -x.amt), 0);
+                let amtH = dNet !== 0 ? `<div class="day-amount" style="color:${dNet>0?'var(--accent-green)':'var(--text-dim)'}">${dNet>0?'+':''}${Math.abs(dNet)>=10000?(dNet/10000).toFixed(0)+'만':dNet.toLocaleString()}</div>` : '';
+                grid.innerHTML += `<div class="day ${dStr===selectedDateStr?'selected':''} ${dStr===getTodayDateStr()?'today':''}" onclick="selectDay('${dStr}')"><span class="day-num">${d}</span>${amtH}</div>`;
+            }
 
-            const daily = db.filter(x => x.date === selectedDateStr);
-            let fd = daily;
-            if(filterType!=='all') fd=fd.filter(x=>x.type===filterType);
-            if(filterCategory!=='all') fd=fd.filter(x=>x.cat===filterCategory);
+            const fd = filteredItems.filter(x => x.date === selectedDateStr);
             const list = document.getElementById('list-area');
-            list.innerHTML = fd.length ? '' : '<div style="text-align:center; color:var(--text-dim); margin-top:30px; font-size:12px;">내역이 없습니다.</div>';
-            fd.sort((a,b)=>b.id-a.id).forEach(x => {
-                const isGrouped = db.filter(i => i.groupId === x.groupId).length > 1;
-                list.innerHTML += `<div class="item-card" onclick="showItemDetail(${x.id})"><div style="font-size:20px; margin-right:12px;">${x.icon}</div><div style="flex:1; overflow:hidden;"><div class="cat-badge">${x.cat} ${isGrouped?'🔗':''} ${x.repeat?'↺':''}</div><div style="font-size:13px; color:white; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.memo || ''}</div></div><div style="font-size:15px; font-weight:700; color:${x.type==='in'?'var(--accent-green)':'white'}; white-space:nowrap;">${x.type==='in'?'+':'-'} ₩${x.amt.toLocaleString()}</div></div>`;
+            list.innerHTML = fd.length ? '' : '<div style="text-align:center; color:var(--text-dim); margin-top:40px; font-size:13px; font-weight:500;">내역이 없습니다.</div>';
+            
+            fd.sort((a,b) => { if(a.date !== b.date) return new Date(b.date) - new Date(a.date); return b.id - a.id; }).forEach(x => {
+                const c = getCatColor(x.cat);
+                list.innerHTML += `
+                    <div class="item-card" onclick="showItemDetail(${x.id})">
+                        <div style="font-size:24px; margin-right:12px;">${x.icon}</div>
+                        <div style="flex:1; overflow:hidden;">
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <div class="cat-badge" style="background:${c.bg}; color:${c.text}; border:1px solid ${c.border}">${x.cat}</div>
+                                <div style="font-size:14px; color:var(--text-main); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${x.memo || ''}</div>
+                            </div>
+                        </div>
+                        <div style="font-size:15px; font-weight:600; color:${x.type==='in'?'var(--accent-green)':'var(--text-main)'}; white-space:nowrap;">${x.type==='in'?'+':'-'} ${x.amt.toLocaleString()}원</div>
+                    </div>`;
+            });
+            updateBudgetLogic();
+        }
+
+        function setFilterType(t) { filterType = t; filterCategories = []; renderLedger(); }
+        function toggleFilterCat(c) { if(filterCategories.includes(c)) filterCategories = filterCategories.filter(cat => cat !== c); else filterCategories.push(c); renderLedger(); }
+        function toggleFilterBar() { const filterBar = document.getElementById('filter-bar'); const filterBtn = document.getElementById('filter-btn'); filterBar.classList.toggle('visible'); filterBtn.classList.toggle('active'); if(!filterBar.classList.contains('visible')) { filterType='all'; filterCategories=[]; renderLedger(); } }
+
+        function renderStatsModal() {
+            const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
+            document.getElementById('stats-month-name').innerText = `${y}년 ${m+1}월 분석`;
+            const monthEx = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex').reduce((s,x)=>s+x.amt,0);
+
+            const exData = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex');
+            const catMap = {}; exData.forEach(x => { catMap[x.cat] = (catMap[x.cat] || 0) + x.amt; });
+            const sortedCats = Object.keys(catMap).sort((a,b)=>catMap[b]-catMap[a]);
+            const bgColors = sortedCats.map(c => getCatColor(c).bg); 
+            
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+            if(pieChart) pieChart.destroy();
+            pieChart = new Chart(ctxPie, {
+                type: 'doughnut', 
+                data: { labels: sortedCats, datasets: [{ data: sortedCats.map(c=>catMap[c]), backgroundColor: bgColors, borderWidth: 2, borderColor: '#FFF' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } 
             });
 
-            updateBudgetLogic();
-            renderTamagotchi(); // NEW: v1.1
+            const legendContainer = document.getElementById('pie-legend');
+            legendContainer.innerHTML = '';
+            sortedCats.forEach(c => {
+                const color = getCatColor(c);
+                const share = monthEx > 0 ? ((catMap[c]/monthEx)*100).toFixed(1) : 0;
+                legendContainer.innerHTML += `
+                    <div class="stats-legend-row">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div style="width:12px; height:12px; border-radius:4px; background:${color.bg}; border:1px solid ${color.border}"></div>
+                            <span style="font-weight:600; color:var(--text-main);">${c}</span>
+                            <span style="font-size:12px; color:var(--text-dim);">${share}%</span>
+                        </div>
+                        <div style="font-weight:700;">${catMap[c].toLocaleString()}원</div>
+                    </div>`;
+            });
         }
 
         function updateBudgetLogic() {
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), prefix=`${y}-${String(m+1).padStart(2,'0')}`;
             const monthEx = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex').reduce((s,x)=>s+x.amt,0);
-            const total = budget.total || 0;
-            const remain = total - monthEx;
+            const total = budget.total || 0; const remain = total - monthEx;
             const pct = total > 0 ? Math.min((monthEx/total)*100, 100) : 0;
             
-            document.getElementById('main-budget-remain').innerText = `(남은 예산: ₩${remain.toLocaleString()})`;
-
+            document.getElementById('main-budget-remain').innerText = `남은 예산: ${remain.toLocaleString()}원`;
             if(document.getElementById('screen-goal').classList.contains('active')) {
-                document.getElementById('budget-remain-amt-goal').innerText = `₩${remain.toLocaleString()}`;
+                document.getElementById('budget-remain-amt-goal').innerText = `${remain.toLocaleString()}원`;
                 document.getElementById('budget-percent-goal').innerText = `${pct.toFixed(0)}% 사용`;
+                document.getElementById('budget-progress-goal').style.width = `${pct}%`;
                 const bar = document.getElementById('budget-progress-goal');
-                bar.style.width = `${pct}%`;
-                bar.className = 'progress-fill';
-                if(pct > 80) bar.classList.add('warning');
-                if(pct > 95) bar.classList.add('danger');
+                if(pct > 90) bar.style.background = 'var(--accent-red)'; else if(pct > 75) bar.style.background = 'var(--accent-orange)'; else bar.style.background = 'var(--accent-blue)';
             }
         }
 
         function renderGoalScreen() {
-            updateBudgetLogic();
-            document.getElementById('total-budget-input').value = budget.total;
-            const list = document.getElementById('cat-budget-list');
-            list.innerHTML = '';
-            let catSum = 0;
+            updateBudgetLogic(); document.getElementById('total-budget-input').value = budget.total;
+            const list = document.getElementById('cat-budget-list'); list.innerHTML = '';
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), prefix=`${y}-${String(m+1).padStart(2,'0')}`;
             const monthExData = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex');
-
             cats.ex.forEach(c => {
-                const bAmt = budget.cats[c.n] || 0;
-                catSum += bAmt;
-                const spent = monthExData.filter(x=>x.cat===c.n).reduce((s,x)=>s+x.amt,0);
-                const pct = bAmt > 0 ? Math.min((spent/bAmt)*100, 100) : 0;
-                
+                const bAmt = budget.cats[c.n] || 0; const spent = monthExData.filter(x=>x.cat===c.n).reduce((s,x)=>s+x.amt,0); const pct = bAmt > 0 ? Math.min((spent/bAmt)*100, 100) : 0;
                 list.innerHTML += `
                     <div class="cat-budget-item">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <span style="font-size:20px;">${c.i}</span>
-                            <div>
-                                <div style="font-size:14px; font-weight:600; color:white;">${c.n}</div>
-                                <div style="font-size:10px; color:var(--text-dim); margin-top:2px;">사용: ${spent.toLocaleString()}</div>
-                            </div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span style="font-size:24px;">${c.i}</span>
+                            <div><div style="font-size:15px; font-weight:600; color:var(--text-main);">${c.n}</div><div style="font-size:11px; color:var(--text-dim); margin-top:4px; font-weight:500;">사용: ${spent.toLocaleString()}원</div></div>
                         </div>
-                        <div style="text-align:right;">
-                            <input type="number" class="cat-budget-input" value="${bAmt}" onchange="updateCatBudget('${c.n}', this.value)">
-                            <div class="budget-bar-mini"><div class="budget-fill-mini" style="width:${pct}%"></div></div>
-                        </div>
+                        <div style="text-align:right;"><input type="number" class="cat-budget-input" value="${bAmt}" onchange="updateCatBudget('${c.n}', this.value)"><div class="budget-bar-mini"><div class="budget-fill-mini" style="width:${pct}%; background:${pct>90?'var(--accent-red)':'var(--accent-green)'}"></div></div></div>
                     </div>`;
             });
-            document.getElementById('cat-sum-display').innerText = `설정 합계: ${catSum.toLocaleString()}`;
-        }
-
-        function updateCatBudget(cat, val) {
-            if(!budget.cats) budget.cats = {};
-            budget.cats[cat] = Number(val);
-            renderGoalScreen();
-        }
-
-        function saveBudget() {
-            budget.total = Number(document.getElementById('total-budget-input').value);
-            localStorage.setItem('budget_v31', JSON.stringify(budget));
-            updateBudgetLogic();
-        }
-
-        function validateAndSaveBudget() {
-            let catSum = 0;
-            for(let k in budget.cats) catSum += budget.cats[k];
-            const total = Number(document.getElementById('total-budget-input').value);
-            
-            if (catSum > total) {
-                const diff = catSum - total;
-                showModal(`총 예산보다 ${diff.toLocaleString()}원 초과`, 
-                    () => { /* 재설정 */ }, 
-                    () => { budget.total = catSum; document.getElementById('total-budget-input').value = catSum; saveBudget(); }, 
-                    "금액 재설정", "총 예산 변경");
-            } else {
-                saveBudget();
-                alert('예산이 저장되었습니다.');
-                switchTab('main');
-            }
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            if (tab === 'main') showScreen('screen-main'); 
-            else if (tab === 'stats') { showScreen('screen-stats'); updateCharts(); }
-            else if (tab === 'goal') { showScreen('screen-goal'); renderGoalScreen(); }
-        }
-
-        function showScreen(id) { 
-            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none'); 
-            document.getElementById(id).style.display = 'flex'; 
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-            document.getElementById(id).classList.add('active'); 
-        }
-
-        function showModal(t, c1, c2, b1="이 항목만", b2="모두") { 
-            const m = document.getElementById('modal-overlay'); m.style.display='flex'; 
-            document.getElementById('modal-title').innerText = t;
-            const btn1 = document.getElementById('btn-only-one'); btn1.innerText = b1; btn1.onclick=(e)=>{e.stopPropagation();c1();hideModal();}; 
-            const btn2 = document.getElementById('btn-all-future'); btn2.innerText = b2; btn2.onclick=(e)=>{e.stopPropagation();c2();hideModal();}; 
-        }
-
-        function hideModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-        
-        function openMultiPicker() { document.getElementById('multi-picker').style.display = 'flex'; renderMultiCalendar(); }
-        function closeMultiPicker() { 
-            document.getElementById('multi-picker').style.display = 'none'; 
-            const cl = document.getElementById('multi-date-count'); 
-            if(multiSelectedDates.length>0) { cl.style.display='block'; cl.innerText=`${multiSelectedDates.length}개 추가`; } 
-            else cl.style.display='none'; 
-        }
-
-        function renderMultiCalendar() { 
-            const y=viewDate.getFullYear(), m=viewDate.getMonth(), f=new Date(y,m,1).getDay(), l=new Date(y,m+1,0).getDate(), g=document.getElementById('multi-cal-grid'); 
-            g.innerHTML=''; 
-            for(let i=0; i<f; i++)g.innerHTML+='<div></div>'; 
-            for(let d=1; d<=l; d++){ 
-                const dStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; 
-                g.innerHTML+=`<div class="day-pick ${multiSelectedDates.includes(dStr)?'picked':''}" onclick="toggleMultiDate('${dStr}')">${d}</div>`; 
-            } 
-        }
-
-        function toggleMultiDate(d) { 
-            if(multiSelectedDates.includes(d)) multiSelectedDates=multiSelectedDates.filter(x=>x!==d); 
-            else multiSelectedDates.push(d); 
-            renderMultiCalendar(); 
-        }
-
-        function toggleFilterBar() { 
-            const b = document.getElementById('filter-bar'); 
-            b.classList.toggle('visible'); 
-            document.getElementById('filter-btn').classList.toggle('active'); 
-            if(!b.classList.contains('visible')) { filterType='all'; filterCategory='all'; render(); } 
-        }
-
-        function setFilterType(t) { filterType=t; filterCategory='all'; updateFilterUI(); render(); }
-        function setFilterCat(c) { filterCategory = (filterCategory===c)?'all':c; render(); }
-        function updateFilterUI() { 
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active')); 
-            document.getElementById(`f-${filterType}`).classList.add('active'); 
-        }
-
-        function openInputScreen() { 
-            inputAmt = '0'; selectedCat = null; editingId = null; multiSelectedDates = []; 
-            document.getElementById('memo-input').value=''; updateAmtDisplay(); setInputMode('ex'); 
-            document.getElementById('date-input').value = selectedDateStr; 
-            document.getElementById('multi-date-count').style.display = 'none'; 
-            document.getElementById('repeat-toggle').classList.remove('on');
-            showScreen('screen-input'); focusAmount(); 
-        }
-
-        function closeInputScreen() { showScreen('screen-main'); }
-        function focusAmount() { 
-            document.getElementById('keypad-layer').style.display = 'block'; 
-            document.getElementById('details-layer').style.display = 'none'; 
-        }
-
-        function blurAmount() { 
-            if(inputAmt === '0') return alert('금액을 입력하세요!'); 
-            document.getElementById('keypad-layer').style.display = 'none'; 
-            document.getElementById('details-layer').style.display = 'flex'; 
-        }
-
-        function setInputMode(m) { 
-            inputMode = m; 
-            document.getElementById('seg-ex').style.background = m==='ex'?'white':'none'; 
-            document.getElementById('seg-ex').style.color = m==='ex'?'black':'white'; 
-            document.getElementById('seg-in').style.background = m==='in'?'white':'none'; 
-            document.getElementById('seg-in').style.color = m==='in'?'black':'white'; 
-            renderCats(); 
-        }
-
-        function renderCats() { 
-            const g = document.getElementById('cat-grid'); 
-            g.innerHTML=''; 
-            cats[inputMode].forEach(c=>{ 
-                g.innerHTML+=`<div class="cat-box ${selectedCat&&selectedCat.n===c.n?'selected':''}" onclick="selectCat({n:'${c.n}', i:'${c.i}'})">
-                    <div style="font-size:24px;">${c.i}</div>
-                    <div style="font-size:10px; color:var(--text-dim); margin-top:4px;">${c.n}</div>
-                </div>`; 
-            });
-            g.innerHTML += `<div class="cat-box add-btn" onclick="openAddCat()"><div style="font-size:24px;">➕</div><div style="font-size:10px; color:var(--text-dim); margin-top:4px;">추가</div></div>`;
-        }
-
-        function selectCat(c) { selectedCat = c; renderCats(); }
-
-        function pressNum(n) {
-            if(n === 'C') { inputAmt = '0'; }
-            else {
-                if(inputAmt === '0') inputAmt = String(n);
-                else inputAmt += String(n);
-            }
-            updateAmtDisplay();
-        }
-
-        function updateAmtDisplay() {
-            document.getElementById('amt-display').innerText = Number(inputAmt).toLocaleString();
         }
 
         function executeSave() {
-            if(!selectedCat) return alert('카테고리를 선택하세요!');
-            const amt = Number(inputAmt);
-            if(amt <= 0) return alert('유효한 금액을 입력하세요!');
-
-            const memo = document.getElementById('memo-input').value;
-            const mainDate = document.getElementById('date-input').value;
-            const isRepeat = document.getElementById('repeat-toggle').classList.contains('on');
-            
-            let targetDates = [mainDate, ...multiSelectedDates];
-            const gId = Date.now();
-
-            if(isRepeat) {
-                for(let i=0; i<12; i++) {
-                    const [y, m, d] = mainDate.split('-').map(Number);
-                    const futureDate = new Date(y, m - 1 + i, d);
-                    const fStr = futureDate.toISOString().split('T')[0];
-                    if(!targetDates.includes(fStr)) targetDates.push(fStr);
+            const amt = Number(inputAmt); if(amt <= 0 || !selectedCat) return alert('금액과 카테고리를 확인하세요');
+            const date = document.getElementById('date-input').value; const memo = document.getElementById('memo-input').value;
+            if (editingId) {
+                const idx = db.findIndex(x => x.id === editingId);
+                if(idx > -1) db[idx] = { ...db[idx], amt, cat: selectedCat.n, icon: selectedCat.i, memo, date, type: inputMode };
+            } else {
+                db.push({ id: Date.now(), date, amt, type: inputMode, cat: selectedCat.n, icon: selectedCat.i, memo });
+                const todayStr = getTodayDateStr();
+                if (tamaState.isDead && date < todayStr && db.filter(r=>r.date===date).length===1) {
+                    tamaState.missedDaysFilled++; if (tamaState.missedDaysFilled >= 2) { Object.assign(tamaState, { isDead: false, level: 0, xp: 0, hunger: 100, missedDaysFilled: 0 }); alert("✨ 팡파르! 다마고치가 다시 알로 부활했습니다! 🥚"); }
+                } else if (!tamaState.isDead) {
+                    tamaState.hunger = Math.min(100, tamaState.hunger + 15);
+                    if (date === todayStr && tamaState.lastRecordDate !== todayStr) { tamaState.streak++; tamaState.lastRecordDate = todayStr; }
+                    tamaState.xp += (tamaState.streak >= 3 ? 15 : 10);
                 }
+                tamaState.lastRecordTime = Date.now(); tamaState.lastHungerUpdateTime = Date.now(); saveTamaState();
             }
-
-            targetDates.forEach(dateStr => {
-                const newId = db.length > 0 ? Math.max(...db.map(x => x.id)) + 1 : 1;
-                db.push({
-                    id: newId,
-                    groupId: gId,
-                    amt: amt,
-                    type: inputMode,
-                    cat: selectedCat.n,
-                    icon: selectedCat.i,
-                    date: dateStr,
-                    memo: memo,
-                    repeat: isRepeat
-                });
-            });
-
-            localStorage.setItem('ledger_v31', JSON.stringify(db));
-            
-            // NEW: v1.1 Tamagotchi Update
-            updateTamaOnSave(mainDate, amt);
-
-            closeInputScreen();
-            render();
+            localStorage.setItem('ledger_v31', JSON.stringify(db)); closeInputScreen(); if(document.getElementById('screen-ledger').classList.contains('active')) renderLedger(); renderTama(); 
         }
 
-        function moveMonth(dir) {
-            viewDate.setMonth(viewDate.getMonth() + dir);
-            render();
+        function openAddCat() { document.getElementById('add-cat-overlay').style.display='flex'; renderEmojis(); }
+        function closeAddCat() { document.getElementById('add-cat-overlay').style.display='none'; document.getElementById('new-cat-name').value = ''; }
+        function renderEmojis() { const eg = document.getElementById('emoji-grid'); eg.innerHTML = ''; emojiList.forEach(e => { eg.innerHTML += `<div class="emoji-item ${newCatEmoji === e ? 'selected' : ''}" onclick="selectEmoji('${e}')">${e}</div>`; }); }
+        function selectEmoji(e) { newCatEmoji = e; renderEmojis(); }
+        function saveNewCategory() {
+            const n = document.getElementById('new-cat-name').value.trim();
+            if(!n) return alert('카테고리 이름을 입력하세요');
+            cats[inputMode].push({n, i: newCatEmoji});
+            localStorage.setItem('ledger_cats_v39', JSON.stringify(cats));
+            closeAddCat(); renderCats(); selectCat(n, newCatEmoji);
         }
 
-        function selectDay(d) {
-            selectedDateStr = d;
-            render();
+        function switchTab(tab) { document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); showScreen(`screen-${tab}`); if(tab === 'ledger') renderLedger(); if(tab === 'goal') renderGoalScreen(); if(tab === 'tama') renderTama(); }
+        function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function openStatsModal() { document.getElementById('stats-modal').classList.add('active'); renderStatsModal(); }
+        function closeStatsModal() { document.getElementById('stats-modal').classList.remove('active'); }
+        function moveMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); selectedDateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth()+1).padStart(2,'0')}-01`; renderLedger(); }
+        function selectDay(dateStr) { selectedDateStr = dateStr; renderLedger(); }
+        function openInputScreen() { inputAmt = '0'; selectedCat = null; editingId = null; document.getElementById('memo-input').value=''; document.getElementById('amt-display').innerText='0원'; setInputMode('ex'); document.getElementById('date-input').value = selectedDateStr; showScreen('screen-input'); focusAmount(); }
+        function closeInputScreen() { if(document.getElementById('tab-tama').classList.contains('active')) showScreen('screen-tama'); else if(document.getElementById('tab-ledger').classList.contains('active')) showScreen('screen-ledger'); else showScreen('screen-goal'); }
+        function focusAmount() { document.getElementById('keypad-layer').style.display = 'block'; document.getElementById('details-layer').style.display = 'none'; }
+        function blurAmount() { if(inputAmt === '0') return; document.getElementById('keypad-layer').style.display = 'none'; document.getElementById('details-layer').style.display = 'flex'; }
+        function pressNum(n) { if(n === 'C') inputAmt = '0'; else inputAmt = inputAmt==='0'?String(n):(inputAmt.length<10?inputAmt+String(n):inputAmt); document.getElementById('amt-display').innerText = Number(inputAmt).toLocaleString() + '원'; }
+        function setInputMode(m) { inputMode = m; document.getElementById('seg-ex').style.background = m==='ex'?'var(--bg-card)':'none'; document.getElementById('seg-ex').style.color = m==='ex'?'var(--text-main)':'var(--text-dim)'; document.getElementById('seg-in').style.background = m==='in'?'var(--bg-card)':'none'; document.getElementById('seg-in').style.color = m==='in'?'var(--text-main)':'var(--text-dim)'; renderCats(); }
+        
+        function renderCats() { 
+            const g = document.getElementById('cat-grid'); g.innerHTML=''; 
+            cats[inputMode].forEach(c=>{ 
+                const isSelected = selectedCat && selectedCat.n === c.n;
+                const border = isSelected ? '2px solid var(--accent-blue)' : '1px solid var(--glass-border)';
+                const bg = isSelected ? 'rgba(0,122,255,0.05)' : 'var(--bg-card)';
+                const opacity = isSelected ? '1' : '0.6';
+                g.innerHTML+=`<div class="cat-box" style="border:${border}; background:${bg}; opacity:${opacity};" onclick="selectCat('${c.n}', '${c.i}')"><div style="font-size:32px; margin-bottom:4px;">${c.i}</div><div style="font-size:12px; font-weight:600; color:var(--text-main);">${c.n}</div></div>`; 
+            }); 
+            g.innerHTML += `<div class="cat-box" style="border:1px dashed var(--text-dim); background:transparent; opacity:0.6;" onclick="openAddCat()"><div style="font-size:32px; margin-bottom:4px; color:var(--text-dim);">+</div><div style="font-size:12px; font-weight:600; color:var(--text-dim);">직접 추가</div></div>`;
         }
+        function selectCat(n, i) { selectedCat = {n, i}; renderCats(); }
 
         function showItemDetail(id) {
-            const item = db.find(x => x.id === id);
-            if(!item) return;
-            
+            const item = db.find(x => x.id === id); if(!item) return; editingId = id; const c = getCatColor(item.cat);
             document.getElementById('det-icon').innerText = item.icon;
-            document.getElementById('det-amt').innerText = `₩${item.amt.toLocaleString()}`;
+            document.getElementById('det-amt').innerText = (item.type==='in'?'+':'-') + ' ' + item.amt.toLocaleString() + '원';
+            document.getElementById('det-amt').style.color = item.type==='in'?'var(--accent-green)':'var(--text-main)';
             document.getElementById('det-cat').innerText = item.cat;
-            document.getElementById('det-date').innerText = item.date;
+            document.getElementById('det-cat').style.background = c.bg;
+            document.getElementById('det-cat').style.color = c.text;
+            document.getElementById('det-cat').style.border = `1px solid ${c.border}`;
+            document.getElementById('det-date').innerText = formatDateWithDay(item.date);
             document.getElementById('det-memo').innerText = item.memo || '메모 없음';
-            
-            editingId = id;
             showScreen('screen-detail');
         }
 
         function initiateEdit() {
-            const item = db.find(x => x.id === editingId);
-            if(!item) return;
-
-            const isGrouped = db.filter(i => i.groupId === item.groupId).length > 1;
-            
-            if(isGrouped) {
-                showModal('연결된 항목이 있습니다',
-                    () => { editSingleItem(item); },
-                    () => { editAllGroupItems(item); },
-                    '이 항목만 수정',
-                    '모두 수정'
-                );
-            } else {
-                editSingleItem(item);
-            }
+            const item = db.find(x => x.id === editingId); if(!item) return;
+            inputMode = item.type; inputAmt = String(item.amt); selectedCat = {n: item.cat, i: item.icon};
+            document.getElementById('memo-input').value = item.memo || ''; document.getElementById('date-input').value = item.date;
+            setInputMode(inputMode); document.getElementById('amt-display').innerText = Number(inputAmt).toLocaleString() + '원';
+            showScreen('screen-input'); blurAmount(); 
         }
 
-        function editSingleItem(item) {
-            inputAmt = String(item.amt);
-            selectedCat = { n: item.cat, i: item.icon };
-            inputMode = item.type;
-            document.getElementById('memo-input').value = item.memo;
-            document.getElementById('date-input').value = item.date;
-            editingId = item.id;
-            updateAmtDisplay();
-            setInputMode(item.type);
-            showScreen('screen-input');
-            blurAmount();
-        }
-
-        function editAllGroupItems(item) {
-            alert('그룹 일괄 수정 기능은 v1.2에서 구현 예정입니다.');
-        }
-
-        function handleDeleteRequest() {
-            const item = db.find(x => x.id === editingId);
-            if(!item) return;
-
-            const isGrouped = db.filter(i => i.groupId === item.groupId).length > 1;
-
-            if(isGrouped) {
-                showModal('연결된 항목이 있습니다',
-                    () => { deleteSingleItem(item.id); },
-                    () => { deleteAllGroupItems(item.groupId); },
-                    '이 항목만 삭제',
-                    '모두 삭제'
-                );
-            } else {
-                if(confirm('정말 삭제하시겠습니까?')) {
-                    deleteSingleItem(item.id);
+        function handleDeleteRequest() { 
+            if(confirm("정말 이 내역을 삭제하시겠습니까?")) { 
+                db = db.filter(x => x.id !== editingId); 
+                localStorage.setItem('ledger_v31', JSON.stringify(db)); 
+                
+                // 삭제 후 이전 화면으로 복귀
+                if(document.getElementById('tab-ledger').classList.contains('active')) {
+                    showScreen('screen-ledger'); 
+                    renderLedger(); 
+                } else {
+                    showScreen('screen-tama'); 
                 }
-            }
+                renderTama(); 
+            } 
         }
 
-        function deleteSingleItem(id) {
-            db = db.filter(x => x.id !== id);
-            localStorage.setItem('ledger_v31', JSON.stringify(db));
-            showScreen('screen-main');
-            render();
-        }
-
-        function deleteAllGroupItems(gId) {
-            db = db.filter(x => x.groupId !== gId);
-            localStorage.setItem('ledger_v31', JSON.stringify(db));
-            showScreen('screen-main');
-            render();
-        }
-
-        function openAddCat() {
-            document.getElementById('add-cat-overlay').style.display = 'flex';
-            document.getElementById('new-cat-name').value = '';
-            renderEmojiGrid();
-        }
-
-        function closeAddCat() {
-            document.getElementById('add-cat-overlay').style.display = 'none';
-        }
-
-        function renderEmojiGrid() {
-            const g = document.getElementById('emoji-grid');
-            g.innerHTML = '';
-            emojiList.forEach(e => {
-                g.innerHTML += `<div class="emoji-item ${e===newCatEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</div>`;
-            });
-        }
-
-        function selectEmoji(e) {
-            newCatEmoji = e;
-            renderEmojiGrid();
-        }
-
-        function saveNewCategory() {
-            const name = document.getElementById('new-cat-name').value.trim();
-            if(!name) return alert('카테고리 이름을 입력하세요!');
-            
-            if(cats[inputMode].find(c => c.n === name)) {
-                return alert('이미 존재하는 카테고리입니다!');
-            }
-
-            cats[inputMode].push({ n: name, i: newCatEmoji });
-            localStorage.setItem('ledger_cats_v28', JSON.stringify(cats));
-            closeAddCat();
-            renderCats();
-        }
-
-        function updateCharts() {
-            const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
-            const monthData = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex');
-
-            // Pie Chart
-            const catData = {};
-            monthData.forEach(x => {
-                if(!catData[x.cat]) catData[x.cat] = 0;
-                catData[x.cat] += x.amt;
-            });
-
-            const labels = Object.keys(catData);
-            const values = Object.values(catData);
-
-            if(pieChart) pieChart.destroy();
-            pieChart = new Chart(document.getElementById('pieChart'), {
-                type: 'doughnut',
-                 {
-                    labels: labels,
-                    datasets: [{
-                         values,
-                        backgroundColor: ['#0A84FF','#32D74B','#FF453A','#FF9F0A','#BF5AF2','#FFD60A']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true, position: 'bottom', labels: { color: 'white', font: { size: 10 } } } }
-                }
-            });
-
-            updateBarChart();
-        }
-
-        function setChartMode(mode) {
-            chartMode = mode;
-            document.querySelectorAll('.chart-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`mode-${mode}`).classList.add('active');
-            updateBarChart();
-        }
-
-        function updateBarChart() {
-            const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
-            const monthData = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex');
-
-            let labels = [], values = [];
-
-            if(chartMode === 'daily') {
-                const last = new Date(y, m + 1, 0).getDate();
-                for(let d=1; d<=last; d++) {
-                    const dStr = `${prefix}-${String(d).padStart(2,'0')}`;
-                    const amt = monthData.filter(x => x.date === dStr).reduce((s, x) => s + x.amt, 0);
-                    labels.push(d);
-                    values.push(amt);
-                }
-            } else if(chartMode === 'weekly') {
-                for(let w=1; w<=5; w++) {
-                    const weekAmt = monthData.filter(x => {
-                        const d = new Date(x.date).getDate();
-                        return d > (w-1)*7 && d <= w*7;
-                    }).reduce((s, x) => s + x.amt, 0);
-                    labels.push(`${w}주`);
-                    values.push(weekAmt);
-                }
-            } else {
-                for(let i=0; i<6; i++) {
-                    const mDate = new Date(y, m - i, 1);
-                    const mPrefix = `${mDate.getFullYear()}-${String(mDate.getMonth()+1).padStart(2,'0')}`;
-                    const amt = db.filter(x => x.date.startsWith(mPrefix) && x.type === 'ex').reduce((s, x) => s + x.amt, 0);
-                    labels.unshift(`${mDate.getMonth()+1}월`);
-                    values.unshift(amt);
-                }
-            }
-
-            if(barChart) barChart.destroy();
-            barChart = new Chart(document.getElementById('barChart'), {
-                type: 'bar',
-                 {
-                    labels: labels,
-                    datasets: [{
-                        label: '지출',
-                         values,
-                        backgroundColor: '#0A84FF'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } }, x: { ticks: { color: 'white' }, grid: { display: false } } }
-                }
-            });
-        }
-
-        // ===== NEW: v1.1 Tamagotchi System =====
-
-        function renderTamagotchi() {
-            const now = Date.now();
-            const hoursPassed = (now - tamaState.lastRecordTime) / (1000 * 60 * 60);
-            tamaState.hunger = Math.max(0, tamaState.hunger - (hoursPassed * 2));
-
-            if(tamaState.hunger <= 0 && !tamaState.isDead) {
-                tamaState.isDead = true;
-                tamaState.hunger = 0;
-            }
-
-            let char = '🥚';
-            if(tamaState.isDead) {
-                char = '👻';
-            } else {
-                if(tamaState.xp < 100) char = '🥚';
-                else if(tamaState.xp < 300) char = '🐣';
-                else char = '🐥';
-                tamaState.level = tamaState.xp < 100 ? 1 : (tamaState.xp < 300 ? 2 : 3);
-            }
-
-            document.getElementById('tama-char').innerText = char;
-            document.getElementById('tama-level').innerText = `Lv.${tamaState.level} (${tamaState.xp} XP)`;
-            document.getElementById('tama-streak').innerText = tamaState.streak >= 3 ? `🔥 ${tamaState.streak}일째!` : `${tamaState.streak}일째`;
-
-            const hungerBar = document.getElementById('tama-hunger-fill');
-            hungerBar.style.width = `${tamaState.hunger}%`;
-            hungerBar.className = 'tama-hunger-fill';
-            if(tamaState.hunger < 20) hungerBar.classList.add('danger');
-            else if(tamaState.hunger < 50) hungerBar.classList.add('warning');
-
-            const receipts = calculateMissedReceipts();
-            const receiptEl = document.getElementById('tama-receipts');
-            receiptEl.innerHTML = '';
-            for(let i=0; i<receipts; i++) {
-                receiptEl.innerHTML += '<div class="receipt-item">📄</div>';
-            }
-
-            saveTamaState();
-        }
-
-        function calculateMissedReceipts() {
-            const today = new Date();
-            let count = 0;
-            for(let i=0; i<7; i++) {
-                const checkDate = new Date(today);
-                checkDate.setDate(today.getDate() - i);
-                const dateStr = checkDate.toISOString().split('T')[0];
-                const hasData = db.some(x => x.date === dateStr);
-                if(!hasData) count++;
-            }
-            return Math.min(count, 7);
-        }
-
-        function updateTamaOnSave(dateStr, amt) {
-            if(amt <= 0) return;
-
-            const today = new Date().toISOString().split('T')[0];
-            
-            if(dateStr === today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                const yesterdayStr = yesterday.toISOString().split('T')[0];
-
-                if(tamaState.lastRecordDate === yesterdayStr) {
-                    tamaState.streak += 1;
-                } else if(tamaState.lastRecordDate !== today) {
-                    tamaState.streak = 1;
-                }
-                tamaState.lastRecordDate = today;
-            }
-
-            let xpGain = 10;
-            if(tamaState.streak >= 3) xpGain = 15;
-
-            if(tamaState.isDead) {
-                const todayObj = new Date();
-                const targetObj = new Date(dateStr);
-                if(targetObj < todayObj) {
-                    tamaState.missedDaysFilled = (tamaState.missedDaysFilled || 0) + 1;
-                }
-                if(tamaState.missedDaysFilled >= 2) {
-                    tamaState.isDead = false;
-                    tamaState.hunger = 100;
-                    tamaState.xp = 0;
-                    tamaState.level = 1;
-                    tamaState.streak = 0;
-                    tamaState.missedDaysFilled = 0;
-                    alert('✨ 다마고치가 부활했습니다! 새로운 알이 태어났어요!');
-                }
-            } else {
-                tamaState.xp += xpGain;
-                tamaState.hunger = Math.min(100, tamaState.hunger + 15);
-            }
-
-            tamaState.lastRecordTime = Date.now();
-            saveTamaState();
-            renderTamagotchi();
-        }
-
-        function saveTamaState() {
-            localStorage.setItem('tama_status_v1_1', JSON.stringify(tamaState));
-        }
-
-        setInterval(() => {
-            if(document.getElementById('screen-main').classList.contains('active')) {
-                renderTamagotchi();
-            }
-        }, 60000);
-
-        window.onload = function() {
-            render();
-            renderTamagotchi();
+        window.onload = () => { 
+            renderTama(); renderLedger(); setInterval(renderTama, 60000); 
+            document.querySelectorAll('.scroll-container').forEach(container => { container.addEventListener('scroll', function() { this.classList.add('is-scrolling'); clearTimeout(scrollTimeout); scrollTimeout = setTimeout(() => { this.classList.remove('is-scrolling'); }, 2000); }); });
         };
     </script>
 </body>
