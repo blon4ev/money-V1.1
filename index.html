@@ -116,7 +116,7 @@
         .hp-bar-track { flex: 1; height: 12px; background: #202020; border: 2px solid white;}
         .hp-bar-fill { height: 100%; background: var(--accent-green); transition: width 0.1s; width: 0%; }
 
-        .tama-character-wrapper { position: relative; width: 100%; height: 160px; display: flex; justify-content: center; align-items: flex-end; z-index: 2; margin-bottom: 20px;}
+        .tama-character-wrapper { position: relative; width: 100%; height: 160px; display: flex; justify(center); align-items: flex-end; z-index: 2; margin-bottom: 20px;}
         .battle-base { position: absolute; bottom: -10px; width: 240px; height: auto; image-rendering: pixelated; z-index: 1; pointer-events: none;}
         .tama-character { position: relative; max-width: 140px; max-height: 140px; margin-bottom: 30px; image-rendering: pixelated; z-index: 2; transition: transform 0s; transform-origin: bottom center; transform: scale(2.5); filter: drop-shadow(0 5px 0px rgba(0,0,0,0.2));}
         .jump-anim { transform: scale(2.5) translateY(-10px) !important; }
@@ -165,7 +165,7 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 20px 16px 20px; background: white; padding: 12px;}
         .weekday { text-align: center; color: var(--text-main); font-size: 15px; padding-bottom: 8px; border-bottom: 3px solid var(--border-heavy); margin-bottom:6px; font-weight:bold;}
         .day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 16px; color: var(--text-main); cursor: pointer; position: relative; padding-top: 5px; border: none; font-weight:bold;}
-        .day.selected { background: var(--text-main); color: white; box-shadow: inset 0 0 0 2px var(--border-inner); }
+        .day.selected { background: var(--text-main); color: white; box-shadow: inset 0 0 0 2px var(--border-heavy); }
         .day.today { color: var(--accent-red); box-shadow: inset 0 -3px 0 0 #FFE0E0, inset 0 3px 0 0 #FFE0E0, inset -3px 0 0 0 #FFE0E0, inset 3px 0 0 0 #FFE0E0;}
         .day-amount { font-size: 10px; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; white-space: nowrap; pointer-events: none;}
 
@@ -247,7 +247,7 @@
     <div class="liquid-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     
     <div id="battle-toast" class="toast-wrapper">
-        <div class="retro-dialog-box">
+        <div class="retro-toast-box">
             <p id="battle-toast-msg" class="retro-toast-text">메시지</p>
         </div>
     </div>
@@ -293,9 +293,9 @@
                             <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rare-candy.png" style="width:32px; image-rendering:pixelated;" alt="candy">
                             <span id="candy-count-display" style="font-size:18px;">0</span>개
                         </button>
-                        <button class="retro-btn new-egg-btn" onclick="buyNewEgg()">
+                        <button class="retro-btn new-egg-btn" onclick="buyNewEgg()" style="height:44px;">
                             <img src="https://play.pokemonshowdown.com/sprites/gen5/egg.png" style="width:24px; image-rendering:pixelated;" alt="egg">
-                            <span>새 알 받기</span>
+                            <span>새 알</span>
                         </button>
                     </div>
                 </div>
@@ -521,6 +521,7 @@
             <div class="tab-item" id="tab-goal" onclick="switchTab('goal')"><div class="tab-icon">🎯</div><div class="tab-label">목표</div></div>
         </div>
     </div>
+
     <script>
         let db = JSON.parse(localStorage.getItem('ledger_v31')) || [];
         let budget = JSON.parse(localStorage.getItem('budget_v31')) || { total: 0, cats: {} };
@@ -834,8 +835,8 @@
             `;
             const avCats = [...new Set(baseItems.map(x=>x.cat))]; 
             avCats.forEach(c => { 
-                const isActive = filterCategories.includes(c);
-                fHtml += `<div class="filter-chip" onclick="toggleFilterCat('${c}')">${c}</div>`; 
+                const color = getCatColor(c); const isActive = filterCategories.includes(c);
+                fHtml += `<div class="filter-chip" style="border-color:${color.border};" onclick="toggleFilterCat('${c}')">${c}</div>`; 
             });
             fCat.innerHTML = fHtml;
 
@@ -868,12 +869,13 @@
                 const c = getCatColor(x.cat);
                 const isGrouped = x.groupId && db.filter(i => i.groupId === x.groupId).length > 1;
                 const iconStr = (isGrouped ? ' 🔗' : '') + (x.repeat ? ' ↺' : '') + (x.dutch && x.dutch.active ? ' 🤝' : '');
+                const payInfo = x.type === 'ex' ? ` · ${(x.payment === 'card' ? '💳 신용 카드' : '💵 현금(체크)')}` : '';
                 const effAmt = getEffectiveAmt(x);
 
                 list.innerHTML += `
-                    <div class="list-item" onclick="showItemDetail(${x.id})">
+                    <div class="list-item retro-dialog-box" onclick="showItemDetail(${x.id})" style="padding:16px; margin-bottom:12px;">
                         <div class="list-left">
-                            <div class="list-icon">${x.icon}</div>
+                            <div class="list-icon" style="font-size:32px;">${x.icon}</div>
                             <div class="list-details">
                                 <div class="cat-badge" style="background:${c.bg}; color:${c.text};">${x.cat}${iconStr}</div>
                                 <div class="list-sub" style="font-weight:bold; color:var(--text-main); margin-top:4px; font-size:16px;">${x.memo || '메모 없음'}</div>
@@ -881,6 +883,7 @@
                         </div>
                         <div style="text-align:right;">
                             <div class="list-amt" style="color:${x.type==='in'?'var(--accent-green)':'var(--text-main)'}; font-size:22px;">${x.type==='in'?'+':'-'} ${effAmt.toLocaleString()}원</div>
+                            <div style="font-size:13px; color:var(--text-dim); margin-top:6px;">${payInfo}</div>
                         </div>
                     </div>`;
             });
@@ -1008,8 +1011,8 @@
         
         function setInputMode(m) { 
             inputMode = m; 
-            document.getElementById('seg-ex').style.background = m==='ex'?'var(--text-main)':'transparent'; document.getElementById('seg-ex').style.color = m==='ex'?'white':'var(--text-main)'; document.getElementById('seg-ex').style.boxShadow = m==='ex'?'none':'var(--shadow-3px)';
-            document.getElementById('seg-in').style.background = m==='in'?'var(--text-main)':'transparent'; document.getElementById('seg-in').style.color = m==='in'?'white':'var(--text-main)'; document.getElementById('seg-in').style.boxShadow = m==='in'?'none':'var(--shadow-3px)';
+            document.getElementById('seg-ex').style.background = m==='ex'?'var(--text-main)':'transparent'; document.getElementById('seg-ex').style.color = m==='ex'?'white':'var(--text-main)'; 
+            document.getElementById('seg-in').style.background = m==='in'?'var(--text-main)':'transparent'; document.getElementById('seg-in').style.color = m==='in'?'white':'var(--text-main)'; 
             
             if(m === 'in') { document.getElementById('payment-method-row').style.display = 'none'; document.getElementById('dutch-main-row').style.display = 'none'; document.getElementById('dutch-people-row').style.display = 'none'; }
             else { document.getElementById('payment-method-row').style.display = 'flex'; document.getElementById('dutch-main-row').style.display = 'flex'; if(isDutch) document.getElementById('dutch-people-row').style.display = 'flex'; }
@@ -1022,11 +1025,12 @@
                 const isSelected = selectedCat && selectedCat.n === c.n;
                 const border = isSelected ? '4px solid var(--accent-blue)' : 'none';
                 const bg = isSelected ? '#D0E0FF' : 'white';
+                const opacity = isSelected ? '1' : '1';
                 const transform = isSelected ? 'translate(3px,3px)' : 'none';
                 const shadow = isSelected ? 'none' : 'var(--shadow-3px)';
-                g.innerHTML+=`<div class="cat-box" style="border:${border}; background:${bg}; transform:${transform}; box-shadow:${shadow};" onclick="selectCat('${c.n}', '${c.i}')"><div style="font-size:36px; margin-bottom:4px;">${c.i}</div><div style="font-size:16px; font-weight:bold; color:var(--text-main);">${c.n}</div></div>`; 
+                g.innerHTML+=`<div class="cat-box" style="border:${border}; background:${bg}; opacity:${opacity}; transform:${transform}; box-shadow:${shadow};" onclick="selectCat('${c.n}', '${c.i}')"><div style="font-size:36px; margin-bottom:4px;">${c.i}</div><div style="font-size:16px; font-weight:bold; color:var(--text-main);">${c.n}</div></div>`; 
             }); 
-            g.innerHTML += `<div class="cat-box" style="border:none; background:transparent; box-shadow:var(--shadow-3px);" onclick="openAddCat()"><div style="font-size:36px; margin-bottom:4px; color:var(--text-dim);">+</div><div style="font-size:16px; font-weight:bold; color:var(--text-dim);">추가</div></div>`;
+            g.innerHTML += `<div class="cat-box" style="border:4px dashed var(--text-dim); background:transparent; box-shadow:none;" onclick="openAddCat()"><div style="font-size:36px; margin-bottom:4px; color:var(--text-dim);">+</div><div style="font-size:16px; font-weight:bold; color:var(--text-dim);">추가</div></div>`;
         }
         function selectCat(n, i) { selectedCat = {n, i}; renderCats(); }
 
@@ -1035,8 +1039,8 @@
             document.getElementById('det-icon').innerText = item.icon;
             if(item.dutch && item.dutch.active) {
                 document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${effAmt.toLocaleString()}원`; document.getElementById('det-amt-sub').innerText = `(총 결제: ${item.amt.toLocaleString()}원)`; document.getElementById('det-amt-sub').style.display = 'block';
-                let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow); margin:4px;"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
-                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:4px dotted var(--border-heavy);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:var(--shadow-3px); margin:3px;">${isSettled?'✔':''}</div></div>`; });
+                let dHtml = `<div style="margin-top:20px; background:white; border:var(--border-heavy) 2px solid; padding:16px; border-radius:0; text-align:left; box-shadow:var(--shadow-3px);"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
+                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:4px dotted var(--border-light);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:var(--shadow-3px); margin:3px;">${isSettled?'✔':''}</div></div>`; });
                 dHtml += `</div>`; document.getElementById('det-dutch-area').innerHTML = dHtml;
             } else { document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${item.amt.toLocaleString()}원`; document.getElementById('det-amt-sub').style.display = 'none'; document.getElementById('det-dutch-area').innerHTML = ''; }
             document.getElementById('det-amt').style.color = item.type==='in'?'var(--accent-green)':'var(--text-main)'; document.getElementById('det-cat').innerText = item.cat; document.getElementById('det-cat').style.background = c.bg; document.getElementById('det-cat').style.color = c.text; document.getElementById('det-date').innerText = formatDateWithDay(item.date); document.getElementById('det-memo').innerText = item.memo || '메모 없음';
