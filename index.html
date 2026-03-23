@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v66 (Perfect Numpad & Single-line Toast)</title>
+    <title>Budget Split Ledger v65 (Final Polish)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -79,8 +79,7 @@
         .particle { position: absolute; font-size: 14px; pointer-events: none; opacity: 0; z-index: 3; }
         @keyframes floatUp { 0% { opacity: 1; transform: translate(0, 0) scale(0.5); } 100% { opacity: 0; transform: translate(var(--tx), -40px) scale(1.2); } }
 
-        /* 🌟 [FIX] 토스트 메시지 한 줄로 두껍게 디자인 */
-        .toast-wrapper { position: absolute; bottom: 110px; left: 0; width: 100%; z-index: 4000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; transform: translateY(15px);}
+        .toast-wrapper { position: absolute; bottom: 100px; left: 0; width: 100%; z-index: 4000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; transform: translateY(15px);}
         .toast-wrapper.show { opacity: 1; transform: translateY(0); }
         .retro-toast-box { background-color: var(--bg-card); border: none; padding: 18px 24px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; justify-content: center; margin: 4px; text-align: center; white-space: nowrap;}
         .retro-toast-text { font-size: 16px; color: var(--text-main); font-weight: bold; margin: 0; }
@@ -105,7 +104,7 @@
         .list-icon { font-size: 22px; }
         .list-details { display: flex; flex-direction: column; gap: 4px; overflow: hidden; align-items: flex-start;}
         
-        .cat-badge { display: inline-flex; align-items: center; padding: 3px 6px; font-size: 11px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white;}
+        .cat-badge { display: inline-flex; align-items: center; padding: 3px 6px; font-size: 11px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.5);}
         .list-memo { font-size: 14px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight:bold; margin-top:2px;}
         .list-amt { font-size: 16px; font-weight: bold; white-space: nowrap; margin-left:8px;}
 
@@ -154,10 +153,10 @@
         .amt-display { text-align: right; padding: 12px 16px; font-size: 38px; color: var(--text-main); cursor: pointer; margin: 0 15px 15px 15px; font-weight:bold; background:white; flex-shrink: 0;}
         .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;}
         
-        /* 🌟 [FIX] 넘패드를 화면 가득 차게 반응형 높이로 조절 (grid-template-rows 1fr) */
-        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 15px 15px 15px; background: var(--bg-main); overflow: hidden;}
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 14px; height: 100%; width: 100%; }
-        .key { background: white; border: none; color: var(--text-main); width: 100%; height: 100%; border-radius: 0; font-size: 30px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
+        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 15px 0 15px; background: var(--bg-main); }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 14px; height: 100%; width: 100%; padding-bottom: 15px;} 
+        
+        .key { background: white; border: none; color: var(--text-main); width: 100%; height: 100%; border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
         .key:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;}
         .key-done { background: var(--text-main); color: white; font-size: 24px;}
         .key-done:active { background: #404040;}
@@ -171,14 +170,14 @@
         .memo-input { width: calc(100% - 6px); background: white; border: none; border-radius: 0; padding: 14px; color: var(--text-main); font-size: 16px; margin-bottom: 28px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 3px; flex-shrink: 0;}
         
         .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; flex-shrink: 0;}
-        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 0; min-height: 46px; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
+        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0; min-height: 46px; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
         .cat-box.selected { background: var(--text-main); color: white; box-shadow: none; transform:translate(3px,3px);}
         .cat-box.selected > div { color: white !important; }
         
         .option-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-top: 2px dashed var(--border-light); color: var(--text-main); font-size: 15px; font-weight:bold; flex-shrink: 0;}
         
-        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 210px; box-shadow: var(--shadow-3px); margin:3px; flex-shrink: 0; position:relative; z-index: 20;}
-        .payment-btn { flex: 1; border: none; padding: 8px 4px; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position: relative; z-index: 30; white-space: nowrap;}
+        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 200px; box-shadow: var(--shadow-3px); margin:3px; flex-shrink: 0; position:relative; z-index: 20;}
+        .payment-btn { flex: 1; border: none; padding: 10px 4px; font-size: 13px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position: relative; z-index: 30; white-space: nowrap;}
         .payment-btn.active { background: var(--text-main) !important; color: white !important; }
 
         .switch { width: 50px; height: 28px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-3px); margin: 3px;}
@@ -188,11 +187,15 @@
         .save-btn-large { width: calc(100% - 6px); height: 52px; background: var(--accent-blue); color: white; font-size: 18px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:3px;}
         .save-btn-large:active { transform: translate(4px,4px); box-shadow:none; background:#1A52B8;}
 
-        /* 🌟 [FIX] 날짜 복사 모달을 v64의 꽉 찬 뷰로 롤백 */
-        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; border: none;}
-        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; background:white; padding:12px 10px; border:none; border-radius:0; box-shadow:var(--pokemon-dialog-shadow); margin-bottom:4px; width: 100%; box-sizing: border-box;}
-        .day-pick { aspect-ratio: 1; border-radius: 0; display: flex; align-items: center; justify-content: center; color: var(--text-main); border: none; cursor: pointer; font-size: 14px; background: var(--bg-main); box-shadow:var(--shadow-3px); margin:3px; font-weight:bold;}
-        .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 4px 4px 0 rgba(0,0,0,0.3); margin: 0px; transform: translate(3px,3px);}
+        /* 🌟 [FIX] 날짜 선택 캘린더 모달을 오버플로우 방지 및 가계부 스타일로 롤백 */
+        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(15px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom)) 0; box-sizing: border-box; border: none; overflow-y: auto;}
+        .multi-picker-header { display: flex; justify-content: center; align-items: center; margin-bottom: 10px; padding: 0 15px; flex-shrink: 0; }
+        
+        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 15px 12px 15px; background: white; padding: 8px; flex-shrink: 0; box-shadow: var(--pokemon-dialog-shadow); border: none; border-radius: 0; box-sizing: border-box;}
+        .multi-weekday { text-align: center; color: var(--text-main); font-size: 12px; padding-bottom: 4px; border-bottom: 2px solid var(--border-heavy); margin-bottom:4px; font-weight:bold; }
+        
+        .day-pick { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 14px; color: var(--text-main); cursor: pointer; position: relative; padding-top: 4px; border: none; font-weight:bold; background: transparent; margin: 0; box-shadow: none;}
+        .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 0 0 0 2px var(--border-heavy); margin:0; transform:none;}
 
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
         .action-sheet { width: calc(100% - 8px); margin: 0 4px; max-width: 480px; background: var(--bg-main); border-radius: 0; padding-bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy);}
@@ -218,7 +221,7 @@
     <div class="liquid-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     
     <div id="battle-toast" class="toast-wrapper">
-        <div class="retro-toast-box">
+        <div class="retro-dialog-box" style="width:100%; max-width:355px;">
             <p id="battle-toast-msg" class="retro-toast-text">메시지</p>
         </div>
     </div>
@@ -479,11 +482,15 @@
         </div>
 
         <div class="multi-picker-overlay" id="multi-picker">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; width: 100%;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding: 0 15px; flex-shrink: 0;">
                 <h2 style="color:var(--text-main); margin:0; font-size:22px;">날짜 선택</h2>
-                <button class="retro-btn" style="padding:8px 16px; font-size:15px; background:#404040; color:white;" onclick="closeMultiPicker()">완료</button>
             </div>
-            <div class="multi-calendar-grid retro-dialog-box" id="multi-cal-grid" style="margin:0; padding:12px; width: 100%; box-sizing: border-box;"></div>
+            
+            <div class="multi-calendar-grid" id="multi-cal-grid"></div>
+            
+            <div style="padding: 0 15px; flex-shrink: 0;">
+                <button class="retro-btn save-btn-large" style="background:var(--accent-blue); color:white; width:calc(100% - 6px); margin:4px 3px 0 3px;" onclick="closeMultiPicker()">선택 완료</button>
+            </div>
         </div>
 
         <div class="modal-overlay" id="modal-overlay">
@@ -588,7 +595,6 @@
             }, 2500); 
         }
 
-        // 🌟 [FIX] 토스트에서 줄바꿈 <br> 태그 모두 제거
         function checkDailyCandy() {
             const today = getTodayDateStr();
             if (tamaState.lastLoginDate !== today) {
@@ -969,9 +975,10 @@
             if(multiSelectedDates.length > 0) { countLabel.style.display = 'block'; countLabel.innerText = `${multiSelectedDates.length}개 날짜 추가됨`; } else countLabel.style.display = 'none'; 
         }
         
+        // 🌟 [FIX] JS 렌더링 클래스명 일치 확인 (.multi-weekday)
         function renderMultiCalendar() { 
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), f=new Date(y,m,1).getDay(), l=new Date(y,m+1,0).getDate(), g=document.getElementById('multi-cal-grid'); 
-            g.innerHTML='<div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>'; 
+            g.innerHTML='<div class="multi-weekday">일</div><div class="multi-weekday">월</div><div class="multi-weekday">화</div><div class="multi-weekday">수</div><div class="multi-weekday">목</div><div class="multi-weekday">금</div><div class="multi-weekday">토</div>'; 
             for(let i=0; i<f; i++) g.innerHTML+='<div></div>'; 
             for(let d=1; d<=l; d++) { 
                 const dStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; 
