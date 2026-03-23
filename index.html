@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v58 (Calendar Fixed)</title>
+    <title>Budget Split Ledger v59 (Numpad Fixed)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -25,6 +25,7 @@
             --bg-card: #FFFFFF; 
             --bg-main: #E0E0E0; 
             
+            /* 🌟 완벽한 계단형 도트 섀도우 */
             --shadow-4px: 0 -4px 0 0 var(--border-heavy), 0 4px 0 0 var(--border-heavy), -4px 0 0 0 var(--border-heavy), 4px 0 0 0 var(--border-heavy);
             --shadow-3px: 0 -3px 0 0 var(--border-heavy), 0 3px 0 0 var(--border-heavy), -3px 0 0 0 var(--border-heavy), 3px 0 0 0 var(--border-heavy);
             --shadow-2px: 0 -2px 0 0 var(--border-heavy), 0 2px 0 0 var(--border-heavy), -2px 0 0 0 var(--border-heavy), 2px 0 0 0 var(--border-heavy);
@@ -38,6 +39,7 @@
         button, input, textarea { font-family: 'NeoDunggeunmo', sans-serif; letter-spacing: 1px; box-sizing: border-box; }
         div { box-sizing: border-box; }
 
+        /* 좌우 테두리 삭제 */
         .iphone-frame { width: 100%; max-width: 480px; height: 100dvh; background: var(--bg-main); position: relative; z-index: 10; overflow: hidden;}
         
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding-top: calc(10px + env(safe-area-inset-top)); padding-bottom: calc(85px + env(safe-area-inset-bottom)); z-index: 5; background: var(--bg-main); overflow-x: hidden; overflow-y: hidden;}
@@ -107,6 +109,7 @@
         .list-memo { font-size: 15px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight:bold; margin-top:2px;}
         .list-amt { font-size: 18px; font-weight: bold; white-space: nowrap; margin-left:10px;}
 
+        /* 가계부 요약 영역 */
         .compact-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 0 20px 12px 20px; padding: 10px 12px !important; flex-shrink: 0;}
         .sum-item { display: flex; flex-direction: column; align-items: center; }
         .sum-label { font-size: 13px; color: var(--text-dim); margin-bottom: 2px; font-weight:bold;}
@@ -124,9 +127,8 @@
         .fab { position: absolute; bottom: calc(85px + env(safe-area-inset-bottom)); right: 20px; width: 56px; height: 56px; border-radius: 0; background: var(--bg-card); border: none; color: var(--text-main); font-size: 36px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-4px); margin: 4px;}
         .fab:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;} 
 
-        /* 🌟 [FIX] 필터 바 display:none 복구 (토글 작동) */
-        .filter-bar { display: none; overflow-x: auto; white-space: nowrap; margin-bottom: 12px; padding: 0 20px 4px 20px; align-items: center; flex-shrink: 0;}
-        .filter-bar.visible { display: flex; } 
+        /* 필터 바 */
+        .filter-bar { overflow-x: auto; white-space: nowrap; margin-bottom: 12px; padding: 0 20px 4px 20px; align-items: center; display: flex; flex-shrink: 0;}
         .filter-segment-container { display: flex; background: var(--bg-main); padding: 3px; border-radius: 0; gap: 2px; flex-shrink: 0; height: 34px; box-sizing: border-box; align-items: center; border: none; box-shadow: var(--shadow-2px); margin: 2px; margin-right:8px;}
         .filter-segment-btn { height: 100%; display: flex; align-items: center; justify-content: center; border: none; padding: 0 10px; margin: 0; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;}
         .filter-segment-btn.active { background: var(--text-main); color: white;}
@@ -136,6 +138,59 @@
         .filter-chip:active { transform: translate(2px,2px); box-shadow:none;}
         .filter-chip.active { background: var(--text-main); color: white; box-shadow: none; transform: translate(2px,2px);}
 
+        /* 🌟 [FIX] 입력 창 금액 표시 & 키패드 컨테이너 최적화 */
+        .amt-display { text-align: right; padding: 15px 20px; font-size: 42px; color: var(--text-main); cursor: pointer; margin-bottom: 15px; font-weight:bold; background:white; }
+        .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%;}
+        
+        /* 🌟 [FIX] 키패드 레이어를 꽉 차게 만들고 gap으로 그림자 영역 해결 */
+        .keypad-layer { position: absolute; left: 0; bottom: 0; width: 100%; z-index: 50; background: var(--bg-main); padding-top: 10px; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-right: 4px; padding-bottom: 4px; }
+        
+        .key { background: white; border: none; color: var(--text-main); height: 75px; border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center;}
+        .key:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;}
+        .key-done { background: var(--text-main); color: white; font-size: 24px;}
+        .key-done:active { background: #404040;}
+        
+        .details-layer { display: none; flex-direction: column; flex: 1; overflow-y: auto; overflow-x:hidden; padding-bottom: 20px; }
+        .details-layer.visible { display: flex; }
+        
+        .memo-input { width: calc(100% - 6px); background: white; border: none; padding: 16px; color: var(--text-main); font-size: 18px; margin-bottom: 20px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 3px;}
+        
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+        .cat-box { display: flex; flex-direction: column; align-items: center; padding: 16px 0; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
+        .cat-box.selected { background: var(--text-main); color: white; box-shadow: none; transform:translate(3px,3px);}
+        .cat-box.selected > div { color: white !important; }
+        
+        .option-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 4px; border-top: 3px dashed var(--border-light); color: var(--text-main); font-size: 18px; font-weight:bold;}
+        
+        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 220px; box-shadow: var(--shadow-2px); margin:2px;}
+        .payment-btn { flex: 1; border: none; padding: 12px 4px; font-size: 16px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;}
+        .payment-btn.active { background: var(--text-main); color: white; }
+
+        .switch { width: 56px; height: 32px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-2px); margin: 2px;}
+        .switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--text-main); top: 6px; left: 6px; transition: 0s; }
+        .switch.on::after { left: 30px; background: var(--accent-green);}
+
+        .save-btn-large { width: calc(100% - 8px); height: 70px; margin-top: 20px; background: var(--accent-blue); color: white; font-size: 24px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:4px;}
+        .save-btn-large:active { transform: translate(4px,4px); box-shadow:none; background:#1A52B8;}
+
+        /* 모달 및 시트 */
+        .add-cat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; flex-direction: column; justify-content: flex-end; }
+        .add-cat-sheet { background: var(--bg-main); padding: 30px 24px calc(30px + env(safe-area-inset-bottom)); box-shadow: 0 -4px 0 0 var(--border-heavy);}
+        .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 20px 0; max-height: 250px; overflow-y: auto; }
+        .emoji-item { font-size: 36px; text-align: center; padding: 12px; cursor: pointer; background: white; border: none; box-shadow: var(--shadow-3px); margin:3px;}
+        .emoji-item.selected { background: var(--text-main); color:white; box-shadow: none; transform: translate(3px,3px); }
+
+        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+        
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
+        .action-sheet { width: 100%; max-width: 480px; background: var(--bg-main); padding-bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy);}
+        .sheet-btn { width: 100%; padding: 24px; background: white; border: none; color: var(--text-main); font-size: 20px; border-bottom: 4px solid var(--border-heavy); cursor: pointer; font-weight: bold;}
+        .sheet-btn.danger { color: var(--accent-red); }
+        
+        .round-btn { background: var(--bg-card); border: none; width: 44px; height: 44px; color: var(--text-main); font-size: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px; font-weight:bold;}
+        .round-btn:active { transform: translate(3px, 3px); box-shadow: none; background:#E0E0E0;}
+        
         .stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 500; display: none; flex-direction: column; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
         .stats-modal.active { display: flex; }
     </style>
@@ -223,7 +278,7 @@
 
             <div class="compact-summary retro-dialog-box">
                 <div class="sum-item"><div class="sum-label">수입</div><div class="sum-val" id="sum-in" style="color:var(--accent-green);">0원</div></div>
-                <div class="sum-item"><div class="sum-label" style="margin-left:auto; margin-right:auto;">지출</div><div class="sum-val" id="sum-ex" style="color:var(--accent-red);">0원</div></div>
+                <div class="sum-item"><div class="sum-label">지출</div><div class="sum-val" id="sum-ex" style="color:var(--accent-red);">0원</div></div>
             </div>
 
             <div class="calendar-grid retro-dialog-box" id="cal-grid"></div>
@@ -281,7 +336,7 @@
                 <div style="font-size:20px; color:var(--text-main); font-weight:bold;" id="budget-numpad-title">예산 입력</div>
                 <div style="width:60px;"></div>
             </div>
-            <div class="amt-display retro-dialog-box" id="budget-amt-display" style="margin-top:20px; font-size:40px; padding:15px;">0원</div>
+            <div class="amt-display retro-dialog-box" id="budget-amt-display" style="margin-top:20px; padding:15px;">0원</div>
             <div class="input-content-wrapper">
                 <div class="keypad-layer" style="display:block;">
                     <div class="keypad-grid">
@@ -306,7 +361,7 @@
                 <div style="width:60px;"></div>
             </div>
             
-            <div class="amt-display retro-dialog-box" id="amt-display" onclick="focusAmount()" style="margin-top:20px; font-size:40px; padding:15px;">0원</div>
+            <div class="amt-display retro-dialog-box" id="amt-display" onclick="focusAmount()" style="margin-top:20px; padding:15px;">0원</div>
             
             <div class="input-content-wrapper">
                 <div class="keypad-layer" id="keypad-layer">
@@ -366,7 +421,7 @@
 
         <div id="screen-detail" class="screen">
             <button class="action-btn" style="width:auto; padding:0 15px; font-size:15px; align-self:flex-start; margin-left:20px;" onclick="showScreen('screen-ledger')">뒤로</button>
-            <div class="retro-dialog-box" style="text-align:center; margin:20px 0; padding:40px 20px;">
+            <div class="retro-dialog-box" style="text-align:center; margin:20px; padding:40px 20px;">
                 <div id="det-icon" style="font-size:56px; margin-bottom:12px;">💸</div>
                 <div id="det-amt" style="font-size:40px; color:var(--text-main); margin:10px 0 0 0; font-weight:bold;">0원</div>
                 <div id="det-amt-sub" style="font-size:14px; color:var(--text-dim); margin-bottom:10px; display:none;">(총 결제: 0원)</div>
@@ -390,7 +445,7 @@
                     <h3 style="color:var(--text-main); margin:0; font-size:20px;">새 카테고리 추가</h3>
                     <button class="action-btn" style="width:auto; padding:0 12px; font-size:14px;" onclick="closeAddCat()">취소</button>
                 </div>
-                <input type="text" id="new-cat-name" placeholder="이름 입력 (예: 데이트)" class="memo-input" style="margin-bottom:15px; font-size:16px;">
+                <input type="text" id="new-cat-name" placeholder="이름 입력" class="memo-input" style="margin-bottom:15px; font-size:16px;">
                 <div style="color:var(--text-main); font-size:16px; margin-bottom:10px; font-weight:bold;">아이콘 선택</div>
                 <div class="emoji-grid" id="emoji-grid"></div>
                 <button class="retro-btn save-btn-large" style="background:#404040; color:white; font-size:18px; height:54px;" onclick="saveNewCategory()">추가하기</button>
@@ -713,7 +768,6 @@
             renderWeeklyList();
         }
 
-        // 🌟 [FIX] 캘린더 렌더링 부활 (크래시 원인 제거)
         function renderLedger() {
             const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
             document.getElementById('month-name').innerText = `${y}년 ${m+1}월`; document.getElementById('selected-date-text').innerText = `${selectedDateStr} 내역`;
@@ -744,10 +798,8 @@
             const inS = filteredItems.filter(x => x.type === 'in').reduce((s, x) => s + x.amt, 0); 
             const exS = filteredItems.filter(x => x.type === 'ex').reduce((s, x) => s + getEffectiveAmt(x), 0);
             
-            // 안전하게 요소 가져오기
             const sumInEl = document.getElementById('sum-in');
             const sumExEl = document.getElementById('sum-ex');
-            
             if (sumInEl) sumInEl.innerText = `+${(inS/10000).toFixed(1)}만`; 
             if (sumExEl) sumExEl.innerText = `-${(exS/10000).toFixed(1)}만`; 
 
@@ -793,7 +845,6 @@
         function setFilterType(t) { filterType = t; filterCategories = []; renderLedger(); }
         function toggleFilterCat(c) { if(filterCategories.includes(c)) filterCategories = filterCategories.filter(cat => cat !== c); else filterCategories.push(c); renderLedger(); }
         
-        // 🌟 [FIX] 필터 버튼 토글 함수 복구
         function toggleFilterBar() { 
             const filterBar = document.getElementById('filter-bar'); 
             const filterBtn = document.getElementById('filter-btn'); 
@@ -827,7 +878,6 @@
             });
         }
 
-        // 🌟 [FIX] 안전한 UI 렌더링을 위한 안전 장치
         function updateBudgetLogic() {
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), prefix=`${y}-${String(m+1).padStart(2,'0')}`;
             const monthEx = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex').reduce((s,x)=>s+getEffectiveAmt(x),0);
@@ -964,8 +1014,8 @@
             document.getElementById('det-icon').innerText = item.icon;
             if(item.dutch && item.dutch.active) {
                 document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${effAmt.toLocaleString()}원`; document.getElementById('det-amt-sub').innerText = `(총 결제: ${item.amt.toLocaleString()}원)`; document.getElementById('det-amt-sub').style.display = 'block';
-                let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow); margin:4px;"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
-                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:4px dotted var(--border-outer);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:var(--shadow-3px); margin:3px;">${isSettled?'✔':''}</div></div>`; });
+                let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow);"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
+                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:4px dotted var(--border-light);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
                 dHtml += `</div>`; document.getElementById('det-dutch-area').innerHTML = dHtml;
             } else { document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${item.amt.toLocaleString()}원`; document.getElementById('det-amt-sub').style.display = 'none'; document.getElementById('det-dutch-area').innerHTML = ''; }
             document.getElementById('det-amt').style.color = item.type==='in'?'var(--accent-green)':'var(--text-main)'; document.getElementById('det-cat').innerText = item.cat; document.getElementById('det-cat').style.background = c.bg; document.getElementById('det-cat').style.color = c.text; document.getElementById('det-date').innerText = formatDateWithDay(item.date); document.getElementById('det-memo').innerText = item.memo || '메모 없음';
