@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v65 (Final Polish)</title>
+    <title>Budget Split Ledger v66 (Calculator Numpad Update)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -104,7 +104,7 @@
         .list-icon { font-size: 22px; }
         .list-details { display: flex; flex-direction: column; gap: 4px; overflow: hidden; align-items: flex-start;}
         
-        .cat-badge { display: inline-flex; align-items: center; padding: 3px 6px; font-size: 11px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.5);}
+        .cat-badge { display: inline-flex; align-items: center; padding: 3px 6px; font-size: 11px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white;}
         .list-memo { font-size: 14px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight:bold; margin-top:2px;}
         .list-amt { font-size: 16px; font-weight: bold; white-space: nowrap; margin-left:8px;}
 
@@ -153,10 +153,11 @@
         .amt-display { text-align: right; padding: 12px 16px; font-size: 38px; color: var(--text-main); cursor: pointer; margin: 0 15px 15px 15px; font-weight:bold; background:white; flex-shrink: 0;}
         .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;}
         
-        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 15px 0 15px; background: var(--bg-main); }
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 14px; height: 100%; width: 100%; padding-bottom: 15px;} 
+        /* 🌟 [FIX] 넘패드를 3x4 배열의 꽉 찬 정사각형으로 적용 */
+        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 20px 25px 20px; background: var(--bg-main); align-items: center; justify-content: center; overflow-y: auto; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; max-width: 400px; margin: auto; }
         
-        .key { background: white; border: none; color: var(--text-main); width: 100%; height: 100%; border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
+        .key { background: white; border: none; color: var(--text-main); width: 100%; aspect-ratio: 1; height: auto; border-radius: 0; font-size: 36px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
         .key:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;}
         .key-done { background: var(--text-main); color: white; font-size: 24px;}
         .key-done:active { background: #404040;}
@@ -170,14 +171,14 @@
         .memo-input { width: calc(100% - 6px); background: white; border: none; border-radius: 0; padding: 14px; color: var(--text-main); font-size: 16px; margin-bottom: 28px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 3px; flex-shrink: 0;}
         
         .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; flex-shrink: 0;}
-        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0; min-height: 46px; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
+        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 0; min-height: 46px; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
         .cat-box.selected { background: var(--text-main); color: white; box-shadow: none; transform:translate(3px,3px);}
         .cat-box.selected > div { color: white !important; }
         
         .option-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-top: 2px dashed var(--border-light); color: var(--text-main); font-size: 15px; font-weight:bold; flex-shrink: 0;}
         
         .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 200px; box-shadow: var(--shadow-3px); margin:3px; flex-shrink: 0; position:relative; z-index: 20;}
-        .payment-btn { flex: 1; border: none; padding: 10px 4px; font-size: 13px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position: relative; z-index: 30; white-space: nowrap;}
+        .payment-btn { flex: 1; border: none; padding: 8px 4px; font-size: 13px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position: relative; z-index: 30; pointer-events: auto; white-space: nowrap;}
         .payment-btn.active { background: var(--text-main) !important; color: white !important; }
 
         .switch { width: 50px; height: 28px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-3px); margin: 3px;}
@@ -187,15 +188,13 @@
         .save-btn-large { width: calc(100% - 6px); height: 52px; background: var(--accent-blue); color: white; font-size: 18px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:3px;}
         .save-btn-large:active { transform: translate(4px,4px); box-shadow:none; background:#1A52B8;}
 
-        /* 🌟 [FIX] 날짜 선택 캘린더 모달을 오버플로우 방지 및 가계부 스타일로 롤백 */
         .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(15px + env(safe-area-inset-top)) 0 calc(20px + env(safe-area-inset-bottom)) 0; box-sizing: border-box; border: none; overflow-y: auto;}
-        .multi-picker-header { display: flex; justify-content: center; align-items: center; margin-bottom: 10px; padding: 0 15px; flex-shrink: 0; }
+        .multi-picker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 15px; flex-shrink: 0; }
         
         .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 15px 12px 15px; background: white; padding: 8px; flex-shrink: 0; box-shadow: var(--pokemon-dialog-shadow); border: none; border-radius: 0; box-sizing: border-box;}
         .multi-weekday { text-align: center; color: var(--text-main); font-size: 12px; padding-bottom: 4px; border-bottom: 2px solid var(--border-heavy); margin-bottom:4px; font-weight:bold; }
-        
         .day-pick { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 14px; color: var(--text-main); cursor: pointer; position: relative; padding-top: 4px; border: none; font-weight:bold; background: transparent; margin: 0; box-shadow: none;}
-        .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 0 0 0 2px var(--border-heavy); margin:0; transform:none;}
+        .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 0 0 0 2px var(--border-heavy); }
 
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
         .action-sheet { width: calc(100% - 8px); margin: 0 4px; max-width: 480px; background: var(--bg-main); border-radius: 0; padding-bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy);}
@@ -221,7 +220,7 @@
     <div class="liquid-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     
     <div id="battle-toast" class="toast-wrapper">
-        <div class="retro-dialog-box" style="width:100%; max-width:355px;">
+        <div class="retro-toast-box">
             <p id="battle-toast-msg" class="retro-toast-text">메시지</p>
         </div>
     </div>
@@ -360,12 +359,19 @@
             </div>
             <div class="amt-display retro-dialog-box" id="budget-amt-display" style="margin-top:20px; font-size:40px; padding:15px;">0원</div>
             <div class="input-content-wrapper">
-                <div class="keypad-layer" style="display:flex; flex-direction:column;">
+                <div class="keypad-layer" id="budget-keypad-layer">
                     <div class="keypad-grid" style="flex:1;">
-                        <button class="key" onclick="pressBudgetNum(1)">1</button><button class="key" onclick="pressBudgetNum(2)">2</button><button class="key" onclick="pressBudgetNum(3)">3</button>
-                        <button class="key" onclick="pressBudgetNum(4)">4</button><button class="key" onclick="pressBudgetNum(5)">5</button><button class="key" onclick="pressBudgetNum(6)">6</button>
-                        <button class="key" onclick="pressBudgetNum(7)">7</button><button class="key" onclick="pressBudgetNum(8)">8</button><button class="key" onclick="pressBudgetNum(9)">9</button>
-                        <button class="key" style="background:#E0E0E0;" onclick="pressBudgetNum('C')">C</button><button class="key" onclick="pressBudgetNum(0)">0</button>
+                        <button class="key" onclick="pressBudgetNum(7)">7</button>
+                        <button class="key" onclick="pressBudgetNum(8)">8</button>
+                        <button class="key" onclick="pressBudgetNum(9)">9</button>
+                        <button class="key" onclick="pressBudgetNum(4)">4</button>
+                        <button class="key" onclick="pressBudgetNum(5)">5</button>
+                        <button class="key" onclick="pressBudgetNum(6)">6</button>
+                        <button class="key" onclick="pressBudgetNum(1)">1</button>
+                        <button class="key" onclick="pressBudgetNum(2)">2</button>
+                        <button class="key" onclick="pressBudgetNum(3)">3</button>
+                        <button class="key" style="background:#E0E0E0;" onclick="pressBudgetNum('C')">C</button>
+                        <button class="key" onclick="pressBudgetNum(0)">0</button>
                         <button class="key key-done" onclick="confirmBudget()">확인</button>
                     </div>
                 </div>
@@ -387,12 +393,19 @@
             
             <div class="input-content-wrapper">
                 
-                <div class="keypad-layer" id="keypad-layer" style="display:flex; flex-direction:column; padding-top:10px;">
+                <div class="keypad-layer" id="keypad-layer">
                     <div class="keypad-grid" style="flex:1;">
-                        <button class="key" onclick="pressNum(1)">1</button><button class="key" onclick="pressNum(2)">2</button><button class="key" onclick="pressNum(3)">3</button>
-                        <button class="key" onclick="pressNum(4)">4</button><button class="key" onclick="pressNum(5)">5</button><button class="key" onclick="pressNum(6)">6</button>
-                        <button class="key" onclick="pressNum(7)">7</button><button class="key" onclick="pressNum(8)">8</button><button class="key" onclick="pressNum(9)">9</button>
-                        <button class="key" style="background:#E0E0E0;" onclick="pressNum('C')">C</button><button class="key" onclick="pressNum(0)">0</button>
+                        <button class="key" onclick="pressNum(7)">7</button>
+                        <button class="key" onclick="pressNum(8)">8</button>
+                        <button class="key" onclick="pressNum(9)">9</button>
+                        <button class="key" onclick="pressNum(4)">4</button>
+                        <button class="key" onclick="pressNum(5)">5</button>
+                        <button class="key" onclick="pressNum(6)">6</button>
+                        <button class="key" onclick="pressNum(1)">1</button>
+                        <button class="key" onclick="pressNum(2)">2</button>
+                        <button class="key" onclick="pressNum(3)">3</button>
+                        <button class="key" style="background:#E0E0E0;" onclick="pressNum('C')">C</button>
+                        <button class="key" onclick="pressNum(0)">0</button>
                         <button class="key key-done" onclick="blurAmount()">확인</button>
                     </div>
                 </div>
@@ -482,12 +495,10 @@
         </div>
 
         <div class="multi-picker-overlay" id="multi-picker">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding: 0 15px; flex-shrink: 0;">
+            <div class="multi-picker-header">
                 <h2 style="color:var(--text-main); margin:0; font-size:22px;">날짜 선택</h2>
             </div>
-            
             <div class="multi-calendar-grid" id="multi-cal-grid"></div>
-            
             <div style="padding: 0 15px; flex-shrink: 0;">
                 <button class="retro-btn save-btn-large" style="background:var(--accent-blue); color:white; width:calc(100% - 6px); margin:4px 3px 0 3px;" onclick="closeMultiPicker()">선택 완료</button>
             </div>
