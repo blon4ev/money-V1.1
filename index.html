@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v59 (Input Layout Fixed)</title>
+    <title>Budget Split Ledger v60 (Fixed Layout & Colors)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -17,7 +17,7 @@
             --accent-red: #E84848;
             --accent-orange: #F89838;
             
-            --border-heavy: #404040; 
+            --border-heavy: #303030; 
             --border-light: #D0D0D0; 
             
             --text-main: #202020;
@@ -25,6 +25,7 @@
             --bg-card: #FFFFFF; 
             --bg-main: #E0E0E0; 
             
+            /* 🌟 완벽한 계단형 픽셀 섀도우 */
             --shadow-4px: 0 -4px 0 0 var(--border-heavy), 0 4px 0 0 var(--border-heavy), -4px 0 0 0 var(--border-heavy), 4px 0 0 0 var(--border-heavy);
             --shadow-3px: 0 -3px 0 0 var(--border-heavy), 0 3px 0 0 var(--border-heavy), -3px 0 0 0 var(--border-heavy), 3px 0 0 0 var(--border-heavy);
             --shadow-2px: 0 -2px 0 0 var(--border-heavy), 0 2px 0 0 var(--border-heavy), -2px 0 0 0 var(--border-heavy), 2px 0 0 0 var(--border-heavy);
@@ -35,15 +36,16 @@
         ::-webkit-scrollbar { display: none; }
 
         body { font-family: 'NeoDunggeunmo', sans-serif; background-color: var(--bg-main); color: var(--text-main); display: flex; justify-content: center; align-items: flex-start; height: 100dvh; margin: 0; overflow: hidden; -webkit-tap-highlight-color: transparent; letter-spacing: 1px; image-rendering: pixelated; }
-        button, input, textarea { font-family: 'NeoDunggeunmo', sans-serif; letter-spacing: 1px; box-sizing: border-box; }
+        button, input, textarea { font-family: 'NeoDunggeunmo', sans-serif; letter-spacing: 1px; box-sizing: border-box; outline: none; }
         div { box-sizing: border-box; }
 
         .iphone-frame { width: 100%; max-width: 480px; height: 100dvh; background: var(--bg-main); position: relative; z-index: 10; overflow: hidden;}
         
-        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding-top: calc(10px + env(safe-area-inset-top)); padding-bottom: calc(85px + env(safe-area-inset-bottom)); z-index: 5; background: var(--bg-main); overflow-x: hidden; overflow-y: hidden;}
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding-top: calc(15px + env(safe-area-inset-top)); padding-bottom: calc(85px + env(safe-area-inset-bottom)); z-index: 5; background: var(--bg-main); overflow-x: hidden; overflow-y: hidden;}
         .screen.active { display: flex; }
         
-        #screen-input, #screen-budget-input, #screen-detail { z-index: 300; background: var(--bg-main); padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); padding-bottom: calc(30px + env(safe-area-inset-bottom)); }
+        #screen-input, #screen-budget-input, #screen-detail { z-index: 300; background: var(--bg-main); padding: 0; }
+        .input-header-area { padding: calc(15px + env(safe-area-inset-top)) 20px 10px 20px; flex-shrink: 0;}
 
         .tab-bar { position: absolute; bottom: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: #D0D0D0; display: flex; justify-content: space-around; padding-top: 10px; padding-bottom: env(safe-area-inset-bottom); z-index: 100; box-shadow: 0 -3px 0 0 var(--border-heavy), inset 0 4px 0 #E8E8E8; }
         .tab-item { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); cursor: pointer; background: none; border: none; width: 33.3%; transition: 0s; }
@@ -51,142 +53,161 @@
         .tab-icon { font-size: 24px; margin-bottom: 2px; }
         .tab-label { font-size: 14px; margin-top: 2px;} 
 
-        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; width: 100%; padding: 0 20px; flex-shrink: 0;}
-        .month-label { font-size: 24px; font-weight: normal; color: var(--text-main); margin: 0; text-shadow: 2px 2px 0 white; } 
-        .header-actions { display: flex; gap: 10px; }
+        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%; padding: 0 20px; flex-shrink: 0;}
+        .month-label { font-size: 26px; font-weight: normal; color: var(--text-main); margin: 0; text-shadow: 2px 2px 0 white; } 
+        .header-actions { display: flex; gap: 12px; }
         
-        .action-btn { width: 38px; height: 38px; border-radius: 0; background: var(--bg-card); border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: var(--shadow-3px); margin: 3px; transition: 0s;}
+        .action-btn { width: 44px; height: 44px; border-radius: 0; background: var(--bg-card); border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--shadow-3px); margin: 3px; transition: 0s;}
         .action-btn:active { transform: translate(3px, 3px); box-shadow: none; background:#E0E0E0;}
 
-        .retro-dialog-box { background-color: var(--bg-card); border: none; border-radius: 0; padding: 14px; position: relative; box-shadow: var(--pokemon-dialog-shadow); color: var(--text-main); line-height: 1.6; margin: 4px; flex-shrink: 0;}
+        .retro-dialog-box { background-color: var(--bg-card); border: none; border-radius: 0; padding: 16px; position: relative; box-shadow: var(--pokemon-dialog-shadow); color: var(--text-main); line-height: 1.6; margin: 4px; flex-shrink: 0;}
         .retro-dialog-box.legendary-glow { background: linear-gradient(135deg, #FFFDE7 0%, #FFF59D 100%); box-shadow: 0 -4px 0 0 #FBC02D, 0 4px 0 0 #FBC02D, -4px 0 0 0 #FBC02D, 4px 0 0 0 #FBC02D, inset 0 0 0 2px #FFFFFF, inset 0 0 0 5px #FBC02D; }
 
         .battle-top-section { display: flex; flex-direction: column; position: relative; padding-top: 5px; margin-bottom: 10px; flex-shrink: 0;}
-        .hp-box-wrapper { padding: 0 20px; display: flex; justify-content: flex-start; margin-bottom: 10px; z-index: 5;}
-        .hp-box { background: var(--bg-card); border: none; border-radius: 0; padding: 10px 12px; width: 220px; box-shadow: var(--shadow-3px); margin: 3px; }
-        .hp-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 6px; border-bottom: 3px solid var(--border-heavy); padding-bottom: 4px;}
-        .hp-name { font-size: 16px; color: var(--text-main); font-weight: bold; display: flex; align-items: center; gap: 4px;}
-        .hp-level { font-size: 15px; color: var(--text-main); font-weight:bold; }
-        .hp-bottom { display: flex; align-items: center; background: #404040; padding: 3px 6px; box-shadow: var(--shadow-2px); margin: 2px;}
-        .hp-label { color: #F89838; font-size: 13px; margin-right: 6px; font-weight: bold; text-shadow: 1px 1px 0 #000;}
-        .hp-bar-track { flex: 1; height: 10px; background: #202020; border: 2px solid white;}
+        .hp-box-wrapper { padding: 0 20px; display: flex; justify-content: flex-start; margin-bottom: 15px; z-index: 5;}
+        .hp-box { background: var(--bg-card); border: none; border-radius: 0; padding: 12px 16px; width: 240px; box-shadow: var(--shadow-3px); margin: 3px; }
+        .hp-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; border-bottom: 3px solid var(--border-heavy); padding-bottom: 6px;}
+        .hp-name { font-size: 18px; color: var(--text-main); font-weight: bold; display: flex; align-items: center; gap: 4px;}
+        .hp-level { font-size: 16px; color: var(--text-main); font-weight:bold; }
+        .hp-bottom { display: flex; align-items: center; background: #404040; padding: 4px 6px; box-shadow: var(--shadow-2px); margin: 2px;}
+        .hp-label { color: #F89838; font-size: 14px; margin-right: 6px; font-weight: bold; text-shadow: 1px 1px 0 #000;}
+        .hp-bar-track { flex: 1; height: 12px; background: #202020; border: 2px solid white;}
         .hp-bar-fill { height: 100%; background: var(--accent-green); transition: width 0.1s; width: 0%; }
 
-        .tama-character-wrapper { position: relative; width: 100%; height: 140px; display: flex; justify-content: center; align-items: flex-end; z-index: 2; margin-bottom: 15px;}
-        .battle-base { position: absolute; bottom: -5px; width: 220px; height: auto; image-rendering: pixelated; z-index: 1; pointer-events: none;}
-        .tama-character { position: relative; max-width: 120px; max-height: 120px; margin-bottom: 25px; image-rendering: pixelated; z-index: 2; transition: transform 0s; transform-origin: bottom center; transform: scale(2.5); filter: drop-shadow(0 5px 0px rgba(0,0,0,0.2));}
+        .tama-character-wrapper { position: relative; width: 100%; height: 160px; display: flex; justify-content: center; align-items: flex-end; z-index: 2; margin-bottom: 15px;}
+        .battle-base { position: absolute; bottom: -10px; width: 240px; height: auto; image-rendering: pixelated; z-index: 1; pointer-events: none;}
+        .tama-character { position: relative; max-width: 140px; max-height: 140px; margin-bottom: 30px; image-rendering: pixelated; z-index: 2; transition: transform 0s; transform-origin: bottom center; transform: scale(2.5); filter: drop-shadow(0 5px 0px rgba(0,0,0,0.2));}
         .jump-anim { transform: scale(2.5) translateY(-10px) !important; }
         .particle { position: absolute; font-size: 16px; pointer-events: none; opacity: 0; z-index: 3; }
         @keyframes floatUp { 0% { opacity: 1; transform: translate(0, 0) scale(0.5); } 100% { opacity: 0; transform: translate(var(--tx), -40px) scale(1.2); } }
 
         .toast-wrapper { position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%) translateY(15px); z-index: 4000; display: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; width: calc(100% - 40px); max-width: 440px;}
         .toast-wrapper.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .retro-toast-box { background-color: var(--bg-card); border: none; padding: 16px 20px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; margin: 4px;}
-        .retro-toast-text { font-size: 16px; color: var(--text-main); font-weight: bold; line-height: 1.6; margin: 0; }
+        .retro-toast-box { background-color: var(--bg-card); border: none; padding: 20px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; margin: 4px;}
+        .retro-toast-text { font-size: 18px; color: var(--text-main); font-weight: bold; line-height: 1.6; margin: 0; }
 
-        .control-panel-wrapper { padding: 0 15px; margin-bottom: 15px; z-index: 5; flex-shrink: 0;}
-        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; color: var(--text-main); border-bottom: 2px dashed var(--border-heavy); padding-bottom: 6px;}
-        .action-row { display: flex; gap: 10px; width: 100%; }
-        .retro-btn { border: none; border-radius: 0; padding: 12px; font-size: 15px; cursor: pointer; display:flex; justify-content:center; align-items:center; gap:6px; box-shadow: var(--shadow-3px); margin: 3px; transition: 0s;}
+        .control-panel-wrapper { padding: 0 20px; margin-bottom: 15px; z-index: 5; flex-shrink: 0;}
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 15px; color: var(--text-main); border-bottom: 2px dashed var(--border-heavy); padding-bottom: 8px;}
+        .action-row { display: flex; gap: 12px; width: 100%; }
+        .retro-btn { border: none; border-radius: 0; padding: 14px; font-size: 16px; cursor: pointer; display:flex; justify-content:center; align-items:center; gap:6px; box-shadow: var(--shadow-3px); margin: 3px; transition: 0s;}
         .retro-btn:active { transform: translate(3px, 3px); box-shadow: none; background:#E0E0E0 !important;}
         .candy-btn { flex: 1.2; background: #FFF; color: var(--text-main); font-weight:bold; }
         .candy-btn:disabled { background: #C0C0C0; color: #505050; cursor: not-allowed; box-shadow:none; transform:none; }
         .new-egg-btn { flex: 1; background: var(--bg-main); color: var(--text-main); font-weight:bold;}
 
-        .weekly-list-area { flex: 1; overflow-y: auto; overflow-x: hidden; background: var(--bg-main); padding: 0 15px 20px 15px; position: relative; display: flex; flex-direction: column;}
-        .weekly-sticky-header { position: sticky; top: 0; background: var(--bg-main); z-index: 10; padding: 10px 0; border-bottom: 3px solid var(--border-heavy); margin-bottom: 12px; display: flex; align-items: baseline; gap: 10px; flex-shrink: 0;}
-        .weekly-header-title { font-size: 18px; color: var(--text-main); font-weight: bold;}
+        .weekly-list-area { flex: 1; overflow-y: auto; overflow-x: hidden; background: var(--bg-main); padding: 0 20px 20px 20px; position: relative; display: flex; flex-direction: column;}
+        .weekly-sticky-header { position: sticky; top: 0; background: var(--bg-main); z-index: 10; padding: 10px 0; border-bottom: 3px solid var(--border-heavy); margin-bottom: 15px; display: flex; align-items: baseline; gap: 10px; flex-shrink: 0;}
+        .weekly-header-title { font-size: 20px; color: var(--text-main); font-weight: bold;}
         
-        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; cursor: pointer; margin: 3px 3px 10px 3px; background: white; border: none; box-shadow: var(--shadow-3px); transition: 0s; flex-shrink: 0;}
+        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 12px; cursor: pointer; margin: 3px 3px 12px 3px; background: white; border: none; box-shadow: var(--shadow-3px); transition: 0s; flex-shrink: 0;}
         .list-item:active { transform: translate(3px,3px); box-shadow: none; background:#F0F0F0;}
         .list-left { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden; }
-        .list-icon { font-size: 26px; }
+        .list-icon { font-size: 28px; }
         .list-details { display: flex; flex-direction: column; gap: 6px; overflow: hidden; align-items: flex-start;}
         
-        .cat-badge { display: inline-flex; align-items: center; padding: 4px 8px; font-size: 12px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white;}
-        .list-memo { font-size: 15px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight:bold; margin-top:2px;}
-        .list-amt { font-size: 18px; font-weight: bold; white-space: nowrap; margin-left:10px;}
+        /* 🌟 [FIX] 카테고리 뱃지 원색 적용 (JS에서 주입) 및 디자인 변경 */
+        .cat-badge { display: inline-flex; align-items: center; padding: 4px 8px; font-size: 13px; white-space: nowrap; border: 2px solid var(--border-heavy); box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.5);}
+        .list-memo { font-size: 16px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight:bold; margin-top:2px;}
+        .list-amt { font-size: 20px; font-weight: bold; white-space: nowrap; margin-left:10px;}
 
-        .compact-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 0 20px 12px 20px; padding: 10px 12px !important; flex-shrink: 0;}
+        .compact-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 0 20px 16px 20px; padding: 12px 16px !important; flex-shrink: 0;}
         .sum-item { display: flex; flex-direction: column; align-items: center; }
-        .sum-label { font-size: 13px; color: var(--text-dim); margin-bottom: 2px; font-weight:bold;}
-        .sum-val { font-size: 16px; color: var(--text-main); font-weight:bold;}
+        .sum-label { font-size: 15px; color: var(--text-main); margin-bottom: 4px; font-weight:bold;}
+        .sum-val { font-size: 18px; color: var(--text-main); font-weight:bold;}
 
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 20px 12px 20px; background: white; padding: 10px; flex-shrink: 0;}
-        .weekday { text-align: center; color: var(--text-main); font-size: 14px; padding-bottom: 6px; border-bottom: 3px solid var(--border-heavy); margin-bottom:4px; font-weight:bold;}
-        .day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 15px; color: var(--text-main); cursor: pointer; position: relative; padding-top: 4px; border: none; font-weight:bold;}
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 20px 16px 20px; background: white; padding: 12px; flex-shrink: 0;}
+        .weekday { text-align: center; color: var(--text-main); font-size: 15px; padding-bottom: 8px; border-bottom: 3px solid var(--border-heavy); margin-bottom:6px; font-weight:bold;}
+        .day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; font-size: 16px; color: var(--text-main); cursor: pointer; position: relative; padding-top: 5px; border: none; font-weight:bold;}
         .day.selected { background: var(--text-main); color: white; box-shadow: inset 0 0 0 2px var(--border-light); }
-        .day.today { color: var(--accent-red); border: 2px dashed var(--border-heavy);}
-        .day-amount { font-size: 9px; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; white-space: nowrap; pointer-events: none;}
+        .day.today { color: var(--accent-red); box-shadow: inset 0 -3px 0 0 #FFE0E0, inset 0 3px 0 0 #FFE0E0, inset -3px 0 0 0 #FFE0E0, inset 3px 0 0 0 #FFE0E0;}
+        .day-amount { font-size: 10px; margin-top: 2px; text-align: center; width: 100%; overflow: hidden; white-space: nowrap; pointer-events: none;}
 
-        .list-area { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 15px 20px 15px; display: flex; flex-direction: column;}
+        .list-area { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 20px 20px 20px; display: flex; flex-direction: column;}
 
-        .fab { position: absolute; bottom: calc(85px + env(safe-area-inset-bottom)); right: 20px; width: 56px; height: 56px; border-radius: 0; background: var(--bg-card); border: none; color: var(--text-main); font-size: 36px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-4px); margin: 4px;}
+        .fab { position: absolute; bottom: calc(85px + env(safe-area-inset-bottom)); right: 20px; width: 64px; height: 64px; border-radius: 0; background: var(--bg-card); border: none; color: var(--text-main); font-size: 40px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-4px); margin: 4px;}
         .fab:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;} 
 
-        .filter-bar { overflow-x: auto; white-space: nowrap; margin-bottom: 12px; padding: 0 20px 4px 20px; align-items: center; display: flex; flex-shrink: 0;}
-        .filter-segment-container { display: flex; background: var(--bg-main); padding: 3px; border-radius: 0; gap: 2px; flex-shrink: 0; height: 34px; box-sizing: border-box; align-items: center; border: none; box-shadow: var(--shadow-2px); margin: 2px; margin-right:8px;}
-        .filter-segment-btn { height: 100%; display: flex; align-items: center; justify-content: center; border: none; padding: 0 10px; margin: 0; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;}
-        .filter-segment-btn.active { background: var(--text-main); color: white;}
-        .filter-divider { width: 2px; height: 18px; background: var(--border-heavy); margin: 0 6px; flex-shrink: 0; }
+        /* 필터 바 정상 렌더링을 위한 수정 */
+        .filter-bar { display: none; overflow-x: auto; white-space: nowrap; margin-bottom: 16px; padding: 4px 20px; align-items: center; flex-shrink: 0;}
+        .filter-bar.visible { display: flex; } 
+        .filter-segment-container { display: flex; background: var(--bg-card); padding: 4px; gap: 2px; flex-shrink: 0; height: 42px; box-sizing: border-box; align-items: center; border: none; box-shadow: var(--shadow-3px); margin: 3px; margin-right:12px;}
+        .filter-segment-btn { height: 100%; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; padding: 0 12px; margin: 0; font-size: 15px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;}
+        .filter-segment-btn.active { background: var(--border-heavy); color: white;}
+        .filter-divider { width: 3px; height: 24px; background: var(--border-heavy); margin: 0 8px; flex-shrink: 0; }
         
-        .filter-chip { height: 32px; display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 13px; font-weight:bold; margin-right: 8px; margin-top:2px; margin-bottom:2px; cursor: pointer; border: none; background: white; box-shadow: var(--shadow-2px); color: var(--text-main); transition: 0.1s;}
-        .filter-chip:active { transform: translate(2px,2px); box-shadow:none;}
-        .filter-chip.active { background: var(--text-main); color: white; box-shadow: none; transform: translate(2px,2px);}
+        .filter-chip { height: 38px; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; font-size: 14px; font-weight:bold; margin-right: 10px; margin-top:3px; margin-bottom:3px; cursor: pointer; border: none; background: white; box-shadow: var(--shadow-3px); color: var(--text-main); transition: 0s;}
+        .filter-chip:active { transform: translate(3px,3px); box-shadow:none;}
+        .filter-chip.active { background: var(--text-main); color: white; box-shadow: none; transform: translate(3px,3px);}
 
-        /* 🌟 [FIX] 입력 모달 스크롤 겹침 완전 방지 */
-        .amt-display { text-align: right; padding: 15px 20px; font-size: 42px; color: var(--text-main); cursor: pointer; margin-bottom: 15px; font-weight:bold; background:white; flex-shrink: 0;}
+        /* 🌟 [FIX] 목표 탭 내부 패딩 대폭 상향 */
+        .budget-status-card { display: flex; flex-direction: column; gap: 16px; margin: 0 20px 20px 20px; padding: 24px;}
+        .budget-header { display: flex; justify-content: space-between; align-items: baseline; }
+        .budget-title { font-size: 18px; color: var(--text-main); font-weight:bold;}
+        .budget-remain { font-size: 34px; color: var(--text-main); font-weight:bold;}
+        .budget-pct { font-size: 15px; color: var(--text-main); text-align: right; margin-top: 5px; font-weight:bold;}
+        
+        .cat-budget-list { flex: 1; overflow-y: auto; padding: 20px; background:white; margin: 0 20px;}
+        .cat-budget-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 4px dashed var(--border-light); }
+        .cat-budget-input { background: var(--bg-main); border: none; color: var(--text-main); padding: 12px; min-width: 90px; text-align: right; font-size: 20px; cursor: pointer; display: inline-block; box-shadow:var(--shadow-2px); margin:2px; font-weight:bold;}
+
+        .stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
+        .stats-modal.active { display: flex; }
+        .stats-card { margin-bottom: 20px; padding: 24px;}
+
+        /* 🌟 [FIX] 입력 모달 스크롤 겹침 완전 방지 및 하단 고정 버튼 */
+        .amt-display { text-align: right; padding: 20px 24px; font-size: 52px; color: var(--text-main); cursor: pointer; margin: 0 20px 20px 20px; font-weight:bold; background:white; flex-shrink: 0;}
         .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;}
         
-        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 10px 0 10px; background: var(--bg-main); }
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; height: 100%;}
+        /* 🌟 [FIX] 키패드 레이어 다이어트 및 여백 확보 */
+        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 24px 0 24px; background: var(--bg-main); }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; height: 100%;}
         
-        .key { background: white; border: none; color: var(--text-main); border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0 4px 8px 4px; display:flex; align-items:center; justify-content:center;}
+        .key { background: white; border: none; color: var(--text-main); border-radius: 0; font-size: 34px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0 4px 8px 4px; display:flex; align-items:center; justify-content:center;}
         .key:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;}
-        .key-done { background: var(--text-main); color: white; font-size: 24px;}
+        .key-done { background: var(--text-main); color: white; font-size: 26px;}
         .key-done:active { background: #404040;}
         
-        /* 🌟 [FIX] 입력 디테일 스크롤 및 겹침 방지 (flex-shrink: 0 적극 활용) */
-        .details-layer { display: none; flex-direction: column; flex: 1; overflow-y: auto; overflow-x:hidden; padding-bottom: 30px; width: 100%; margin: 0; }
+        /* 🌟 [FIX] 세부 내역 레이어 분리 및 고정 버튼 구조화 */
+        .details-layer { display: none; flex-direction: column; flex: 1; overflow: hidden; width: 100%; margin: 0; background:var(--bg-main);}
         .details-layer.visible { display: flex; }
         
-        .memo-input { width: calc(100% - 8px); background: white; border: none; border-radius: 0; padding: 16px; color: var(--text-main); font-size: 18px; margin-bottom: 20px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 4px; flex-shrink: 0;}
+        .details-scroll-area { flex: 1; overflow-y: auto; padding: 0 20px; padding-bottom: 20px;}
+        .details-fixed-bottom { padding: 15px 20px; background: var(--bg-main); border-top: 4px solid var(--border-heavy); flex-shrink: 0; z-index: 10;}
         
-        /* 🌟 [FIX] 카테고리 박스에서 이모지 삭제, 가로 3칸 그리드로 다이어트 */
-        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; flex-shrink: 0; padding: 0 4px;}
-        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 0; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
+        .memo-input { width: calc(100% - 8px); background: white; border: none; border-radius: 0; padding: 20px; color: var(--text-main); font-size: 20px; margin-bottom: 30px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 4px; flex-shrink: 0;}
+        
+        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 30px; flex-shrink: 0;}
+        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 0; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
         .cat-box.selected { background: var(--text-main); color: white; box-shadow: none; transform:translate(3px,3px);}
+        .cat-box.selected > div { color: white !important; }
         
-        .option-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 8px; border-top: 3px dashed var(--border-light); color: var(--text-main); font-size: 16px; font-weight:bold; flex-shrink: 0;}
+        .option-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 8px; border-top: 4px dashed var(--border-light); color: var(--text-main); font-size: 18px; font-weight:bold; flex-shrink: 0;}
         
-        /* 터치 버그 픽스를 위해 payment-btn에 position relative 추가 */
-        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 200px; box-shadow: var(--shadow-2px); margin:2px; flex-shrink: 0;}
-        .payment-btn { flex: 1; border: none; padding: 12px 4px; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position:relative; z-index:10;}
+        /* 🌟 [FIX] 결제 수단 터치 버그 해결 */
+        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 220px; box-shadow: var(--shadow-3px); margin:3px; flex-shrink: 0;}
+        .payment-btn { flex: 1; border: none; padding: 14px 4px; font-size: 16px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position: relative; z-index: 10;}
         .payment-btn.active { background: var(--text-main); color: white; }
 
-        .switch { width: 56px; height: 32px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-2px); margin: 2px;}
-        .switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--text-main); top: 6px; left: 6px; transition: 0s; }
-        .switch.on::after { left: 30px; background: var(--accent-green);}
+        .switch { width: 60px; height: 34px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-3px); margin: 3px;}
+        .switch::after { content: ''; position: absolute; width: 22px; height: 22px; background: var(--text-main); top: 6px; left: 6px; transition: 0s; }
+        .switch.on::after { left: 32px; background: var(--accent-green);}
 
-        .save-btn-large { width: calc(100% - 8px); height: 70px; margin-top: 20px; background: var(--accent-blue); color: white; font-size: 24px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:4px; flex-shrink: 0;}
+        .save-btn-large { width: calc(100% - 8px); height: 75px; background: var(--accent-blue); color: white; font-size: 26px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:4px;}
         .save-btn-large:active { transform: translate(4px,4px); box-shadow:none; background:#1A52B8;}
 
-        .add-cat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; flex-direction: column; justify-content: flex-end; }
-        .add-cat-sheet { background: var(--bg-main); padding: 30px 24px calc(30px + env(safe-area-inset-bottom)); box-shadow: 0 -4px 0 0 var(--border-heavy);}
-        .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 20px 0; max-height: 250px; overflow-y: auto; }
-        .emoji-item { font-size: 36px; text-align: center; padding: 12px; cursor: pointer; background: white; border: none; box-shadow: var(--shadow-3px); margin:3px;}
-        .emoji-item.selected { background: var(--text-main); color:white; box-shadow: none; transform: translate(3px,3px); }
-
+        /* 멀티 캘린더 피드백 강화 */
         .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; border: none; box-shadow: var(--shadow-4px); margin:4px;}
         .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 20px; background:white; padding:15px; border:none; border-radius:0; box-shadow:var(--pokemon-dialog-shadow); margin-bottom:4px;}
-        
+        .day-pick { aspect-ratio: 1; border-radius: 0; display: flex; align-items: center; justify-content: center; color: var(--text-main); border: none; cursor: pointer; font-size: 18px; background: var(--bg-main); box-shadow:var(--shadow-3px); margin:3px; font-weight:bold;}
+        .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 4px 4px 0 rgba(0,0,0,0.3); border: 2px solid var(--border-heavy); margin: 1px; transform: translate(2px,2px);} /* 🌟 피드백 강화 */
+
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
         .action-sheet { width: calc(100% - 8px); margin: 0 4px; max-width: 480px; background: var(--bg-main); border-radius: 0; padding-bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy);}
-        .sheet-btn { width: 100%; padding: 24px; background: white; border: none; color: var(--text-main); font-size: 20px; border-bottom: 4px solid var(--border-heavy); cursor: pointer; font-weight: bold;}
+        .sheet-btn { width: 100%; padding: 26px; background: white; border: none; color: var(--text-main); font-size: 22px; border-bottom: 4px solid var(--border-heavy); cursor: pointer; font-weight: bold;}
         .sheet-btn.danger { color: var(--accent-red); }
-
-        .stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 500; display: none; flex-direction: column; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
-        .stats-modal.active { display: flex; }
+        
+        .round-btn { background: var(--bg-card); border: none; width: 48px; height: 48px; color: var(--text-main); font-size: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px; font-weight:bold;}
+        .round-btn:active { transform: translate(3px, 3px); box-shadow: none; background:#E0E0E0;}
     </style>
 </head>
 <body>
@@ -208,7 +229,7 @@
                         <div class="hp-top">
                             <div class="hp-name">
                                 <span id="tamaName">알</span>
-                                <span id="tamaNameEditIcon" style="font-size:14px; cursor:pointer; margin-left:4px;" onclick="changeName()">✏️</span>
+                                <span id="tamaNameEditIcon" style="font-size:16px; cursor:pointer; margin-left:4px;" onclick="changeName()">✏️</span>
                             </div>
                             <div class="hp-level" id="tamaLevel">Lv.1</div>
                         </div>
@@ -224,24 +245,24 @@
                 <div class="tama-character-wrapper" id="pokemon-wrapper">
                     <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/underground.png" class="battle-base" alt="">
                     <img src="" id="pokemon-img" class="tama-character" style="display:none;" alt="">
-                    <img src="https://play.pokemonshowdown.com/sprites/gen5/egg.png" id="pokemon-egg" class="tama-character" style="width:60px; object-fit:contain; display:none;" alt="">
+                    <img src="https://play.pokemonshowdown.com/sprites/gen5/egg.png" id="pokemon-egg" class="tama-character" style="width:70px; object-fit:contain; display:none;" alt="">
                 </div>
             </div>
             
             <div class="control-panel-wrapper">
-                <div class="retro-dialog-box" style="padding:14px;">
+                <div class="retro-dialog-box" style="padding:16px;">
                     <div class="info-row">
                         <span id="tamaStreak" style="color:var(--accent-orange); font-weight:bold;">🔥 0일 연속 기록</span>
                         <span id="candy-limit-text">오늘 획득가능: 5번</span>
                     </div>
                     <div class="action-row" style="margin-top:0;">
                         <button class="retro-btn candy-btn" id="feed-candy-btn" onclick="feedCandy()">
-                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rare-candy.png" style="width:28px; image-rendering:pixelated;" alt="candy">
-                            <span id="candy-count-display" style="font-size:16px;">0</span>개
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rare-candy.png" style="width:32px; image-rendering:pixelated;" alt="candy">
+                            <span id="candy-count-display" style="font-size:18px;">0</span>개
                         </button>
-                        <button class="retro-btn new-egg-btn" onclick="buyNewEgg()" style="height:40px;">
-                            <img src="https://play.pokemonshowdown.com/sprites/gen5/egg.png" style="width:20px; image-rendering:pixelated;" alt="egg">
-                            <span style="font-size:15px;">새 알</span>
+                        <button class="retro-btn new-egg-btn" onclick="buyNewEgg()" style="height:44px;">
+                            <img src="https://play.pokemonshowdown.com/sprites/gen5/egg.png" style="width:24px; image-rendering:pixelated;" alt="egg">
+                            <span style="font-size:16px;">새 알</span>
                         </button>
                     </div>
                 </div>
@@ -276,64 +297,64 @@
             </div>
 
             <div class="calendar-grid retro-dialog-box" id="cal-grid"></div>
-            <div id="selected-date-text" style="color:var(--text-main); font-size:16px; margin-bottom:10px; font-weight:bold; padding-left:20px; flex-shrink: 0;"></div>
+            <div id="selected-date-text" style="color:var(--text-main); font-size:18px; margin-bottom:12px; margin-top:10px; font-weight:bold; padding-left:20px; flex-shrink: 0;"></div>
             
-            <div class="list-area scroll-container" id="list-area" style="background:transparent; padding:0 15px 20px 15px;"></div>
+            <div class="list-area scroll-container" id="list-area" style="background:transparent; padding:0 20px 20px 20px;"></div>
             
             <button class="fab" onclick="openInputScreen()">+</button>
         </div>
 
         <div id="screen-goal" class="screen">
             <div class="header-nav" style="justify-content:center;"><h1 class="month-label">예산 및 목표</h1></div>
-            <div class="retro-dialog-box" style="margin: 0 20px 15px 20px;">
+            <div class="retro-dialog-box budget-status-card" style="margin: 0 20px 15px 20px;">
                 <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;">
-                    <span style="font-size: 15px; color: var(--text-main); font-weight:bold;">이달의 남은 예산</span>
-                    <span id="budget-remain-amt-goal" style="font-size: 22px; color: var(--text-main); font-weight:bold;">0원</span>
+                    <span style="font-size: 16px; color: var(--text-main); font-weight:bold;">이달의 남은 예산</span>
+                    <span id="budget-remain-amt-goal" style="font-size: 26px; color: var(--text-main); font-weight:bold;">0원</span>
                 </div>
-                <div class="progress-track" style="margin-bottom:6px; height:14px; background:#202020; box-shadow: 0 -2px 0 0 #FFF, 0 2px 0 0 #FFF, -2px 0 0 0 #FFF, 2px 0 0 0 #FFF; margin:2px;">
+                <div class="progress-track" style="margin-bottom:8px; height:18px; background:#202020; box-shadow: 0 -2px 0 0 #FFF, 0 2px 0 0 #FFF, -2px 0 0 0 #FFF, 2px 0 0 0 #FFF; margin:2px;">
                     <div class="exp-fill" id="budget-progress-goal"></div>
                 </div>
-                <div id="budget-percent-goal" style="font-size:13px; color:var(--text-dim); text-align:right; font-weight:bold;">0% 사용</div>
+                <div id="budget-percent-goal" style="font-size:14px; color:var(--text-dim); text-align:right; font-weight:bold;">0% 사용</div>
             </div>
             
-            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:20px; margin-top:10px; flex-shrink:0;">
-                <div style="color:var(--text-main); font-size:16px; margin-bottom:12px; font-weight:bold;">총 예산 수정하기</div>
-                <div id="total-budget-input" class="total-budget-input" onclick="openBudgetNumpad('total')" style="font-size: 32px; border-bottom: 3px solid var(--text-main);">0원</div>
+            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:30px; margin-top:15px; flex-shrink:0;">
+                <div style="color:var(--text-main); font-size:18px; margin-bottom:15px; font-weight:bold;">총 예산 수정하기</div>
+                <div id="total-budget-input" class="total-budget-input" onclick="openBudgetNumpad('total')" style="font-size: 36px; border-bottom: 4px solid var(--text-main);">0원</div>
             </div>
             
             <div class="cat-budget-list retro-dialog-box" id="cat-budget-list" style="margin: 0 20px; padding:0; flex:1; overflow-y:auto;"></div>
             
-            <div style="padding:15px 20px; flex-shrink:0;"><button class="retro-btn save-btn-large" style="background:#404040; color:white; height:54px; margin-top:0;" onclick="validateAndSaveBudget()">설정 완료</button></div>
+            <div style="padding:20px; flex-shrink:0;"><button class="retro-btn save-btn-large" style="background:#404040; color:white; height:64px; margin-top:0;" onclick="validateAndSaveBudget()">설정 완료</button></div>
         </div>
 
         <div class="stats-modal scroll-container" id="stats-modal">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h2 style="color:var(--text-main); margin:0; font-size:24px;" id="stats-month-name">2026년 3월 통계</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 style="color:var(--text-main); margin:0; font-size:28px;" id="stats-month-name">2026년 3월 통계</h2>
                 <button class="action-btn modal-close-btn" onclick="closeStatsModal()">✕</button>
             </div>
             
             <div class="retro-dialog-box stats-card" id="card-bill-card">
-                <div style="margin-bottom:10px; color:var(--text-main); font-size:15px; font-weight:bold;">이번 달 신용 카드 청구액 💳</div>
-                <div style="font-size:30px; color:var(--accent-red); font-weight:bold;" id="stats-card-bill">0원</div>
+                <div style="margin-bottom:12px; color:var(--text-main); font-size:18px; font-weight:bold;">이번 달 신용 카드 청구액 💳</div>
+                <div style="font-size:36px; color:var(--accent-red); font-weight:bold;" id="stats-card-bill">0원</div>
             </div>
 
             <div class="retro-dialog-box stats-card">
-                <div style="margin-bottom:15px; font-size:16px; border-bottom: 3px dashed var(--border-light); padding-bottom:10px; font-weight:bold;">카테고리별 비율 (내 몫)</div>
-                <div style="height:200px; margin-bottom:20px;"><canvas id="pieChart"></canvas></div>
-                <div id="pie-legend" style="display:flex; flex-direction:column; gap:8px;"></div>
+                <div style="margin-bottom:20px; font-size:18px; border-bottom: 4px dashed var(--border-light); padding-bottom:12px; font-weight:bold;">카테고리별 비율 (내 몫)</div>
+                <div style="height:240px; margin-bottom:24px;"><canvas id="pieChart"></canvas></div>
+                <div id="pie-legend" style="display:flex; flex-direction:column; gap:10px;"></div>
             </div>
         </div>
 
         <div id="screen-budget-input" class="screen">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <button class="action-btn" style="width:auto; padding:0 12px; font-size:15px;" onclick="closeBudgetNumpad()">취소</button>
-                <div style="font-size:20px; color:var(--text-main); font-weight:bold;" id="budget-numpad-title">예산 입력</div>
-                <div style="width:60px;"></div>
+            <div class="input-header-area" style="display:flex; justify-content:space-between; align-items:center;">
+                <button class="action-btn" style="width:auto; padding:0 16px; font-size:16px;" onclick="closeBudgetNumpad()">취소</button>
+                <div style="font-size:24px; color:var(--text-main); font-weight:bold;" id="budget-numpad-title">예산 입력</div>
+                <div style="width:70px;"></div>
             </div>
-            <div class="amt-display retro-dialog-box" id="budget-amt-display" style="margin-top:20px; font-size:40px; padding:15px;">0원</div>
+            <div class="amt-display retro-dialog-box" id="budget-amt-display" style="margin:20px; font-size:46px;">0원</div>
             <div class="input-content-wrapper">
-                <div class="keypad-layer" style="display:flex; flex-direction:column;">
-                    <div class="keypad-grid" style="flex:1;">
+                <div class="keypad-layer" style="display:block;">
+                    <div class="keypad-grid">
                         <button class="key" onclick="pressBudgetNum(1)">1</button><button class="key" onclick="pressBudgetNum(2)">2</button><button class="key" onclick="pressBudgetNum(3)">3</button>
                         <button class="key" onclick="pressBudgetNum(4)">4</button><button class="key" onclick="pressBudgetNum(5)">5</button><button class="key" onclick="pressBudgetNum(6)">6</button>
                         <button class="key" onclick="pressBudgetNum(7)">7</button><button class="key" onclick="pressBudgetNum(8)">8</button><button class="key" onclick="pressBudgetNum(9)">9</button>
@@ -345,22 +366,22 @@
         </div>
 
         <div id="screen-input" class="screen">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <button class="action-btn" style="width:auto; padding:0 12px; font-size:15px;" onclick="closeInputScreen()">취소</button>
+            <div class="input-header-area" style="display:flex; justify-content:space-between; align-items:center;">
+                <button class="action-btn" style="width:auto; padding:0 16px; font-size:16px;" onclick="closeInputScreen()">취소</button>
                 
-                <div style="background:var(--bg-main); display:flex; padding:3px; width:140px; border:none; box-shadow: var(--shadow-3px); margin:3px; flex-shrink:0;">
-                    <button id="seg-ex" style="flex:1; border:none; background:var(--text-main); color:white; padding:8px; font-size:15px; font-weight:bold; border-radius:0;" onclick="setInputMode('ex')">지출</button>
-                    <button id="seg-in" style="flex:1; border:none; background:transparent; color:var(--text-main); padding:8px; font-size:15px;" onclick="setInputMode('in')">수입</button>
+                <div style="background:var(--bg-main); display:flex; padding:4px; width:160px; border:none; box-shadow: var(--shadow-3px); margin:3px; flex-shrink:0;">
+                    <button id="seg-ex" style="flex:1; border:none; background:var(--text-main); color:white; padding:10px; font-size:16px; font-weight:bold; border-radius:0;" onclick="setInputMode('ex')">지출</button>
+                    <button id="seg-in" style="flex:1; border:none; background:transparent; color:var(--text-main); padding:10px; font-size:16px;" onclick="setInputMode('in')">수입</button>
                 </div>
-                <div style="width:60px;"></div>
+                <div style="width:70px;"></div>
             </div>
             
-            <div class="amt-display retro-dialog-box" id="amt-display" onclick="focusAmount()" style="margin-top:20px; font-size:40px; padding:15px; flex-shrink:0;">0원</div>
+            <div class="amt-display retro-dialog-box" id="amt-display" onclick="focusAmount()" style="margin:10px 20px 20px 20px;">0원</div>
             
             <div class="input-content-wrapper">
                 
-                <div class="keypad-layer" id="keypad-layer" style="display:flex; flex-direction:column; padding-top:10px;">
-                    <div class="keypad-grid" style="flex:1;">
+                <div class="keypad-layer" id="keypad-layer">
+                    <div class="keypad-grid">
                         <button class="key" onclick="pressNum(1)">1</button><button class="key" onclick="pressNum(2)">2</button><button class="key" onclick="pressNum(3)">3</button>
                         <button class="key" onclick="pressNum(4)">4</button><button class="key" onclick="pressNum(5)">5</button><button class="key" onclick="pressNum(6)">6</button>
                         <button class="key" onclick="pressNum(7)">7</button><button class="key" onclick="pressNum(8)">8</button><button class="key" onclick="pressNum(9)">9</button>
@@ -369,98 +390,104 @@
                     </div>
                 </div>
                 
-                <div class="details-layer retro-dialog-box" id="details-layer">
-                    <textarea class="memo-input" id="memo-input" placeholder="어디에 쓰셨나요?"></textarea>
-                    <div class="cat-grid" id="cat-grid"></div>
-                    
-                    <div class="option-row" id="payment-method-row">
-                        <span>결제 수단</span>
-                        <div class="payment-toggle" style="display: flex; background: var(--bg-main); border: none; width: 190px; box-shadow: var(--shadow-2px); margin:2px;">
-                            <button id="pay-cash" class="payment-btn active" style="flex: 1; border: none; padding: 10px 2px; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;" onclick="setPaymentMethod('cash')">현금(체크)</button>
-                            <button id="pay-card" class="payment-btn" style="flex: 1; border: none; padding: 10px 2px; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;" onclick="setPaymentMethod('card')">신용 카드</button>
+                <div class="details-layer" id="details-layer">
+                    <div class="details-scroll-area retro-dialog-box" style="margin: 0 20px; padding: 20px; overflow-y: auto; flex: 1;">
+                        <textarea class="memo-input" id="memo-input" placeholder="어디에 쓰셨나요?"></textarea>
+                        <div class="cat-grid" id="cat-grid"></div>
+                        
+                        <div class="option-row" id="payment-method-row">
+                            <span>결제 수단</span>
+                            <div class="payment-toggle" style="display: flex; background: var(--bg-main); border: none; width: 200px; box-shadow: var(--shadow-3px); margin:3px;">
+                                <button id="pay-cash" class="payment-btn active" style="flex: 1; border: none; padding: 12px 4px; font-size: 15px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position:relative; z-index:10;" onclick="setPaymentMethod('cash')">현금(체크)</button>
+                                <button id="pay-card" class="payment-btn" style="flex: 1; border: none; padding: 12px 4px; font-size: 15px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position:relative; z-index:10;" onclick="setPaymentMethod('card')">신용 카드</button>
+                            </div>
+                        </div>
+
+                        <div class="option-row" id="dutch-main-row">
+                            <span>더치페이(선결제)</span>
+                            <div class="switch" id="dutch-toggle" onclick="toggleDutch()"></div>
+                        </div>
+                        <div class="option-row" id="dutch-people-row" style="display:none; border-top:none; padding-top:0; padding-bottom:20px;">
+                            <span style="font-size:16px;">총 인원 (본인 포함)</span>
+                            <div style="display:flex; align-items:center; gap:16px;">
+                                <button class="round-btn" style="width:40px; height:40px; font-size:22px;" onclick="changeDutchPeople(-1)">-</button>
+                                <span id="dutch-people-count" style="font-size:24px; width:30px; text-align:center; font-weight:bold;">2</span>
+                                <button class="round-btn" style="width:40px; height:40px; font-size:22px;" onclick="changeDutchPeople(1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="option-row">
+                            <span>날짜 복사</span>
+                            <button class="retro-btn" style="padding:10px 16px; background:white; font-size:15px;" onclick="openMultiPicker()">+ 날짜 추가</button>
+                        </div>
+                        <div id="multi-date-count" style="font-size:15px; color:var(--accent-blue); text-align:right; margin-bottom:15px; display:none; font-weight:bold;"></div>
+                        
+                        <div class="option-row">
+                            <span>지정 날짜</span>
+                            <input type="date" id="date-input" style="background:none; border:none; box-shadow:var(--shadow-3px); margin:3px; padding:10px; color:var(--text-main); font-size:18px; outline:none;">
+                        </div>
+                        
+                        <div class="option-row">
+                            <span>매월 반복</span>
+                            <div class="switch" id="repeat-toggle" onclick="this.classList.toggle('on')"></div>
                         </div>
                     </div>
-
-                    <div class="option-row" id="dutch-main-row">
-                        <span>더치페이(선결제)</span>
-                        <div class="switch" id="dutch-toggle" onclick="toggleDutch()"></div>
+                    <div class="details-fixed-bottom" style="padding: 15px 20px 25px 20px; background: var(--bg-main); flex-shrink: 0; z-index: 10;">
+                        <button class="retro-btn save-btn-large" style="background:var(--accent-blue); color:white; font-size:24px; margin:0;" onclick="executeSave()">저장하기</button>
                     </div>
-                    <div class="option-row" id="dutch-people-row" style="display:none; border-top:none; padding-top:0; padding-bottom:15px;">
-                        <span style="font-size:15px;">총 인원 (본인 포함)</span>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <button class="round-btn" style="width:36px; height:36px; font-size:20px;" onclick="changeDutchPeople(-1)">-</button>
-                            <span id="dutch-people-count" style="font-size:20px; width:24px; text-align:center; font-weight:bold;">2</span>
-                            <button class="round-btn" style="width:36px; height:36px; font-size:20px;" onclick="changeDutchPeople(1)">+</button>
-                        </div>
-                    </div>
-
-                    <div class="option-row">
-                        <span>날짜 복사</span>
-                        <button class="retro-btn" style="padding:8px 12px; background:white; font-size:14px;" onclick="openMultiPicker()">+ 날짜 추가</button>
-                    </div>
-                    <div id="multi-date-count" style="font-size:14px; color:var(--accent-blue); text-align:right; margin-bottom:12px; display:none; font-weight:bold;"></div>
-                    
-                    <div class="option-row">
-                        <span>지정 날짜</span>
-                        <input type="date" id="date-input" style="background:none; border:none; box-shadow:var(--shadow-2px); margin:2px; padding:8px; color:var(--text-main); font-size:16px; outline:none;">
-                    </div>
-                    
-                    <div class="option-row">
-                        <span>매월 반복</span>
-                        <div class="switch" id="repeat-toggle" onclick="this.classList.toggle('on')"></div>
-                    </div>
-                    <button class="retro-btn save-btn-large" style="background:var(--accent-blue); color:white; font-size:20px;" onclick="executeSave()">저장하기</button>
                 </div>
             </div>
         </div>
 
         <div id="screen-detail" class="screen">
-            <button class="action-btn" style="width:auto; padding:0 15px; font-size:15px; align-self:flex-start; margin-left:20px;" onclick="showScreen('screen-ledger')">뒤로</button>
-            <div class="retro-dialog-box" style="text-align:center; margin:20px; padding:30px 20px;">
-                <div id="det-icon" style="font-size:56px; margin-bottom:12px;">💸</div>
-                <div id="det-amt" style="font-size:40px; color:var(--text-main); margin:10px 0 0 0; font-weight:bold;">0원</div>
-                <div id="det-amt-sub" style="font-size:14px; color:var(--text-dim); margin-bottom:10px; display:none;">(총 결제: 0원)</div>
+            <div class="input-header-area">
+                <button class="action-btn" style="width:auto; padding:0 16px; font-size:16px;" onclick="showScreen('screen-ledger')">뒤로</button>
+            </div>
+            <div class="retro-dialog-box" style="text-align:center; margin:10px 20px 20px 20px; padding:40px 20px;">
+                <div id="det-icon" style="font-size:64px; margin-bottom:15px;">💸</div>
+                <div id="det-amt" style="font-size:46px; color:var(--text-main); margin:10px 0 0 0; font-weight:bold;">0원</div>
+                <div id="det-amt-sub" style="font-size:16px; color:var(--text-dim); margin-bottom:10px; display:none;">(총 결제: 0원)</div>
 
-                <div id="det-cat" class="cat-badge" style="margin-top:15px; font-size:16px; padding:8px 16px; box-shadow:var(--shadow-3px); margin:3px auto; color:white;">Category</div>
-                <div id="det-date" style="color:var(--text-main); font-size:16px; margin-top:25px; font-weight:bold;"></div>
-                <div id="det-payment" style="color:var(--text-main); font-size:15px; margin-top:8px; font-weight:bold;"></div>
-                <div id="det-memo" style="margin-top:20px; color:var(--text-main); font-size:20px; font-weight:bold;"></div>
+                <div id="det-cat" class="cat-badge" style="margin-top:20px; font-size:18px; padding:10px 20px; height:auto; box-shadow:var(--shadow-3px); margin:3px auto; color:white;">Category</div>
+                <div id="det-date" style="color:var(--text-main); font-size:18px; margin-top:30px; font-weight:bold;"></div>
+                <div id="det-payment" style="color:var(--text-main); font-size:16px; margin-top:12px; font-weight:bold;"></div>
+                <div id="det-memo" style="margin-top:25px; color:var(--text-main); font-size:24px; font-weight:bold;"></div>
                 
                 <div id="det-dutch-area"></div>
             </div>
-            <div style="display:flex; gap:10px; margin-top:auto; padding: 0 20px;">
-                <button class="retro-btn" style="flex:1; height:56px; font-size:18px;" onclick="initiateEdit()">수정</button>
-                <button class="retro-btn" style="flex:1; height:56px; color:white; background:var(--accent-red); font-size:18px;" onclick="handleDeleteRequest()">삭제</button>
+            <div style="display:flex; gap:12px; margin-top:auto; padding: 0 20px 20px 20px;">
+                <button class="retro-btn" style="flex:1; height:64px; font-size:22px;" onclick="initiateEdit()">수정</button>
+                <button class="retro-btn" style="flex:1; height:64px; color:white; background:var(--accent-red); font-size:22px;" onclick="handleDeleteRequest()">삭제</button>
             </div>
         </div>
 
         <div class="add-cat-overlay" id="add-cat-overlay">
             <div class="add-cat-sheet">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h3 style="color:var(--text-main); margin:0; font-size:20px;">새 카테고리 추가</h3>
-                    <button class="action-btn" style="width:auto; padding:0 12px; font-size:14px;" onclick="closeAddCat()">취소</button>
+                    <h3 style="color:var(--text-main); margin:0; font-size:24px;">새 카테고리 추가</h3>
+                    <button class="action-btn" style="width:auto; padding:0 16px; font-size:16px;" onclick="closeAddCat()">취소</button>
                 </div>
-                <input type="text" id="new-cat-name" placeholder="이름 입력" class="memo-input" style="margin-bottom:15px; font-size:16px;">
-                <div style="color:var(--text-main); font-size:16px; margin-bottom:10px; font-weight:bold;">아이콘 선택</div>
+                <input type="text" id="new-cat-name" placeholder="이름 입력" class="memo-input" style="margin-bottom:20px; font-size:18px;">
+                <div style="color:var(--text-main); font-size:18px; margin-bottom:12px; font-weight:bold;">아이콘 선택</div>
                 <div class="emoji-grid" id="emoji-grid"></div>
-                <button class="retro-btn save-btn-large" style="background:#404040; color:white; font-size:18px; height:54px;" onclick="saveNewCategory()">추가하기</button>
+                <button class="retro-btn save-btn-large" style="background:#404040; color:white; font-size:22px; height:64px; margin-top:10px;" onclick="saveNewCategory()">추가하기</button>
             </div>
         </div>
 
         <div class="multi-picker-overlay" id="multi-picker">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h2 style="color:var(--text-main); margin:0; font-size:22px;">날짜 선택</h2>
-                <button class="retro-btn" style="padding:8px 16px; font-size:16px; background:#404040; color:white;" onclick="closeMultiPicker()">완료</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="color:var(--text-main); margin:0; font-size:26px;">날짜 선택</h2>
+                <button class="retro-btn" style="padding:12px 24px; font-size:18px; background:#404040; color:white;" onclick="closeMultiPicker()">완료</button>
             </div>
-            <div class="multi-calendar-grid retro-dialog-box" id="multi-cal-grid" style="margin:0; padding:12px;"></div>
+            <div class="multi-calendar-grid retro-dialog-box" id="multi-cal-grid" style="margin:0; padding:16px;"></div>
         </div>
 
         <div class="modal-overlay" id="modal-overlay">
             <div class="action-sheet">
-                <div id="modal-title" style="padding:15px; text-align:center; color:var(--text-main); font-size:16px; border-bottom:3px dashed var(--border-light); background:white; font-weight:bold;">항목 삭제 알림</div>
+                <div id="modal-title" style="padding:24px; text-align:center; color:var(--text-main); font-size:20px; border-bottom:4px dashed var(--border-light); background:white; font-weight:bold;">항목 삭제 알림</div>
                 <button class="sheet-btn" id="btn-only-one">이 항목만 삭제</button>
                 <button class="sheet-btn danger" id="btn-all-future">연관 그룹 모두 삭제</button>
-                <button class="sheet-btn" style="border-top: 6px solid var(--border-heavy); background:var(--bg-main);" onclick="hideModal()">취소</button>
+                <button class="sheet-btn" style="border-top: 8px solid var(--border-heavy); background:var(--bg-main);" onclick="hideModal()">취소</button>
             </div>
         </div>
 
@@ -497,13 +524,25 @@
         const catColorCache = {};
         function initCatColors() {
             const allCats = [...new Set([...cats.ex.map(c=>c.n), ...cats.in.map(c=>c.n)])];
-            allCats.forEach((name, i) => { const h = (i * 137.5) % 360; catColorCache[name] = { bg: `hsl(${h}, 75%, 90%)`, text: `hsl(${h}, 85%, 35%)`, border: `hsl(${h}, 70%, 80%)` }; });
+            allCats.forEach((name, i) => { 
+                // 🌟 [FIX] 파스텔톤 대신 16비트 레트로 감성에 맞는 선명한 원색 기반 컬러 생성
+                const h = (i * 137.5) % 360; 
+                catColorCache[name] = { 
+                    bg: `hsl(${h}, 80%, 45%)`, 
+                    text: `#FFFFFF`, 
+                    border: `hsl(${h}, 90%, 25%)` 
+                }; 
+            });
         }
         initCatColors();
 
         function getCatColor(name) {
-            if(!name) return { bg: '#F2F2F7', text: '#8E8E93', border: 'transparent' };
-            if(!catColorCache[name]) { const count = Object.keys(catColorCache).length; const h = (count * 137.5) % 360; catColorCache[name] = { bg: `hsl(${h}, 75%, 90%)`, text: `hsl(${h}, 85%, 35%)`, border: `hsl(${h}, 70%, 80%)` }; }
+            if(!name) return { bg: '#404040', text: '#FFFFFF', border: '#202020' };
+            if(!catColorCache[name]) { 
+                const count = Object.keys(catColorCache).length; 
+                const h = (count * 137.5) % 360; 
+                catColorCache[name] = { bg: `hsl(${h}, 80%, 45%)`, text: `#FFFFFF`, border: `hsl(${h}, 90%, 25%)` }; 
+            }
             return catColorCache[name];
         }
 
@@ -704,10 +743,9 @@
                     html += `
                         <div class="list-item" onclick="showItemDetail(${x.id})">
                             <div class="list-left">
-                                <div class="list-icon" style="font-size:32px;">${x.icon}</div>
+                                <div class="list-icon">${x.icon}</div>
                                 <div class="list-details">
-                                    <div class="cat-badge" style="background:${c.bg};">${x.cat}${iconStr}</div>
-                                    <div class="list-memo">${x.memo || '메모 없음'}</div>
+                                    <div class="cat-badge" style="background:${c.bg}; color:${c.text};">${x.cat}${iconStr}</div>
                                 </div>
                             </div>
                             <div class="list-amt" style="color:${x.type==='in'?'var(--accent-green)':'var(--text-main)'};">${x.type==='in'?'+':'-'} ${effAmt.toLocaleString()}원</div>
@@ -763,12 +801,24 @@
             renderWeeklyList();
         }
 
+        // 🌟 [FIX] 필터 바 칩을 전체 카테고리로 고정 (동적 변경 방지)
         function renderLedger() {
             const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
             document.getElementById('month-name').innerText = `${y}년 ${m+1}월`; document.getElementById('selected-date-text').innerText = `${selectedDateStr} 내역`;
             
             let baseItems = db.filter(x => x.date.startsWith(prefix));
-            if(filterType !== 'all') baseItems = baseItems.filter(x => x.type === filterType);
+            
+            // 현재 활성화된 지출/수입/전체 탭에 따라 카테고리 풀 변경
+            let currentCats = [];
+            if (filterType === 'all') {
+                currentCats = [...cats.ex.map(c=>c.n), ...cats.in.map(c=>c.n)];
+            } else if (filterType === 'ex') {
+                currentCats = cats.ex.map(c=>c.n);
+                baseItems = baseItems.filter(x => x.type === 'ex');
+            } else if (filterType === 'in') {
+                currentCats = cats.in.map(c=>c.n);
+                baseItems = baseItems.filter(x => x.type === 'in');
+            }
             
             const fCat = document.getElementById('filter-bar');
             let fHtml = `
@@ -779,11 +829,12 @@
                 </div>
                 <div class="filter-divider"></div>
             `;
-            const avCats = [...new Set(baseItems.map(x=>x.cat))]; 
+            
+            const avCats = [...new Set(currentCats)]; 
             avCats.forEach(c => { 
                 const isActive = filterCategories.includes(c);
                 const activeClass = isActive ? 'active' : '';
-                fHtml += `<div class="filter-chip ${activeClass}" onclick="toggleFilterCat('${c}')">${c}</div>`; 
+                fHtml += `<button class="filter-chip ${activeClass}" onclick="toggleFilterCat('${c}')">${c}</button>`; 
             });
             fCat.innerHTML = fHtml;
 
@@ -821,16 +872,16 @@
                 const effAmt = getEffectiveAmt(x);
 
                 list.innerHTML += `
-                    <div class="list-item" onclick="showItemDetail(${x.id})">
+                    <div class="list-item retro-dialog-box" onclick="showItemDetail(${x.id})" style="padding:16px; margin-bottom:12px;">
                         <div class="list-left">
                             <div class="list-icon" style="font-size:32px;">${x.icon}</div>
                             <div class="list-details">
-                                <div class="cat-badge" style="background:${c.bg};">${x.cat}${iconStr}</div>
+                                <div class="cat-badge" style="background:${c.bg}; color:${c.text};">${x.cat}${iconStr}</div>
                                 <div class="list-memo">${x.memo || '메모 없음'}</div>
                             </div>
                         </div>
                         <div style="text-align:right;">
-                            <div class="list-amt" style="color:${x.type==='in'?'var(--accent-green)':'var(--text-main)'};">${x.type==='in'?'+':'-'} ${effAmt.toLocaleString()}원</div>
+                            <div class="list-amt" style="color:${x.type==='in'?'var(--accent-green)':'var(--text-main)'}; font-size:22px;">${x.type==='in'?'+':'-'} ${effAmt.toLocaleString()}원</div>
                         </div>
                     </div>`;
             });
@@ -843,11 +894,15 @@
         function toggleFilterBar() { 
             const filterBar = document.getElementById('filter-bar'); 
             const filterBtn = document.getElementById('filter-btn'); 
-            filterBar.classList.toggle('visible'); 
-            if(filterBtn) filterBtn.classList.toggle('active'); 
-            if(!filterBar.classList.contains('visible')) { 
+            
+            if (filterBar.style.display === 'flex') {
+                filterBar.style.display = 'none';
+                if(filterBtn) filterBtn.classList.remove('active'); 
                 filterType='all'; filterCategories=[]; renderLedger(); 
-            } 
+            } else {
+                filterBar.style.display = 'flex';
+                if(filterBtn) filterBtn.classList.add('active'); 
+            }
         }
 
         function renderStatsModal() {
@@ -923,7 +978,6 @@
             if(multiSelectedDates.length > 0) { countLabel.style.display = 'block'; countLabel.innerText = `${multiSelectedDates.length}개 날짜 추가됨`; } else countLabel.style.display = 'none'; 
         }
         
-        // 🌟 [FIX] 캘린더 복사 모달 요일 헤더 정상 출력되도록 복구
         function renderMultiCalendar() { 
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), f=new Date(y,m,1).getDay(), l=new Date(y,m+1,0).getDate(), g=document.getElementById('multi-cal-grid'); 
             g.innerHTML='<div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>'; 
@@ -1009,7 +1063,6 @@
         function renderCats() { 
             const g = document.getElementById('cat-grid'); g.innerHTML=''; 
             
-            // 🌟 [FIX] 이모지 제외 후 텍스트만 출력되도록 렌더링 유지
             cats[inputMode].forEach(c=>{ 
                 const isSelected = selectedCat && selectedCat.n === c.n;
                 const border = isSelected ? 'none' : 'none';
