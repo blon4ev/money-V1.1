@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v64 (Final Polish)</title>
+    <title>Budget Split Ledger v65 (Perfect Numpad & Toast)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -79,10 +79,11 @@
         .particle { position: absolute; font-size: 14px; pointer-events: none; opacity: 0; z-index: 3; }
         @keyframes floatUp { 0% { opacity: 1; transform: translate(0, 0) scale(0.5); } 100% { opacity: 0; transform: translate(var(--tx), -40px) scale(1.2); } }
 
-        .toast-wrapper { position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(15px); z-index: 4000; display: none; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; width: calc(100% - 30px); max-width: 440px;}
-        .toast-wrapper.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .retro-toast-box { background-color: var(--bg-card); border: none; padding: 12px 16px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; margin: 4px;}
-        .retro-toast-text { font-size: 15px; color: var(--text-main); font-weight: bold; line-height: 1.5; margin: 0; }
+        /* 🌟 [FIX] 토스트 메시지 팝업 정중앙 정렬 완벽 픽스 */
+        .toast-wrapper { position: absolute; bottom: 110px; left: 0; width: 100%; z-index: 4000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; transform: translateY(15px);}
+        .toast-wrapper.show { opacity: 1; transform: translateY(0); }
+        .retro-toast-box { background-color: var(--bg-card); border: none; padding: 14px 24px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; justify-content: center; margin: 4px; text-align: center;}
+        .retro-toast-text { font-size: 16px; color: var(--text-main); font-weight: bold; line-height: 1.5; margin: 0; }
 
         .control-panel-wrapper { padding: 0 15px; margin-bottom: 15px; z-index: 5; flex-shrink: 0;}
         .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; color: var(--text-main); border-bottom: 2px dashed var(--border-heavy); padding-bottom: 6px;}
@@ -136,15 +137,14 @@
         .filter-chip:active { transform: translate(2px,2px); box-shadow:none;}
         .filter-chip.active { background: var(--text-main); color: white; box-shadow: none; transform: translate(2px,2px);}
 
-        /* 🌟 [FIX] 목표 탭 카테고리 내부 패딩 완벽 조율 (15px 유지, 내부만 넓게) */
         .budget-status-card { display: flex; flex-direction: column; gap: 10px; margin: 0 15px 15px 15px; padding: 16px;}
         .budget-header { display: flex; justify-content: space-between; align-items: baseline; }
         .budget-title { font-size: 15px; color: var(--text-main); font-weight:bold;}
         .budget-remain { font-size: 26px; color: var(--text-main); font-weight:bold;}
         .budget-pct { font-size: 12px; color: var(--text-main); text-align: right; margin-top: 4px; font-weight:bold;}
         
-        .cat-budget-list { flex: 1; overflow-y: auto; padding: 10px 15px; background:white; margin: 0 15px;}
-        .cat-budget-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 10px; border-bottom: 2px dashed var(--border-light); }
+        .cat-budget-list { flex: 1; overflow-y: auto; padding: 10px 15px !important; background:white; margin: 0 15px;}
+        .cat-budget-item { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; border-bottom: 2px dashed var(--border-light); }
         .cat-budget-input { background: var(--bg-main); border: none; color: var(--text-main); padding: 8px; min-width: 80px; text-align: right; font-size: 16px; cursor: pointer; display: inline-block; box-shadow:var(--shadow-2px); margin:2px; font-weight:bold;}
 
         .stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 500; display: none; flex-direction: column; padding: calc(20px + env(safe-area-inset-top)) 15px calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
@@ -154,13 +154,13 @@
         .amt-display { text-align: right; padding: 12px 16px; font-size: 38px; color: var(--text-main); cursor: pointer; margin: 0 15px 15px 15px; font-weight:bold; background:white; flex-shrink: 0;}
         .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;}
         
-        /* 🌟 [FIX] 넘패드(키패드) 크기를 다시 시원하게 키움 (정사각형 느낌) */
+        /* 🌟 [FIX] 넘패드(키패드) 정사각형 복구 및 100% 꽉 채우기 */
         .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 15px 0 15px; background: var(--bg-main); }
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; height: 100%; width: 100%; align-items: center; justify-items: center;}
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; height: 100%; width: 100%; padding-bottom: 15px;} /* gap과 padding으로 그림자 여유 확보 */
         
-        .key { background: white; border: none; color: var(--text-main); width: 100%; height: 64px; border-radius: 0; font-size: 28px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 4px; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
+        .key { background: white; border: none; color: var(--text-main); width: 100%; aspect-ratio: 1; height: auto; border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
         .key:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;}
-        .key-done { background: var(--text-main); color: white; font-size: 22px;}
+        .key-done { background: var(--text-main); color: white; font-size: 24px;}
         .key-done:active { background: #404040;}
         
         .details-layer { display: none; flex-direction: column; flex: 1; overflow: hidden; width: 100%; margin: 0; background:var(--bg-main);}
@@ -172,16 +172,15 @@
         .memo-input { width: calc(100% - 6px); background: white; border: none; border-radius: 0; padding: 14px; color: var(--text-main); font-size: 16px; margin-bottom: 28px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 3px; flex-shrink: 0;}
         
         .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; flex-shrink: 0;}
-        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
+        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0; min-height: 46px; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
         .cat-box.selected { background: var(--text-main); color: white; box-shadow: none; transform:translate(3px,3px);}
         .cat-box.selected > div { color: white !important; }
         
         .option-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-top: 2px dashed var(--border-light); color: var(--text-main); font-size: 15px; font-weight:bold; flex-shrink: 0;}
         
-        /* 🌟 [FIX] 결제 수단 인라인 스타일 100% 제거 및 터치 영역 최적화 */
-        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 200px; box-shadow: var(--shadow-3px); margin:3px; flex-shrink: 0;}
-        .payment-btn { flex: 1; border: none; padding: 10px 4px; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; white-space: nowrap;}
-        .payment-btn.active { background: var(--text-main); color: white; }
+        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 210px; box-shadow: var(--shadow-3px); margin:3px; flex-shrink: 0; position:relative; z-index: 20;}
+        .payment-btn { flex: 1; border: none; padding: 8px 4px; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position: relative; z-index: 30; white-space: nowrap;}
+        .payment-btn.active { background: var(--text-main) !important; color: white !important; }
 
         .switch { width: 50px; height: 28px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-3px); margin: 3px;}
         .switch::after { content: ''; position: absolute; width: 18px; height: 18px; background: var(--text-main); top: 5px; left: 5px; transition: 0s; }
@@ -190,12 +189,11 @@
         .save-btn-large { width: calc(100% - 6px); height: 52px; background: var(--accent-blue); color: white; font-size: 18px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:3px;}
         .save-btn-large:active { transform: translate(4px,4px); box-shadow:none; background:#1A52B8;}
 
-        /* 🌟 [FIX] 다중 캘린더 복사창 오버플로우 막고 모달형으로 예쁘게 띄우기 */
-        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2500; display: none; align-items:center; justify-content:center; padding: 20px;}
-        .multi-picker-box { background: var(--bg-main); width: 100%; max-width: 400px; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy), 0 4px 0 0 var(--border-heavy), -4px 0 0 0 var(--border-heavy), 4px 0 0 0 var(--border-heavy); box-sizing: border-box;}
+        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2500; display: none; flex-direction: column; align-items:center; justify-content:center; padding: 20px; box-sizing: border-box;}
+        .multi-picker-box { background: var(--bg-main); width: 100%; max-width: 400px; padding: 20px; display: flex; flex-direction: column; box-shadow: var(--shadow-4px); box-sizing: border-box;}
         
-        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; background:white; padding:10px; border:none; border-radius:0; box-shadow:var(--pokemon-dialog-shadow); margin-bottom:15px; width: 100%; box-sizing: border-box;}
-        .day-pick { aspect-ratio: 1; border-radius: 0; display: flex; align-items: center; justify-content: center; color: var(--text-main); border: none; cursor: pointer; font-size: 14px; background: transparent; font-weight:bold;}
+        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; background:white; padding:12px; border:none; border-radius:0; box-shadow:var(--pokemon-dialog-shadow); margin-bottom:15px; width: 100%; box-sizing: border-box;}
+        .day-pick { aspect-ratio: 1; border-radius: 0; display: flex; align-items: center; justify-content: center; color: var(--text-main); border: none; cursor: pointer; font-size: 14px; background: var(--bg-main); font-weight:bold; margin: 2px;}
         .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 0 0 0 2px var(--border-heavy); }
 
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
@@ -222,7 +220,7 @@
     <div class="liquid-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     
     <div id="battle-toast" class="toast-wrapper">
-        <div class="retro-dialog-box" style="width:100%; max-width:355px;">
+        <div class="retro-dialog-box" style="margin: 0;">
             <p id="battle-toast-msg" class="retro-toast-text">메시지</p>
         </div>
     </div>
@@ -583,7 +581,7 @@
             const toastWrapper = document.getElementById('battle-toast');
             const msgEl = document.getElementById('battle-toast-msg');
             msgEl.innerHTML = msg;
-            toastWrapper.style.display = 'block';
+            toastWrapper.style.display = 'flex';
             void toastWrapper.offsetWidth; 
             toastWrapper.classList.add('show');
             
@@ -711,7 +709,6 @@
             }
         }
 
-        // 🌟 [FIX] 결제 수단 클릭 로직 (정상 작동)
         function setPaymentMethod(m) {
             inputPaymentMethod = m;
             document.getElementById('pay-card').classList.remove('active'); 
@@ -975,7 +972,6 @@
             if(multiSelectedDates.length > 0) { countLabel.style.display = 'block'; countLabel.innerText = `${multiSelectedDates.length}개 날짜 추가됨`; } else countLabel.style.display = 'none'; 
         }
         
-        // 🌟 [FIX] 다중 선택 캘린더 동일한 로직 렌더링
         function renderMultiCalendar() { 
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), f=new Date(y,m,1).getDay(), l=new Date(y,m+1,0).getDate(), g=document.getElementById('multi-cal-grid'); 
             g.innerHTML='<div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>'; 
@@ -1078,7 +1074,7 @@
             if(item.dutch && item.dutch.active) {
                 document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${effAmt.toLocaleString()}원`; document.getElementById('det-amt-sub').innerText = `(총 결제: ${item.amt.toLocaleString()}원)`; document.getElementById('det-amt-sub').style.display = 'block';
                 let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow); margin:4px;"><div style="font-size:14px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
-                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:3px dashed var(--border-heavy);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:18px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:28px; height:28px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:18px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
+                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:3px dashed var(--border-light);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:18px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:28px; height:28px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:18px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
                 dHtml += `</div>`; document.getElementById('det-dutch-area').innerHTML = dHtml;
             } else { document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${item.amt.toLocaleString()}원`; document.getElementById('det-amt-sub').style.display = 'none'; document.getElementById('det-dutch-area').innerHTML = ''; }
             document.getElementById('det-amt').style.color = item.type==='in'?'var(--accent-green)':'var(--text-main)'; document.getElementById('det-cat').innerText = item.cat; document.getElementById('det-cat').style.background = c.bg; document.getElementById('det-cat').style.color = c.text; document.getElementById('det-date').innerText = formatDateWithDay(item.date); document.getElementById('det-memo').innerText = item.memo || '메모 없음';
