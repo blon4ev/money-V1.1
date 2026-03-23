@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v59 (Numpad Fixed)</title>
+    <title>Budget Split Ledger v59 (Input Layout Fixed)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -25,7 +25,6 @@
             --bg-card: #FFFFFF; 
             --bg-main: #E0E0E0; 
             
-            /* 🌟 완벽한 계단형 도트 섀도우 */
             --shadow-4px: 0 -4px 0 0 var(--border-heavy), 0 4px 0 0 var(--border-heavy), -4px 0 0 0 var(--border-heavy), 4px 0 0 0 var(--border-heavy);
             --shadow-3px: 0 -3px 0 0 var(--border-heavy), 0 3px 0 0 var(--border-heavy), -3px 0 0 0 var(--border-heavy), 3px 0 0 0 var(--border-heavy);
             --shadow-2px: 0 -2px 0 0 var(--border-heavy), 0 2px 0 0 var(--border-heavy), -2px 0 0 0 var(--border-heavy), 2px 0 0 0 var(--border-heavy);
@@ -39,7 +38,6 @@
         button, input, textarea { font-family: 'NeoDunggeunmo', sans-serif; letter-spacing: 1px; box-sizing: border-box; }
         div { box-sizing: border-box; }
 
-        /* 좌우 테두리 삭제 */
         .iphone-frame { width: 100%; max-width: 480px; height: 100dvh; background: var(--bg-main); position: relative; z-index: 10; overflow: hidden;}
         
         .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding-top: calc(10px + env(safe-area-inset-top)); padding-bottom: calc(85px + env(safe-area-inset-bottom)); z-index: 5; background: var(--bg-main); overflow-x: hidden; overflow-y: hidden;}
@@ -105,11 +103,10 @@
         .list-icon { font-size: 26px; }
         .list-details { display: flex; flex-direction: column; gap: 6px; overflow: hidden; align-items: flex-start;}
         
-        .cat-badge { display: inline-flex; align-items: center; padding: 3px 6px; font-size: 12px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white;}
+        .cat-badge { display: inline-flex; align-items: center; padding: 4px 8px; font-size: 12px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white;}
         .list-memo { font-size: 15px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight:bold; margin-top:2px;}
         .list-amt { font-size: 18px; font-weight: bold; white-space: nowrap; margin-left:10px;}
 
-        /* 가계부 요약 영역 */
         .compact-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 0 20px 12px 20px; padding: 10px 12px !important; flex-shrink: 0;}
         .sum-item { display: flex; flex-direction: column; align-items: center; }
         .sum-label { font-size: 13px; color: var(--text-dim); margin-bottom: 2px; font-weight:bold;}
@@ -127,7 +124,6 @@
         .fab { position: absolute; bottom: calc(85px + env(safe-area-inset-bottom)); right: 20px; width: 56px; height: 56px; border-radius: 0; background: var(--bg-card); border: none; color: var(--text-main); font-size: 36px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-4px); margin: 4px;}
         .fab:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;} 
 
-        /* 필터 바 */
         .filter-bar { overflow-x: auto; white-space: nowrap; margin-bottom: 12px; padding: 0 20px 4px 20px; align-items: center; display: flex; flex-shrink: 0;}
         .filter-segment-container { display: flex; background: var(--bg-main); padding: 3px; border-radius: 0; gap: 2px; flex-shrink: 0; height: 34px; box-sizing: border-box; align-items: center; border: none; box-shadow: var(--shadow-2px); margin: 2px; margin-right:8px;}
         .filter-segment-btn { height: 100%; display: flex; align-items: center; justify-content: center; border: none; padding: 0 10px; margin: 0; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;}
@@ -138,59 +134,57 @@
         .filter-chip:active { transform: translate(2px,2px); box-shadow:none;}
         .filter-chip.active { background: var(--text-main); color: white; box-shadow: none; transform: translate(2px,2px);}
 
-        /* 🌟 [FIX] 입력 창 금액 표시 & 키패드 컨테이너 최적화 */
-        .amt-display { text-align: right; padding: 15px 20px; font-size: 42px; color: var(--text-main); cursor: pointer; margin-bottom: 15px; font-weight:bold; background:white; }
-        .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%;}
+        /* 🌟 [FIX] 입력 모달 스크롤 겹침 완전 방지 */
+        .amt-display { text-align: right; padding: 15px 20px; font-size: 42px; color: var(--text-main); cursor: pointer; margin-bottom: 15px; font-weight:bold; background:white; flex-shrink: 0;}
+        .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;}
         
-        /* 🌟 [FIX] 키패드 레이어를 꽉 차게 만들고 gap으로 그림자 영역 해결 */
-        .keypad-layer { position: absolute; left: 0; bottom: 0; width: 100%; z-index: 50; background: var(--bg-main); padding-top: 10px; }
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-right: 4px; padding-bottom: 4px; }
+        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 10px 0 10px; background: var(--bg-main); }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; height: 100%;}
         
-        .key { background: white; border: none; color: var(--text-main); height: 75px; border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center;}
+        .key { background: white; border: none; color: var(--text-main); border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0 4px 8px 4px; display:flex; align-items:center; justify-content:center;}
         .key:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;}
         .key-done { background: var(--text-main); color: white; font-size: 24px;}
         .key-done:active { background: #404040;}
         
-        .details-layer { display: none; flex-direction: column; flex: 1; overflow-y: auto; overflow-x:hidden; padding-bottom: 20px; }
+        /* 🌟 [FIX] 입력 디테일 스크롤 및 겹침 방지 (flex-shrink: 0 적극 활용) */
+        .details-layer { display: none; flex-direction: column; flex: 1; overflow-y: auto; overflow-x:hidden; padding-bottom: 30px; width: 100%; margin: 0; }
         .details-layer.visible { display: flex; }
         
-        .memo-input { width: calc(100% - 6px); background: white; border: none; padding: 16px; color: var(--text-main); font-size: 18px; margin-bottom: 20px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 3px;}
+        .memo-input { width: calc(100% - 8px); background: white; border: none; border-radius: 0; padding: 16px; color: var(--text-main); font-size: 18px; margin-bottom: 20px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 4px; flex-shrink: 0;}
         
-        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-        .cat-box { display: flex; flex-direction: column; align-items: center; padding: 16px 0; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
+        /* 🌟 [FIX] 카테고리 박스에서 이모지 삭제, 가로 3칸 그리드로 다이어트 */
+        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; flex-shrink: 0; padding: 0 4px;}
+        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 0; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
         .cat-box.selected { background: var(--text-main); color: white; box-shadow: none; transform:translate(3px,3px);}
-        .cat-box.selected > div { color: white !important; }
         
-        .option-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 4px; border-top: 3px dashed var(--border-light); color: var(--text-main); font-size: 18px; font-weight:bold;}
+        .option-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 8px; border-top: 3px dashed var(--border-light); color: var(--text-main); font-size: 16px; font-weight:bold; flex-shrink: 0;}
         
-        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 220px; box-shadow: var(--shadow-2px); margin:2px;}
-        .payment-btn { flex: 1; border: none; padding: 12px 4px; font-size: 16px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;}
+        /* 터치 버그 픽스를 위해 payment-btn에 position relative 추가 */
+        .payment-toggle { display: flex; background: var(--bg-main); border: none; width: 200px; box-shadow: var(--shadow-2px); margin:2px; flex-shrink: 0;}
+        .payment-btn { flex: 1; border: none; padding: 12px 4px; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold; position:relative; z-index:10;}
         .payment-btn.active { background: var(--text-main); color: white; }
 
         .switch { width: 56px; height: 32px; background: white; position: relative; cursor: pointer; border: none; box-shadow: var(--shadow-2px); margin: 2px;}
         .switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--text-main); top: 6px; left: 6px; transition: 0s; }
         .switch.on::after { left: 30px; background: var(--accent-green);}
 
-        .save-btn-large { width: calc(100% - 8px); height: 70px; margin-top: 20px; background: var(--accent-blue); color: white; font-size: 24px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:4px;}
+        .save-btn-large { width: calc(100% - 8px); height: 70px; margin-top: 20px; background: var(--accent-blue); color: white; font-size: 24px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:4px; flex-shrink: 0;}
         .save-btn-large:active { transform: translate(4px,4px); box-shadow:none; background:#1A52B8;}
 
-        /* 모달 및 시트 */
         .add-cat-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; flex-direction: column; justify-content: flex-end; }
         .add-cat-sheet { background: var(--bg-main); padding: 30px 24px calc(30px + env(safe-area-inset-bottom)); box-shadow: 0 -4px 0 0 var(--border-heavy);}
         .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 20px 0; max-height: 250px; overflow-y: auto; }
         .emoji-item { font-size: 36px; text-align: center; padding: 12px; cursor: pointer; background: white; border: none; box-shadow: var(--shadow-3px); margin:3px;}
         .emoji-item.selected { background: var(--text-main); color:white; box-shadow: none; transform: translate(3px,3px); }
 
-        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; border: none; box-shadow: var(--shadow-4px); margin:4px;}
+        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 20px; background:white; padding:15px; border:none; border-radius:0; box-shadow:var(--pokemon-dialog-shadow); margin-bottom:4px;}
         
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
-        .action-sheet { width: 100%; max-width: 480px; background: var(--bg-main); padding-bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy);}
+        .action-sheet { width: calc(100% - 8px); margin: 0 4px; max-width: 480px; background: var(--bg-main); border-radius: 0; padding-bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy);}
         .sheet-btn { width: 100%; padding: 24px; background: white; border: none; color: var(--text-main); font-size: 20px; border-bottom: 4px solid var(--border-heavy); cursor: pointer; font-weight: bold;}
         .sheet-btn.danger { color: var(--accent-red); }
-        
-        .round-btn { background: var(--bg-card); border: none; width: 44px; height: 44px; color: var(--text-main); font-size: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px; font-weight:bold;}
-        .round-btn:active { transform: translate(3px, 3px); box-shadow: none; background:#E0E0E0;}
-        
+
         .stats-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 500; display: none; flex-direction: column; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); overflow-y: auto; }
         .stats-modal.active { display: flex; }
     </style>
@@ -278,7 +272,7 @@
 
             <div class="compact-summary retro-dialog-box">
                 <div class="sum-item"><div class="sum-label">수입</div><div class="sum-val" id="sum-in" style="color:var(--accent-green);">0원</div></div>
-                <div class="sum-item"><div class="sum-label">지출</div><div class="sum-val" id="sum-ex" style="color:var(--accent-red);">0원</div></div>
+                <div class="sum-item"><div class="sum-label" style="margin-left:auto; margin-right:auto;">지출</div><div class="sum-val" id="sum-ex" style="color:var(--accent-red);">0원</div></div>
             </div>
 
             <div class="calendar-grid retro-dialog-box" id="cal-grid"></div>
@@ -336,10 +330,10 @@
                 <div style="font-size:20px; color:var(--text-main); font-weight:bold;" id="budget-numpad-title">예산 입력</div>
                 <div style="width:60px;"></div>
             </div>
-            <div class="amt-display retro-dialog-box" id="budget-amt-display" style="margin-top:20px; padding:15px;">0원</div>
+            <div class="amt-display retro-dialog-box" id="budget-amt-display" style="margin-top:20px; font-size:40px; padding:15px;">0원</div>
             <div class="input-content-wrapper">
-                <div class="keypad-layer" style="display:block;">
-                    <div class="keypad-grid">
+                <div class="keypad-layer" style="display:flex; flex-direction:column;">
+                    <div class="keypad-grid" style="flex:1;">
                         <button class="key" onclick="pressBudgetNum(1)">1</button><button class="key" onclick="pressBudgetNum(2)">2</button><button class="key" onclick="pressBudgetNum(3)">3</button>
                         <button class="key" onclick="pressBudgetNum(4)">4</button><button class="key" onclick="pressBudgetNum(5)">5</button><button class="key" onclick="pressBudgetNum(6)">6</button>
                         <button class="key" onclick="pressBudgetNum(7)">7</button><button class="key" onclick="pressBudgetNum(8)">8</button><button class="key" onclick="pressBudgetNum(9)">9</button>
@@ -354,18 +348,19 @@
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <button class="action-btn" style="width:auto; padding:0 12px; font-size:15px;" onclick="closeInputScreen()">취소</button>
                 
-                <div style="background:var(--bg-main); display:flex; padding:3px; width:140px; border:none; box-shadow: var(--shadow-3px); margin:3px;">
+                <div style="background:var(--bg-main); display:flex; padding:3px; width:140px; border:none; box-shadow: var(--shadow-3px); margin:3px; flex-shrink:0;">
                     <button id="seg-ex" style="flex:1; border:none; background:var(--text-main); color:white; padding:8px; font-size:15px; font-weight:bold; border-radius:0;" onclick="setInputMode('ex')">지출</button>
                     <button id="seg-in" style="flex:1; border:none; background:transparent; color:var(--text-main); padding:8px; font-size:15px;" onclick="setInputMode('in')">수입</button>
                 </div>
                 <div style="width:60px;"></div>
             </div>
             
-            <div class="amt-display retro-dialog-box" id="amt-display" onclick="focusAmount()" style="margin-top:20px; padding:15px;">0원</div>
+            <div class="amt-display retro-dialog-box" id="amt-display" onclick="focusAmount()" style="margin-top:20px; font-size:40px; padding:15px; flex-shrink:0;">0원</div>
             
             <div class="input-content-wrapper">
-                <div class="keypad-layer" id="keypad-layer">
-                    <div class="keypad-grid">
+                
+                <div class="keypad-layer" id="keypad-layer" style="display:flex; flex-direction:column; padding-top:10px;">
+                    <div class="keypad-grid" style="flex:1;">
                         <button class="key" onclick="pressNum(1)">1</button><button class="key" onclick="pressNum(2)">2</button><button class="key" onclick="pressNum(3)">3</button>
                         <button class="key" onclick="pressNum(4)">4</button><button class="key" onclick="pressNum(5)">5</button><button class="key" onclick="pressNum(6)">6</button>
                         <button class="key" onclick="pressNum(7)">7</button><button class="key" onclick="pressNum(8)">8</button><button class="key" onclick="pressNum(9)">9</button>
@@ -421,7 +416,7 @@
 
         <div id="screen-detail" class="screen">
             <button class="action-btn" style="width:auto; padding:0 15px; font-size:15px; align-self:flex-start; margin-left:20px;" onclick="showScreen('screen-ledger')">뒤로</button>
-            <div class="retro-dialog-box" style="text-align:center; margin:20px; padding:40px 20px;">
+            <div class="retro-dialog-box" style="text-align:center; margin:20px; padding:30px 20px;">
                 <div id="det-icon" style="font-size:56px; margin-bottom:12px;">💸</div>
                 <div id="det-amt" style="font-size:40px; color:var(--text-main); margin:10px 0 0 0; font-weight:bold;">0원</div>
                 <div id="det-amt-sub" style="font-size:14px; color:var(--text-dim); margin-bottom:10px; display:none;">(총 결제: 0원)</div>
@@ -696,9 +691,9 @@
             const hasTodayRecord = db.some(x => x.date === getTodayDateStr());
             
             let html = '';
-            if (!hasTodayRecord) html += `<button class="retro-btn" onclick="openInputScreen()" style="background:var(--text-main); color:white; width:calc(100% - 6px); height:50px; font-size:18px; margin: 3px 3px 15px 3px;">+ 오늘 지출 등록하기</button>`;
+            if (!hasTodayRecord) html += `<button class="retro-btn" onclick="openInputScreen()" style="background:var(--text-main); color:white; width:calc(100% - 6px); height:54px; font-size:18px; margin: 3px 3px 15px 3px; font-weight:bold;">+ 오늘 지출 등록하기</button>`;
             
-            if(weeklyItems.length === 0) html += '<div style="text-align:center; color:var(--text-dim); margin-top:30px; font-size:15px;">이번 주 내역이 없습니다.</div>';
+            if(weeklyItems.length === 0) html += '<div style="text-align:center; color:var(--text-dim); margin-top:30px; font-size:16px;">이번 주 내역이 없습니다.</div>';
             else {
                 weeklyItems.forEach(x => {
                     const c = getCatColor(x.cat);
@@ -709,10 +704,10 @@
                     html += `
                         <div class="list-item" onclick="showItemDetail(${x.id})">
                             <div class="list-left">
-                                <div class="list-icon">${x.icon}</div>
+                                <div class="list-icon" style="font-size:32px;">${x.icon}</div>
                                 <div class="list-details">
-                                    <div class="cat-badge" style="background:${c.bg}; color:${c.text};">${x.cat}${iconStr}</div>
-                                    <div class="list-sub">${formatDateWithDay(x.date)}</div>
+                                    <div class="cat-badge" style="background:${c.bg};">${x.cat}${iconStr}</div>
+                                    <div class="list-memo">${x.memo || '메모 없음'}</div>
                                 </div>
                             </div>
                             <div class="list-amt" style="color:${x.type==='in'?'var(--accent-green)':'var(--text-main)'};">${x.type==='in'?'+':'-'} ${effAmt.toLocaleString()}원</div>
@@ -828,9 +823,9 @@
                 list.innerHTML += `
                     <div class="list-item" onclick="showItemDetail(${x.id})">
                         <div class="list-left">
-                            <div class="list-icon">${x.icon}</div>
+                            <div class="list-icon" style="font-size:32px;">${x.icon}</div>
                             <div class="list-details">
-                                <div class="cat-badge" style="background:${c.bg}; color:${c.text};">${x.cat}${iconStr}</div>
+                                <div class="cat-badge" style="background:${c.bg};">${x.cat}${iconStr}</div>
                                 <div class="list-memo">${x.memo || '메모 없음'}</div>
                             </div>
                         </div>
@@ -918,9 +913,26 @@
             updateBattleMessage('예산 설정이<br>저장되었습니다!');
         }
 
-        function openMultiPicker() { document.getElementById('multi-picker').style.display = 'flex'; renderMultiCalendar(); }
-        function closeMultiPicker() { document.getElementById('multi-picker').style.display = 'none'; const countLabel = document.getElementById('multi-date-count'); if(multiSelectedDates.length > 0) { countLabel.style.display = 'block'; countLabel.innerText = `${multiSelectedDates.length}개 날짜 추가됨`; } else countLabel.style.display = 'none'; }
-        function renderMultiCalendar() { const y=viewDate.getFullYear(), m=viewDate.getMonth(), f=new Date(y,m,1).getDay(), l=new Date(y,m+1,0).getDate(), g=document.getElementById('multi-cal-grid'); g.innerHTML=''; for(let i=0; i<f; i++) g.innerHTML+='<div></div>'; for(let d=1; d<=l; d++) { const dStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; g.innerHTML+=`<div class="day-pick ${multiSelectedDates.includes(dStr)?'picked':''}" onclick="toggleMultiDate('${dStr}')">${d}</div>`; } }
+        function openMultiPicker() { 
+            document.getElementById('multi-picker').style.display = 'flex'; 
+            renderMultiCalendar(); 
+        }
+        function closeMultiPicker() { 
+            document.getElementById('multi-picker').style.display = 'none'; 
+            const countLabel = document.getElementById('multi-date-count'); 
+            if(multiSelectedDates.length > 0) { countLabel.style.display = 'block'; countLabel.innerText = `${multiSelectedDates.length}개 날짜 추가됨`; } else countLabel.style.display = 'none'; 
+        }
+        
+        // 🌟 [FIX] 캘린더 복사 모달 요일 헤더 정상 출력되도록 복구
+        function renderMultiCalendar() { 
+            const y=viewDate.getFullYear(), m=viewDate.getMonth(), f=new Date(y,m,1).getDay(), l=new Date(y,m+1,0).getDate(), g=document.getElementById('multi-cal-grid'); 
+            g.innerHTML='<div class="weekday">일</div><div class="weekday">월</div><div class="weekday">화</div><div class="weekday">수</div><div class="weekday">목</div><div class="weekday">금</div><div class="weekday">토</div>'; 
+            for(let i=0; i<f; i++) g.innerHTML+='<div></div>'; 
+            for(let d=1; d<=l; d++) { 
+                const dStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; 
+                g.innerHTML+=`<div class="day-pick ${multiSelectedDates.includes(dStr)?'picked':''}" onclick="toggleMultiDate('${dStr}')">${d}</div>`; 
+            } 
+        }
         function toggleMultiDate(d) { if(multiSelectedDates.includes(d)) multiSelectedDates = multiSelectedDates.filter(x=>x!==d); else multiSelectedDates.push(d); renderMultiCalendar(); }
 
         function executeSave() {
@@ -980,7 +992,7 @@
         }
         
         function closeInputScreen() { if(document.getElementById('tab-tama').classList.contains('active')) showScreen('screen-tama'); else if(document.getElementById('tab-ledger').classList.contains('active')) showScreen('screen-ledger'); else showScreen('screen-goal'); }
-        function focusAmount() { document.getElementById('keypad-layer').style.display = 'block'; document.getElementById('details-layer').style.display = 'none'; }
+        function focusAmount() { document.getElementById('keypad-layer').style.display = 'flex'; document.getElementById('details-layer').style.display = 'none'; }
         function blurAmount() { if(inputAmt === '0') return; document.getElementById('keypad-layer').style.display = 'none'; document.getElementById('details-layer').style.display = 'flex'; }
         function pressNum(n) { if(n === 'C') inputAmt = '0'; else inputAmt = inputAmt==='0'?String(n):(inputAmt.length<10?inputAmt+String(n):inputAmt); document.getElementById('amt-display').innerText = Number(inputAmt).toLocaleString() + '원'; }
         
@@ -996,6 +1008,8 @@
         
         function renderCats() { 
             const g = document.getElementById('cat-grid'); g.innerHTML=''; 
+            
+            // 🌟 [FIX] 이모지 제외 후 텍스트만 출력되도록 렌더링 유지
             cats[inputMode].forEach(c=>{ 
                 const isSelected = selectedCat && selectedCat.n === c.n;
                 const border = isSelected ? 'none' : 'none';
@@ -1003,9 +1017,9 @@
                 const color = isSelected ? 'white' : 'var(--text-main)';
                 const transform = isSelected ? 'translate(3px,3px)' : 'none';
                 const shadow = isSelected ? 'none' : 'var(--shadow-3px)';
-                g.innerHTML+=`<div class="cat-box" style="border:${border}; background:${bg}; transform:${transform}; box-shadow:${shadow};" onclick="selectCat('${c.n}', '${c.i}')"><div style="font-size:36px; margin-bottom:4px;">${c.i}</div><div style="font-size:16px; font-weight:bold; color:${color};">${c.n}</div></div>`; 
+                g.innerHTML+=`<div class="cat-box" style="border:${border}; background:${bg}; transform:${transform}; box-shadow:${shadow};" onclick="selectCat('${c.n}', '${c.i}')"><div style="font-size:16px; font-weight:bold; color:${color}; padding: 12px 0;">${c.n}</div></div>`; 
             }); 
-            g.innerHTML += `<div class="cat-box" style="border:none; background:transparent; box-shadow:var(--shadow-3px);" onclick="openAddCat()"><div style="font-size:36px; margin-bottom:4px; color:var(--text-dim);">+</div><div style="font-size:16px; font-weight:bold; color:var(--text-dim);">추가</div></div>`;
+            g.innerHTML += `<div class="cat-box" style="border:none; background:transparent; box-shadow:var(--shadow-3px);" onclick="openAddCat()"><div style="font-size:16px; font-weight:bold; color:var(--text-dim); padding: 12px 0;">+ 추가</div></div>`;
         }
         function selectCat(n, i) { selectedCat = {n, i}; renderCats(); }
 
@@ -1014,8 +1028,8 @@
             document.getElementById('det-icon').innerText = item.icon;
             if(item.dutch && item.dutch.active) {
                 document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${effAmt.toLocaleString()}원`; document.getElementById('det-amt-sub').innerText = `(총 결제: ${item.amt.toLocaleString()}원)`; document.getElementById('det-amt-sub').style.display = 'block';
-                let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow);"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
-                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:4px dotted var(--border-light);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
+                let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow); margin:4px;"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
+                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:4px dotted var(--border-heavy);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
                 dHtml += `</div>`; document.getElementById('det-dutch-area').innerHTML = dHtml;
             } else { document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${item.amt.toLocaleString()}원`; document.getElementById('det-amt-sub').style.display = 'none'; document.getElementById('det-dutch-area').innerHTML = ''; }
             document.getElementById('det-amt').style.color = item.type==='in'?'var(--accent-green)':'var(--text-main)'; document.getElementById('det-cat').innerText = item.cat; document.getElementById('det-cat').style.background = c.bg; document.getElementById('det-cat').style.color = c.text; document.getElementById('det-date').innerText = formatDateWithDay(item.date); document.getElementById('det-memo').innerText = item.memo || '메모 없음';
