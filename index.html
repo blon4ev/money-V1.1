@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v65 (Perfect Numpad & Toast)</title>
+    <title>Budget Split Ledger v66 (Perfect Numpad & Single-line Toast)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -79,11 +79,11 @@
         .particle { position: absolute; font-size: 14px; pointer-events: none; opacity: 0; z-index: 3; }
         @keyframes floatUp { 0% { opacity: 1; transform: translate(0, 0) scale(0.5); } 100% { opacity: 0; transform: translate(var(--tx), -40px) scale(1.2); } }
 
-        /* 🌟 [FIX] 토스트 메시지 팝업 정중앙 정렬 완벽 픽스 */
+        /* 🌟 [FIX] 토스트 메시지 한 줄로 두껍게 디자인 */
         .toast-wrapper { position: absolute; bottom: 110px; left: 0; width: 100%; z-index: 4000; display: none; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease, transform 0.2s ease; pointer-events: none; transform: translateY(15px);}
         .toast-wrapper.show { opacity: 1; transform: translateY(0); }
-        .retro-toast-box { background-color: var(--bg-card); border: none; padding: 14px 24px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; justify-content: center; margin: 4px; text-align: center;}
-        .retro-toast-text { font-size: 16px; color: var(--text-main); font-weight: bold; line-height: 1.5; margin: 0; }
+        .retro-toast-box { background-color: var(--bg-card); border: none; padding: 18px 24px; box-shadow: var(--pokemon-dialog-shadow); display: flex; align-items: center; justify-content: center; margin: 4px; text-align: center; white-space: nowrap;}
+        .retro-toast-text { font-size: 16px; color: var(--text-main); font-weight: bold; margin: 0; }
 
         .control-panel-wrapper { padding: 0 15px; margin-bottom: 15px; z-index: 5; flex-shrink: 0;}
         .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; color: var(--text-main); border-bottom: 2px dashed var(--border-heavy); padding-bottom: 6px;}
@@ -154,11 +154,10 @@
         .amt-display { text-align: right; padding: 12px 16px; font-size: 38px; color: var(--text-main); cursor: pointer; margin: 0 15px 15px 15px; font-weight:bold; background:white; flex-shrink: 0;}
         .input-content-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;}
         
-        /* 🌟 [FIX] 넘패드(키패드) 정사각형 복구 및 100% 꽉 채우기 */
-        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 15px 0 15px; background: var(--bg-main); }
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; height: 100%; width: 100%; padding-bottom: 15px;} /* gap과 padding으로 그림자 여유 확보 */
-        
-        .key { background: white; border: none; color: var(--text-main); width: 100%; aspect-ratio: 1; height: auto; border-radius: 0; font-size: 32px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
+        /* 🌟 [FIX] 넘패드를 화면 가득 차게 반응형 높이로 조절 (grid-template-rows 1fr) */
+        .keypad-layer { display: flex; flex-direction: column; flex: 1; padding: 10px 15px 15px 15px; background: var(--bg-main); overflow: hidden;}
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 14px; height: 100%; width: 100%; }
+        .key { background: white; border: none; color: var(--text-main); width: 100%; height: 100%; border-radius: 0; font-size: 30px; cursor: pointer; box-shadow: var(--shadow-4px); font-weight: bold; margin: 0; display:flex; align-items:center; justify-content:center; box-sizing:border-box;}
         .key:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;}
         .key-done { background: var(--text-main); color: white; font-size: 24px;}
         .key-done:active { background: #404040;}
@@ -172,7 +171,7 @@
         .memo-input { width: calc(100% - 6px); background: white; border: none; border-radius: 0; padding: 14px; color: var(--text-main); font-size: 16px; margin-bottom: 28px; outline: none; resize: none; font-weight:bold; box-shadow: inset 4px 4px 0 #F0F0F0, var(--shadow-3px); margin: 3px; flex-shrink: 0;}
         
         .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; flex-shrink: 0;}
-        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 0; min-height: 46px; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
+        .cat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 0; min-height: 46px; background: white; border: none; cursor: pointer; box-shadow: var(--shadow-3px); margin:3px;}
         .cat-box.selected { background: var(--text-main); color: white; box-shadow: none; transform:translate(3px,3px);}
         .cat-box.selected > div { color: white !important; }
         
@@ -189,12 +188,11 @@
         .save-btn-large { width: calc(100% - 6px); height: 52px; background: var(--accent-blue); color: white; font-size: 18px; font-weight:bold; border:none; box-shadow: var(--shadow-4px); margin:3px;}
         .save-btn-large:active { transform: translate(4px,4px); box-shadow:none; background:#1A52B8;}
 
-        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2500; display: none; flex-direction: column; align-items:center; justify-content:center; padding: 20px; box-sizing: border-box;}
-        .multi-picker-box { background: var(--bg-main); width: 100%; max-width: 400px; padding: 20px; display: flex; flex-direction: column; box-shadow: var(--shadow-4px); box-sizing: border-box;}
-        
-        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; background:white; padding:12px; border:none; border-radius:0; box-shadow:var(--pokemon-dialog-shadow); margin-bottom:15px; width: 100%; box-sizing: border-box;}
-        .day-pick { aspect-ratio: 1; border-radius: 0; display: flex; align-items: center; justify-content: center; color: var(--text-main); border: none; cursor: pointer; font-size: 14px; background: var(--bg-main); font-weight:bold; margin: 2px;}
-        .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 0 0 0 2px var(--border-heavy); }
+        /* 🌟 [FIX] 날짜 복사 모달을 v64의 꽉 찬 뷰로 롤백 */
+        .multi-picker-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); z-index: 2500; display: none; flex-direction: column; padding: calc(30px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; border: none;}
+        .multi-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; background:white; padding:12px 10px; border:none; border-radius:0; box-shadow:var(--pokemon-dialog-shadow); margin-bottom:4px; width: 100%; box-sizing: border-box;}
+        .day-pick { aspect-ratio: 1; border-radius: 0; display: flex; align-items: center; justify-content: center; color: var(--text-main); border: none; cursor: pointer; font-size: 14px; background: var(--bg-main); box-shadow:var(--shadow-3px); margin:3px; font-weight:bold;}
+        .day-pick.picked { background: var(--accent-red); color: white; box-shadow: inset 4px 4px 0 rgba(0,0,0,0.3); margin: 0px; transform: translate(3px,3px);}
 
         .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; align-items: flex-end; justify-content: center; }
         .action-sheet { width: calc(100% - 8px); margin: 0 4px; max-width: 480px; background: var(--bg-main); border-radius: 0; padding-bottom: env(safe-area-inset-bottom); display: flex; flex-direction: column; box-shadow: 0 -4px 0 0 var(--border-heavy);}
@@ -220,7 +218,7 @@
     <div class="liquid-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     
     <div id="battle-toast" class="toast-wrapper">
-        <div class="retro-dialog-box" style="margin: 0;">
+        <div class="retro-toast-box">
             <p id="battle-toast-msg" class="retro-toast-text">메시지</p>
         </div>
     </div>
@@ -481,13 +479,11 @@
         </div>
 
         <div class="multi-picker-overlay" id="multi-picker">
-            <div class="multi-picker-box">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h2 style="color:var(--text-main); margin:0; font-size:20px;">날짜 선택</h2>
-                </div>
-                <div class="multi-calendar-grid" id="multi-cal-grid"></div>
-                <button class="retro-btn save-btn-large" style="background:var(--accent-blue); color:white; margin:10px 0 0 0;" onclick="closeMultiPicker()">선택 완료</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; width: 100%;">
+                <h2 style="color:var(--text-main); margin:0; font-size:22px;">날짜 선택</h2>
+                <button class="retro-btn" style="padding:8px 16px; font-size:15px; background:#404040; color:white;" onclick="closeMultiPicker()">완료</button>
             </div>
+            <div class="multi-calendar-grid retro-dialog-box" id="multi-cal-grid" style="margin:0; padding:12px; width: 100%; box-sizing: border-box;"></div>
         </div>
 
         <div class="modal-overlay" id="modal-overlay">
@@ -592,6 +588,7 @@
             }, 2500); 
         }
 
+        // 🌟 [FIX] 토스트에서 줄바꿈 <br> 태그 모두 제거
         function checkDailyCandy() {
             const today = getTodayDateStr();
             if (tamaState.lastLoginDate !== today) {
@@ -599,7 +596,7 @@
                 tamaState.lastLoginDate = today;
                 saveTamaState();
                 setTimeout(() => {
-                    updateBattleMessage("일일 접속 보상으로<br>사탕 5개를 받았다!");
+                    updateBattleMessage("일일 접속 보상으로 사탕 5개를 받았다!");
                 }, 500); 
             }
         }
@@ -627,20 +624,20 @@
                 else { tamaState.basePokemonId = basePool[Math.floor(Math.random() * basePool.length)]; }
                 tamaState.currentPokemonId = tamaState.basePokemonId;
                 evolved = true;
-                msg = `오앗!?<br>알에서 포켓몬이 부화했다!`;
+                msg = `오앗!? 알에서 포켓몬이 부화했다!`;
             } 
             else if (tamaState.level === 1 && tamaState.xp >= 100) {
                 tamaState.level = 2;
                 if(tamaState.basePokemonId === 133) { const eeveelutions = [134, 135, 136]; tamaState.currentPokemonId = eeveelutions[Math.floor(Math.random() * eeveelutions.length)]; } 
                 else if (evoMap[tamaState.basePokemonId]) { tamaState.currentPokemonId = evoMap[tamaState.basePokemonId][0]; }
                 evolved = true;
-                msg = `어라!?<br>포켓몬의 모습이...!`;
+                msg = `어라!? 포켓몬의 모습이...!`;
             } 
             else if (tamaState.level === 2 && tamaState.xp >= 300) {
                 tamaState.level = 3;
                 if(tamaState.basePokemonId !== 133 && evoMap[tamaState.basePokemonId]) { tamaState.currentPokemonId = evoMap[tamaState.basePokemonId][1]; }
                 evolved = true;
-                msg = `어라!?<br>포켓몬의 모습이...!`;
+                msg = `어라!? 포켓몬의 모습이...!`;
             }
 
             if (evolved) {
@@ -654,11 +651,11 @@
 
         function feedCandy() {
             if (tamaState.candies <= 0) return;
-            if (tamaState.level === 3) { updateBattleMessage("이미 최종 진화<br>단계입니다!"); return; }
+            if (tamaState.level === 3) { updateBattleMessage("이미 최종 진화 단계입니다!"); return; }
             tamaState.candies--;
             tamaState.xp += 10;
             
-            updateBattleMessage(`${tamaState.name}에게<br>이상한 사탕을 먹였다!`);
+            updateBattleMessage(`${tamaState.name}에게 이상한 사탕을 먹였다!`);
 
             const imgElement = document.getElementById(tamaState.level === 0 ? 'pokemon-egg' : 'pokemon-img');
             imgElement.classList.add('jump-anim');
@@ -681,7 +678,7 @@
         }
 
         function buyNewEgg() {
-            if (tamaState.candies < 10) { updateBattleMessage("사탕이 10개<br>필요합니다."); return; }
+            if (tamaState.candies < 10) { updateBattleMessage("사탕이 10개 필요합니다."); return; }
             if (confirm("새로운 알을 받을까요? 현재 포켓몬과 경험치는 초기화됩니다.")) {
                 tamaState.candies -= 10;
                 tamaState.level = 0; tamaState.xp = 0; tamaState.currentPokemonId = null; tamaState.basePokemonId = null;
@@ -690,14 +687,14 @@
                 tamaState.nameChanged = false; 
                 
                 document.getElementById('pokemon-stage').classList.remove('legendary-glow');
-                updateBattleMessage(`새로운 알을<br>건네받았다!`);
+                updateBattleMessage(`새로운 알을 건네받았다!`);
                 saveTamaState(); renderTama();
             }
         }
 
         function changeName() {
             if (tamaState.nameChanged) {
-                updateBattleMessage("이름은 한 번만<br>지어줄 수 있습니다!");
+                updateBattleMessage("이름은 한 번만 지어줄 수 있습니다!");
                 return; 
             }
             const newName = prompt("포켓몬에게 예쁜 이름을 지어주세요", tamaState.name);
@@ -959,7 +956,7 @@
         }
 
         function validateAndSaveBudget() {
-            updateBattleMessage('예산 설정이<br>저장되었습니다!');
+            updateBattleMessage('예산 설정이 저장되었습니다!');
         }
 
         function openMultiPicker() { 
@@ -999,7 +996,7 @@
                 datesToSave.forEach((d, i) => { db.push({ id: Date.now() + i, groupId: groupId, date: d, amt, type: inputMode, cat: selectedCat.n, icon: selectedCat.i, memo, repeat: isRepeat, payment: inputPaymentMethod, dutch: dutchData ? JSON.parse(JSON.stringify(dutchData)) : null }); });
                 
                 updateStreakLogic();
-                updateBattleMessage(`가계부에<br>기록을 남겼다!`);
+                updateBattleMessage(`가계부에 기록을 남겼다!`);
             }
             localStorage.setItem('ledger_v31', JSON.stringify(db)); closeInputScreen(); if(document.getElementById('screen-ledger').classList.contains('active')) renderLedger(); renderTama(); 
         }
@@ -1074,7 +1071,7 @@
             if(item.dutch && item.dutch.active) {
                 document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${effAmt.toLocaleString()}원`; document.getElementById('det-amt-sub').innerText = `(총 결제: ${item.amt.toLocaleString()}원)`; document.getElementById('det-amt-sub').style.display = 'block';
                 let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow); margin:4px;"><div style="font-size:14px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
-                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:3px dashed var(--border-light);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:18px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:28px; height:28px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:18px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
+                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:3px dashed var(--border-heavy);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:18px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:28px; height:28px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:18px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
                 dHtml += `</div>`; document.getElementById('det-dutch-area').innerHTML = dHtml;
             } else { document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${item.amt.toLocaleString()}원`; document.getElementById('det-amt-sub').style.display = 'none'; document.getElementById('det-dutch-area').innerHTML = ''; }
             document.getElementById('det-amt').style.color = item.type==='in'?'var(--accent-green)':'var(--text-main)'; document.getElementById('det-cat').innerText = item.cat; document.getElementById('det-cat').style.background = c.bg; document.getElementById('det-cat').style.color = c.text; document.getElementById('det-date').innerText = formatDateWithDay(item.date); document.getElementById('det-memo').innerText = item.memo || '메모 없음';
