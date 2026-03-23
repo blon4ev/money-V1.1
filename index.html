@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <title>Budget Split Ledger v57 (Crash Fixed & UI Diet)</title>
+    <title>Budget Split Ledger v58 (Calendar Fixed)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link href="https://cdn.jsdelivr.net/gh/neodgm/neodgm-webfont@latest/neodgm/style.css" rel="stylesheet">
@@ -93,24 +93,20 @@
         .candy-btn:disabled { background: #C0C0C0; color: #505050; cursor: not-allowed; box-shadow:none; transform:none; }
         .new-egg-btn { flex: 1; background: var(--bg-main); color: var(--text-main); font-weight:bold;}
 
-        /* 🌟 리스트 및 스크롤 영역 완벽 픽스 */
         .weekly-list-area { flex: 1; overflow-y: auto; overflow-x: hidden; background: var(--bg-main); padding: 0 15px 20px 15px; position: relative; display: flex; flex-direction: column;}
         .weekly-sticky-header { position: sticky; top: 0; background: var(--bg-main); z-index: 10; padding: 10px 0; border-bottom: 3px solid var(--border-heavy); margin-bottom: 12px; display: flex; align-items: baseline; gap: 10px; flex-shrink: 0;}
         .weekly-header-title { font-size: 18px; color: var(--text-main); font-weight: bold;}
         
-        /* 🌟 리스트 아이템 컴팩트하게 */
         .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; cursor: pointer; margin: 3px 3px 10px 3px; background: white; border: none; box-shadow: var(--shadow-3px); transition: 0s; flex-shrink: 0;}
         .list-item:active { transform: translate(3px,3px); box-shadow: none; background:#F0F0F0;}
         .list-left { display: flex; align-items: center; gap: 12px; flex: 1; overflow: hidden; }
         .list-icon { font-size: 26px; }
         .list-details { display: flex; flex-direction: column; gap: 6px; overflow: hidden; align-items: flex-start;}
         
-        /* 🌟 [FIX] 카테고리 뱃지 fit-content 및 도트 UI 적용 */
         .cat-badge { display: inline-flex; align-items: center; padding: 3px 6px; font-size: 12px; white-space: nowrap; border: none; box-shadow: var(--shadow-2px); margin: 2px; width: fit-content; font-weight:bold; color: white;}
         .list-memo { font-size: 15px; color: var(--text-main); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight:bold; margin-top:2px;}
         .list-amt { font-size: 18px; font-weight: bold; white-space: nowrap; margin-left:10px;}
 
-        /* 🌟 [FIX] 요약 카드 다이어트 (두께 감소) */
         .compact-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 0 20px 12px 20px; padding: 10px 12px !important; flex-shrink: 0;}
         .sum-item { display: flex; flex-direction: column; align-items: center; }
         .sum-label { font-size: 13px; color: var(--text-dim); margin-bottom: 2px; font-weight:bold;}
@@ -128,8 +124,9 @@
         .fab { position: absolute; bottom: calc(85px + env(safe-area-inset-bottom)); right: 20px; width: 56px; height: 56px; border-radius: 0; background: var(--bg-card); border: none; color: var(--text-main); font-size: 36px; z-index: 90; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-4px); margin: 4px;}
         .fab:active { transform: translate(4px, 4px); box-shadow: none; background:#E0E0E0;} 
 
-        /* 🌟 [FIX] 필터 바 얇게 압축 & 칩 디자인 반영 */
-        .filter-bar { overflow-x: auto; white-space: nowrap; margin-bottom: 12px; padding: 0 20px 4px 20px; align-items: center; display: flex; flex-shrink: 0;}
+        /* 🌟 [FIX] 필터 바 display:none 복구 (토글 작동) */
+        .filter-bar { display: none; overflow-x: auto; white-space: nowrap; margin-bottom: 12px; padding: 0 20px 4px 20px; align-items: center; flex-shrink: 0;}
+        .filter-bar.visible { display: flex; } 
         .filter-segment-container { display: flex; background: var(--bg-main); padding: 3px; border-radius: 0; gap: 2px; flex-shrink: 0; height: 34px; box-sizing: border-box; align-items: center; border: none; box-shadow: var(--shadow-2px); margin: 2px; margin-right:8px;}
         .filter-segment-btn { height: 100%; display: flex; align-items: center; justify-content: center; border: none; padding: 0 10px; margin: 0; font-size: 14px; cursor: pointer; background: transparent; color: var(--text-dim); font-weight:bold;}
         .filter-segment-btn.active { background: var(--text-main); color: white;}
@@ -217,6 +214,7 @@
                     <button class="action-btn" onclick="moveMonth(1)">&#10095;</button>
                 </div>
                 <div class="header-actions">
+                    <button class="action-btn" id="filter-btn" onclick="toggleFilterBar()">⌥</button>
                     <button class="action-btn" onclick="openStatsModal()">📊</button>
                 </div>
             </div>
@@ -225,13 +223,13 @@
 
             <div class="compact-summary retro-dialog-box">
                 <div class="sum-item"><div class="sum-label">수입</div><div class="sum-val" id="sum-in" style="color:var(--accent-green);">0원</div></div>
-                <div class="sum-item"><div class="sum-label">지출</div><div class="sum-val" id="sum-ex" style="color:var(--accent-red);">0원</div></div>
+                <div class="sum-item"><div class="sum-label" style="margin-left:auto; margin-right:auto;">지출</div><div class="sum-val" id="sum-ex" style="color:var(--accent-red);">0원</div></div>
             </div>
 
             <div class="calendar-grid retro-dialog-box" id="cal-grid"></div>
             <div id="selected-date-text" style="color:var(--text-main); font-size:16px; margin-bottom:10px; font-weight:bold; padding-left:20px; flex-shrink: 0;"></div>
             
-            <div class="list-area scroll-container" id="list-area"></div>
+            <div class="list-area scroll-container" id="list-area" style="background:transparent; padding:0 15px 20px 15px;"></div>
             
             <button class="fab" onclick="openInputScreen()">+</button>
         </div>
@@ -368,7 +366,7 @@
 
         <div id="screen-detail" class="screen">
             <button class="action-btn" style="width:auto; padding:0 15px; font-size:15px; align-self:flex-start; margin-left:20px;" onclick="showScreen('screen-ledger')">뒤로</button>
-            <div class="retro-dialog-box" style="text-align:center; margin:20px; padding:30px 20px;">
+            <div class="retro-dialog-box" style="text-align:center; margin:20px 0; padding:40px 20px;">
                 <div id="det-icon" style="font-size:56px; margin-bottom:12px;">💸</div>
                 <div id="det-amt" style="font-size:40px; color:var(--text-main); margin:10px 0 0 0; font-weight:bold;">0원</div>
                 <div id="det-amt-sub" style="font-size:14px; color:var(--text-dim); margin-bottom:10px; display:none;">(총 결제: 0원)</div>
@@ -392,7 +390,7 @@
                     <h3 style="color:var(--text-main); margin:0; font-size:20px;">새 카테고리 추가</h3>
                     <button class="action-btn" style="width:auto; padding:0 12px; font-size:14px;" onclick="closeAddCat()">취소</button>
                 </div>
-                <input type="text" id="new-cat-name" placeholder="이름 입력" class="memo-input" style="margin-bottom:15px; font-size:16px;">
+                <input type="text" id="new-cat-name" placeholder="이름 입력 (예: 데이트)" class="memo-input" style="margin-bottom:15px; font-size:16px;">
                 <div style="color:var(--text-main); font-size:16px; margin-bottom:10px; font-weight:bold;">아이콘 선택</div>
                 <div class="emoji-grid" id="emoji-grid"></div>
                 <button class="retro-btn save-btn-large" style="background:#404040; color:white; font-size:18px; height:54px;" onclick="saveNewCategory()">추가하기</button>
@@ -653,7 +651,6 @@
                     const iconStr = (isGrouped ? ' 🔗' : '') + (x.repeat ? ' ↺' : '') + (x.dutch && x.dutch.active ? ' 🤝' : '');
                     const effAmt = getEffectiveAmt(x);
 
-                    // 🌟 [FIX] 결제 수단 텍스트 삭제
                     html += `
                         <div class="list-item" onclick="showItemDetail(${x.id})">
                             <div class="list-left">
@@ -716,6 +713,7 @@
             renderWeeklyList();
         }
 
+        // 🌟 [FIX] 캘린더 렌더링 부활 (크래시 원인 제거)
         function renderLedger() {
             const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
             document.getElementById('month-name').innerText = `${y}년 ${m+1}월`; document.getElementById('selected-date-text').innerText = `${selectedDateStr} 내역`;
@@ -724,8 +722,6 @@
             if(filterType !== 'all') baseItems = baseItems.filter(x => x.type === filterType);
             
             const fCat = document.getElementById('filter-bar');
-            
-            // 🌟 [FIX] 전체/수입/지출 세그먼트와 칩 디자인 개선
             let fHtml = `
                 <div class="filter-segment-container">
                     <button class="filter-segment-btn ${filterType==='all'?'active':''}" onclick="setFilterType('all')">전체</button>
@@ -736,7 +732,6 @@
             `;
             const avCats = [...new Set(baseItems.map(x=>x.cat))]; 
             avCats.forEach(c => { 
-                const color = getCatColor(c); 
                 const isActive = filterCategories.includes(c);
                 const activeClass = isActive ? 'active' : '';
                 fHtml += `<div class="filter-chip ${activeClass}" onclick="toggleFilterCat('${c}')">${c}</div>`; 
@@ -748,9 +743,13 @@
 
             const inS = filteredItems.filter(x => x.type === 'in').reduce((s, x) => s + x.amt, 0); 
             const exS = filteredItems.filter(x => x.type === 'ex').reduce((s, x) => s + getEffectiveAmt(x), 0);
-            document.getElementById('sum-in').innerText = `+${(inS/10000).toFixed(1)}만`; 
-            document.getElementById('sum-ex').innerText = `-${(exS/10000).toFixed(1)}만`; 
-            document.getElementById('sum-net').innerText = (inS-exS>=0?'+':'')+`${((inS-exS)/10000).toFixed(1)}만`;
+            
+            // 안전하게 요소 가져오기
+            const sumInEl = document.getElementById('sum-in');
+            const sumExEl = document.getElementById('sum-ex');
+            
+            if (sumInEl) sumInEl.innerText = `+${(inS/10000).toFixed(1)}만`; 
+            if (sumExEl) sumExEl.innerText = `-${(exS/10000).toFixed(1)}만`; 
 
             const first = new Date(y, m, 1).getDay(), last = new Date(y, m + 1, 0).getDate(); 
             const grid = document.getElementById('cal-grid');
@@ -766,7 +765,7 @@
 
             const fd = filteredItems.filter(x => x.date === selectedDateStr);
             const list = document.getElementById('list-area');
-            list.innerHTML = fd.length ? '' : '<div style="text-align:center; color:var(--text-dim); margin-top:40px; font-size:15px;">내역이 없습니다.</div>';
+            list.innerHTML = fd.length ? '' : '<div style="text-align:center; color:var(--text-dim); margin-top:40px; font-size:16px;">내역이 없습니다.</div>';
             
             fd.sort((a,b) => { if(a.date !== b.date) return new Date(b.date) - new Date(a.date); return b.id - a.id; }).forEach(x => {
                 const c = getCatColor(x.cat);
@@ -788,14 +787,22 @@
                         </div>
                     </div>`;
             });
-            
-            // 🌟 [FIX] 크래시 방지를 위해 updateBudgetLogic 호출 시 요소 검증 안전장치 추가
             updateBudgetLogic();
         }
 
         function setFilterType(t) { filterType = t; filterCategories = []; renderLedger(); }
         function toggleFilterCat(c) { if(filterCategories.includes(c)) filterCategories = filterCategories.filter(cat => cat !== c); else filterCategories.push(c); renderLedger(); }
-        function toggleFilterBar() { const filterBar = document.getElementById('filter-bar'); const filterBtn = document.getElementById('filter-btn'); filterBar.classList.toggle('visible'); filterBtn.classList.toggle('active'); if(!filterBar.classList.contains('visible')) { filterType='all'; filterCategories=[]; renderLedger(); } }
+        
+        // 🌟 [FIX] 필터 버튼 토글 함수 복구
+        function toggleFilterBar() { 
+            const filterBar = document.getElementById('filter-bar'); 
+            const filterBtn = document.getElementById('filter-btn'); 
+            filterBar.classList.toggle('visible'); 
+            if(filterBtn) filterBtn.classList.toggle('active'); 
+            if(!filterBar.classList.contains('visible')) { 
+                filterType='all'; filterCategories=[]; renderLedger(); 
+            } 
+        }
 
         function renderStatsModal() {
             const y = viewDate.getFullYear(), m = viewDate.getMonth(), prefix = `${y}-${String(m+1).padStart(2,'0')}`;
@@ -820,19 +827,17 @@
             });
         }
 
-        // 🌟 [FIX] 크래시 원인이었던 getElementById 널 체크 보호
+        // 🌟 [FIX] 안전한 UI 렌더링을 위한 안전 장치
         function updateBudgetLogic() {
             const y=viewDate.getFullYear(), m=viewDate.getMonth(), prefix=`${y}-${String(m+1).padStart(2,'0')}`;
             const monthEx = db.filter(x => x.date.startsWith(prefix) && x.type === 'ex').reduce((s,x)=>s+getEffectiveAmt(x),0);
             const total = budget.total || 0; const remain = total - monthEx; const pct = total > 0 ? Math.min((monthEx/total)*100, 100) : 0;
             
-            const remainEl = document.getElementById('main-budget-remain');
-            if (remainEl) remainEl.innerText = `남은 예산: ${remain.toLocaleString()}원`;
-
+            const mainRemainEl = document.getElementById('main-budget-remain');
+            if(mainRemainEl) mainRemainEl.innerText = `남은 예산: ${remain.toLocaleString()}원`;
+            
             if(document.getElementById('screen-goal').classList.contains('active')) {
-                document.getElementById('budget-remain-amt-goal').innerText = `${remain.toLocaleString()}원`; 
-                document.getElementById('budget-percent-goal').innerText = `${pct.toFixed(0)}% 사용`; 
-                document.getElementById('budget-progress-goal').style.width = `${pct}%`;
+                document.getElementById('budget-remain-amt-goal').innerText = `${remain.toLocaleString()}원`; document.getElementById('budget-percent-goal').innerText = `${pct.toFixed(0)}% 사용`; document.getElementById('budget-progress-goal').style.width = `${pct}%`;
             }
         }
 
@@ -850,10 +855,18 @@
         function openBudgetNumpad(target, currentAmt = 0) { budgetTarget = target; budgetInputAmt = String(target === 'total' ? budget.total || 0 : currentAmt); document.getElementById('budget-numpad-title').innerText = target === 'total' ? '총 예산 설정' : `${target} 예산 설정`; document.getElementById('budget-amt-display').innerText = Number(budgetInputAmt).toLocaleString() + '원'; showScreen('screen-budget-input'); }
         function closeBudgetNumpad() { showScreen('screen-goal'); }
         function pressBudgetNum(n) { if(n === 'C') budgetInputAmt = '0'; else budgetInputAmt = budgetInputAmt === '0' ? String(n) : (budgetInputAmt.length < 10 ? budgetInputAmt + String(n) : budgetInputAmt); document.getElementById('budget-amt-display').innerText = Number(budgetInputAmt).toLocaleString() + '원'; }
-        function confirmBudget() { const val = Number(budgetInputAmt); if (budgetTarget === 'total') budget.total = val; else { if(!budget.cats) budget.cats = {}; budget.cats[budgetTarget] = val; } localStorage.setItem('budget_v31', JSON.stringify(budget)); renderGoalScreen(); closeBudgetNumpad(); }
         
-        // 🌟 [FIX] 목표 탭 설정 완료 버튼 기능 연동
-        function validateAndSaveBudget() { updateBattleMessage('예산 설정이<br>저장되었습니다!'); }
+        function confirmBudget() { 
+            const val = Number(budgetInputAmt); 
+            if (budgetTarget === 'total') budget.total = val; else { if(!budget.cats) budget.cats = {}; budget.cats[budgetTarget] = val; } 
+            localStorage.setItem('budget_v31', JSON.stringify(budget)); 
+            renderGoalScreen(); 
+            closeBudgetNumpad(); 
+        }
+
+        function validateAndSaveBudget() {
+            updateBattleMessage('예산 설정이<br>저장되었습니다!');
+        }
 
         function openMultiPicker() { document.getElementById('multi-picker').style.display = 'flex'; renderMultiCalendar(); }
         function closeMultiPicker() { document.getElementById('multi-picker').style.display = 'none'; const countLabel = document.getElementById('multi-date-count'); if(multiSelectedDates.length > 0) { countLabel.style.display = 'block'; countLabel.innerText = `${multiSelectedDates.length}개 날짜 추가됨`; } else countLabel.style.display = 'none'; }
@@ -923,8 +936,8 @@
         
         function setInputMode(m) { 
             inputMode = m; 
-            document.getElementById('seg-ex').style.background = m==='ex'?'var(--text-main)':'transparent'; document.getElementById('seg-ex').style.color = m==='ex'?'white':'var(--text-main)'; document.getElementById('seg-ex').style.boxShadow = m==='ex'?'none':'var(--shadow-3px)';
-            document.getElementById('seg-in').style.background = m==='in'?'var(--text-main)':'transparent'; document.getElementById('seg-in').style.color = m==='in'?'white':'var(--text-main)'; document.getElementById('seg-in').style.boxShadow = m==='in'?'none':'var(--shadow-3px)';
+            document.getElementById('seg-ex').style.background = m==='ex'?'var(--text-main)':'transparent'; document.getElementById('seg-ex').style.color = m==='ex'?'white':'var(--text-main)'; 
+            document.getElementById('seg-in').style.background = m==='in'?'var(--text-main)':'transparent'; document.getElementById('seg-in').style.color = m==='in'?'white':'var(--text-main)'; 
             
             if(m === 'in') { document.getElementById('payment-method-row').style.display = 'none'; document.getElementById('dutch-main-row').style.display = 'none'; document.getElementById('dutch-people-row').style.display = 'none'; }
             else { document.getElementById('payment-method-row').style.display = 'flex'; document.getElementById('dutch-main-row').style.display = 'flex'; if(isDutch) document.getElementById('dutch-people-row').style.display = 'flex'; }
@@ -951,8 +964,8 @@
             document.getElementById('det-icon').innerText = item.icon;
             if(item.dutch && item.dutch.active) {
                 document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${effAmt.toLocaleString()}원`; document.getElementById('det-amt-sub').innerText = `(총 결제: ${item.amt.toLocaleString()}원)`; document.getElementById('det-amt-sub').style.display = 'block';
-                let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow);"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
-                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:3px dashed var(--border-light);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:${isSettled?'none':'var(--shadow-3px)'}; margin:3px;">${isSettled?'✔':''}</div></div>`; });
+                let dHtml = `<div style="margin-top:20px; background:white; border:none; padding:16px; border-radius:0; text-align:left; box-shadow:var(--pokemon-dialog-shadow); margin:4px;"><div style="font-size:16px; color:var(--text-dim); margin-bottom:12px; font-weight:bold;">정산 현황 (1인당 ${effAmt.toLocaleString()}원)</div>`;
+                item.dutch.settled.forEach((isSettled, i) => { dHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:4px dotted var(--border-outer);" onclick="toggleDutchSettled(${item.id}, ${i})"><span style="font-size:20px; color:${isSettled?'var(--text-dim)':'var(--text-main)'}; font-weight:bold; text-decoration:${isSettled?'line-through':'none'};">친구 ${i+1}</span><div style="width:32px; height:32px; border-radius:0; border:none; background:${isSettled?'var(--text-main)':'white'}; display:flex; align-items:center; justify-content:center; color:white; font-size:20px; box-shadow:var(--shadow-3px); margin:3px;">${isSettled?'✔':''}</div></div>`; });
                 dHtml += `</div>`; document.getElementById('det-dutch-area').innerHTML = dHtml;
             } else { document.getElementById('det-amt').innerText = `${(item.type==='in'?'+':'-')} ${item.amt.toLocaleString()}원`; document.getElementById('det-amt-sub').style.display = 'none'; document.getElementById('det-dutch-area').innerHTML = ''; }
             document.getElementById('det-amt').style.color = item.type==='in'?'var(--accent-green)':'var(--text-main)'; document.getElementById('det-cat').innerText = item.cat; document.getElementById('det-cat').style.background = c.bg; document.getElementById('det-cat').style.color = c.text; document.getElementById('det-date').innerText = formatDateWithDay(item.date); document.getElementById('det-memo').innerText = item.memo || '메모 없음';
